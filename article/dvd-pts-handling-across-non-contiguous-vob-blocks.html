@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DVD PTS Handling Across Non-Contiguous VOB Blocks - vob</title>
+    <meta name="description" content="When a DVD player performs a chapter skip across non-contiguous Video Object (VOB) blocks, it handles Presentation Time Stamps (PTS) by resetting its internal System Time Clock (STC) rather than expecting continuous timestamp progression. Instead of relyi">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/dvd-pts-handling-across-non-contiguous-vob-blocks">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="DVD PTS Handling Across Non-Contiguous VOB Blocks - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/dvd-pts-handling-across-non-contiguous-vob-blocks" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="When a DVD player performs a chapter skip across non-contiguous Video Object (VOB) blocks, it handles Presentation Time Stamps (PTS) by resetting its internal System Time Clock (STC) rather than expecting continuous timestamp progression. Instead of relyi" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="dvd-pts-handling-across-non-contiguous-vob-blocks">DVD PTS
+Handling Across Non-Contiguous VOB Blocks</h1>
+<p>When a DVD player performs a chapter skip across non-contiguous Video
+Object (VOB) blocks, it handles Presentation Time Stamps (PTS) by
+resetting its internal System Time Clock (STC) rather than expecting
+continuous timestamp progression. Instead of relying on a linear PTS
+timeline across fragmented or non-sequential data, the playback system
+coordinates navigation data from IFO files, pack headers containing
+System Clock References (SCR), and Navigation Packs (NV_PCK) embedded in
+each Video Object Unit (VOBU) to re-synchronize audio and video streams
+seamlessly at the target location.</p>
+<h3 id="the-problem-of-discontinuity-in-vob-structures">The Problem of
+Discontinuity in VOB Structures</h3>
+<p>In standard MPEG-2 Program Streams, PTS values dictate the exact
+playback moment of decoded audio and video frames relative to an STC.
+However, DVD authoring often scatters content across non-contiguous VOB
+blocks due to multi-angle features, seamless branching, parental control
+variations, or conventional file fragmentation.</p>
+<p>Because chapters are logical divisions mapped across physical Cells
+and VOBUs, skipping to a new chapter typically points to a completely
+different sector on the disc where the PTS values may be lower, vastly
+higher, or reset to zero compared to the preceding block. Attempting to
+interpret these timestamps linearly would cause buffer underflows,
+freezes, or massive audio-video desynchronization.</p>
+<h3 id="the-chapter-skip-process">The Chapter Skip Process</h3>
+<p>To navigate non-contiguous blocks without playback errors, the
+playback engine executes a precise sequence:</p>
+<ol type="1">
+<li><strong>IFO Table Resolution</strong>: The player consults the
+disc's Program Chain Information (PGCI) inside the IFO files. The Cell
+Playback Information Table (C_PBIT) maps the requested chapter (Program)
+to a specific Cell and its starting Logical Block Address (LBA).</li>
+<li><strong>Buffer Flushing</strong>: Upon receiving the skip command,
+the decoder discards pending data in the track buffer, video elementary
+stream buffer, and audio buffer to prevent old frames from rendering
+under the upcoming timeline.</li>
+<li><strong>STC Re-Initialization</strong>: The player seeks directly to
+the target LBA, reading the Pack Header of the new VOBU. This header
+contains a new System Clock Reference (SCR). The player's hardware STC
+is updated to match this new baseline clock.</li>
+<li><strong>Target VOBU Acquisition</strong>: Each VOBU begins with a
+Navigation Pack (<code>NV_PCK</code>) containing Data Search Information
+(DSI) and Presentation Control Information (PCI). The PCI defines
+<code>VOBU_S_PTM</code> (the presentation start time of the first frame
+in the unit) and <code>VOBU_E_PTM</code> (the presentation end
+time).</li>
+<li><strong>Timestamp Alignment</strong>: The decoder reads the first
+Sequence Header and Group of Pictures (GOP) starting with a closed
+I-frame. The player aligns the incoming elementary stream PTS values
+against the newly initialized STC, ensuring that audio and sub-picture
+streams unpause synchronously with the first valid video frame.</li>
+</ol>
+<h3 id="seamless-vs-non-seamless-transitions">Seamless vs. Non-Seamless
+Transitions</h3>
+<p>Handling timestamps across jumps depends on the transition type
+designated in the Cell parameters:</p>
+<ul>
+<li><strong>Non-Seamless Branching (Normal Chapter Jumps)</strong>: The
+Cell is flagged with a discontinuity indicator
+(<code>STC_Reset_Flag = 1</code>). The player explicitly stops output,
+clears hardware registers, resets the STC to the incoming SCR, and
+restarts decode operations. Timestamp continuity across the gap is
+entirely disregarded.</li>
+<li><strong>Seamless Branching (Contiguous Interleaved Cells)</strong>:
+Used primarily in multi-angle or alternate scenes where the video must
+not stutter. Here, non-contiguous physical blocks are interleaved
+(ILVU). The authoring process ensures that although the read head jumps
+non-contiguously, the SCR and PTS values between linked interleaved
+units are mathematically continuous. The player's track buffer bridges
+the physical seek latency, allowing the PTS to progress linearly without
+an STC reset.</li>
+</ul>
+<p>By isolating the logical timeline through IFO pointers and relying on
+pack-level clock references, DVD systems decouple physical block layout
+from presentation timing, allowing instant recovery and synchronization
+during non-contiguous chapter jumps.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/dvd-pts-handling-across-non-contiguous-vob-blocks';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

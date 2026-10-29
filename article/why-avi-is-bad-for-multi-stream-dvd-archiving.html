@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why AVI Is Bad for Multi-Stream DVD Archiving - vob</title>
+    <meta name="description" content="Archiving DVDs requires a container format that reliably preserves multiple audio tracks, subtitle streams, and chapter markers without data loss or synchronization errors. While the Audio Video Interleave (AVI) format was once a multimedia standard, its">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/why-avi-is-bad-for-multi-stream-dvd-archiving">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why AVI Is Bad for Multi-Stream DVD Archiving - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/why-avi-is-bad-for-multi-stream-dvd-archiving" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Archiving DVDs requires a container format that reliably preserves multiple audio tracks, subtitle streams, and chapter markers without data loss or synchronization errors. While the Audio Video Interleave (AVI) format was once a multimedia standard, its" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-avi-is-bad-for-multi-stream-dvd-archiving">Why AVI Is Bad
+for Multi-Stream DVD Archiving</h1>
+<p>Archiving DVDs requires a container format that reliably preserves
+multiple audio tracks, subtitle streams, and chapter markers without
+data loss or synchronization errors. While the Audio Video Interleave
+(AVI) format was once a multimedia standard, its outdated architecture
+makes it fundamentally inadequate for multi-stream DVD archiving
+compared to native VOB files or modern MKV containers. This article
+explains the technical limitations of AVI and why VOB and MKV are vastly
+superior choices for preserving DVD content.</p>
+<h3 id="lack-of-native-multi-audio-support">Lack of Native Multi-Audio
+Support</h3>
+<p>The AVI format was introduced in 1992 based on the Resource
+Interchange File Format (RIFF). It was engineered with a simple
+structure designed primarily for a single video stream and a single
+audio stream. While hacks and non-standard extensions exist to mux
+multiple audio tracks into an AVI container, software and hardware
+decoders handle these implementations inconsistently. In contrast, DVDs
+regularly contain multiple audio formats (such as stereo commentary, 5.1
+Dolby Digital AC-3, and DTS tracks). Both VOB and MKV natively support
+multiplexing unlimited audio tracks without playback conflicts or
+out-of-spec workarounds.</p>
+<h3 id="inability-to-handle-soft-subtitles">Inability to Handle Soft
+Subtitles</h3>
+<p>DVDs use bitmap-based subpicture streams for subtitles, allowing
+users to toggle them on or off or switch between languages during
+playback. The AVI container lacks a native, standardized specification
+for embedded text or bitmap subtitles. To preserve subtitles in an AVI
+file, users are forced to either "burn" (hardcode) the subtitles
+directly into the video frames—permanently altering the picture and
+limiting the viewer to a single language—or rely on external subtitle
+sidecar files (like .idx/.sub or .srt). MKV natively packages DVD VobSub
+streams directly alongside the video, maintaining switchability and
+original styling, while VOB preserves the original subpicture format
+natively.</p>
+<h3 id="absence-of-chapter-and-menu-metadata">Absence of Chapter and
+Menu Metadata</h3>
+<p>Navigation is an essential component of DVD preservation. The AVI
+container has no standard mechanism for storing chapter markers, title
+structures, or metadata. If you convert a DVD to AVI, you lose the
+ability to skip between chapters or view scene divisions. The MKV
+specification includes a robust chapter system that directly mirrors DVD
+chapter timestamps, and VOB files (when kept alongside their associated
+IFO files) retain the exact navigation logic of the original disc.</p>
+<h3 id="inflexible-indexing-and-timestamping">Inflexible Indexing and
+Timestamping</h3>
+<p>AVI uses a fixed frame-rate timing mechanism rather than per-frame
+timestamps. DVD video frequently incorporates variable frame rate
+mechanisms, such as 3:2 pulldown (telecine) for 24p film content encoded
+at 29.97i. Transmuxing or re-encoding this content into AVI often
+introduces audio-video sync drift over long durations. MKV uses a modern
+timecode-based architecture where every individual frame has a precise
+timestamp, ensuring that video, multiple audio tracks, and subtitles
+stay locked in sync regardless of frame rate variations.</p>
+<h3 id="comparison-with-vob-and-mkv">Comparison with VOB and MKV</h3>
+<ul>
+<li><strong>VOB (MPEG-2 Program Stream):</strong> Because VOB is the
+native file format of the DVD-Video standard, keeping content in VOB
+format ensures a 1:1 bit-perfect archive. It retains the exact MPEG-2
+video stream, all AC-3/DTS/LPCM audio channels, and all subpicture
+graphics with zero generational quality loss.</li>
+<li><strong>MKV (Matroska):</strong> MKV is an open-standard, highly
+extensible container. It allows you to extract the raw streams from a
+DVD without re-encoding (remuxing) into a single, organized file. It
+effortlessly retains all video, audio, and subtitle streams, along with
+chapters and track-specific language tags, making it the premier choice
+for modern playback across virtually all media players.</li>
+</ul></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/why-avi-is-bad-for-multi-stream-dvd-archiving';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

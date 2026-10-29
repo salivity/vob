@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fix Audio Sync When Converting VOBs with FFmpeg - vob</title>
+    <meta name="description" content="Converting VOB files with FFmpeg often results in audio and video drift due to non-continuous presentation timestamps (PTS), dropped frames, and multiplexing quirks inherent to DVD media. To eliminate this desynchronization, FFmpeg provides specific times">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/fix-audio-sync-when-converting-vo-bs-with-f-fmpeg">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Fix Audio Sync When Converting VOBs with FFmpeg - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/fix-audio-sync-when-converting-vo-bs-with-f-fmpeg" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Converting VOB files with FFmpeg often results in audio and video drift due to non-continuous presentation timestamps (PTS), dropped frames, and multiplexing quirks inherent to DVD media. To eliminate this desynchronization, FFmpeg provides specific times" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="fix-audio-sync-when-converting-vobs-with-ffmpeg">Fix Audio Sync
+When Converting VOBs with FFmpeg</h1>
+<p>Converting VOB files with FFmpeg often results in audio and video
+drift due to non-continuous presentation timestamps (PTS), dropped
+frames, and multiplexing quirks inherent to DVD media. To eliminate this
+desynchronization, FFmpeg provides specific timestamp regeneration flags
+and synchronization filters that force the audio and video streams to
+stay aligned throughout the conversion process.</p>
+<h3 id="the-recommended-command">The Recommended Command</h3>
+<p>To convert a VOB file while maintaining perfect synchronization, use
+the following command structure:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ffmpeg</span> <span class="at">-fflags</span> +genpts <span class="at">-i</span> input.vob <span class="at">-vf</span> <span class="st">&quot;fps=source_fps&quot;</span> <span class="at">-af</span> <span class="st">&quot;aresample=async=1000:min_hard_comp=0.100000:first_pts=0&quot;</span> <span class="at">-c:v</span> libx264 <span class="at">-crf</span> 18 <span class="at">-c:a</span> aac <span class="at">-b:a</span> 192k output.mp4</span></code></pre></div>
+<h3 id="essential-command-line-arguments-explained">Essential
+Command-Line Arguments Explained</h3>
+<ul>
+<li><strong><code>-fflags +genpts</code></strong>: This must be placed
+<em>before</em> the input file (<code>-i</code>). VOB files frequently
+contain broken, duplicated, or missing timestamps. This flag forces
+FFmpeg to regenerate missing presentation timestamps based on packet
+headers, preventing the video stream from interpreting time jumps as
+frozen frames.</li>
+<li><strong><code>-af "aresample=async=1000:first_pts=0"</code></strong>:
+This audio filter is the primary tool for correcting drift.
+<ul>
+<li><code>async=1000</code> stretches or squeezes the audio dynamically
+by up to 1,000 samples per second to match timestamp shifts. If the
+discrepancy exceeds this threshold, it inserts silence or trims audio
+samples to realign the track.</li>
+<li><code>first_pts=0</code> ensures that the audio starts at the exact
+same zero-timestamp as the video, eliminating initial delay offsets
+often embedded in DVD audio tracks.</li>
+</ul></li>
+<li><strong><code>-fps_mode cfr</code> (or
+<code>-vsync cfr</code>)</strong>: Forces constant frame rate output. If
+the input VOB has timestamp gaps, this argument duplicates or drops
+video frames to match the declared frame rate rather than letting the
+video play faster or slower than the audio track.</li>
+</ul>
+<h3 id="handling-multiple-vob-files-correctly">Handling Multiple VOB
+Files Correctly</h3>
+<p>A major cause of audio desync occurs when concatenating consecutive
+VOB files (e.g., <code>VTS_01_1.VOB</code>, <code>VTS_01_2.VOB</code>).
+Joining them individually without handling timestamp continuity causes
+the audio to drift at each file boundary.</p>
+<p>To prevent boundary desync, concatenate the raw byte streams before
+processing rather than using the standard FFmpeg concat demuxer:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> VTS_01_1.VOB VTS_01_2.VOB VTS_01_3.VOB <span class="kw">|</span> <span class="ex">ffmpeg</span> <span class="at">-fflags</span> +genpts <span class="at">-i</span> <span class="at">-</span> <span class="at">-af</span> <span class="st">&quot;aresample=async=1000:first_pts=0&quot;</span> <span class="at">-c:v</span> libx264 <span class="at">-c:a</span> aac output.mp4</span></code></pre></div>
+<p>On Windows, use the equivalent binary append syntax:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode cmd"><code class="sourceCode dosbat"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="bu">copy</span> <span class="at">/b</span> VTS_01_1.VOB + VTS_01_2.VOB + VTS_01_3.VOB combined.vob</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>ffmpeg <span class="at">-fflags</span> +genpts <span class="at">-i</span> combined.vob <span class="at">-af</span> <span class="st">&quot;aresample=async=1000:first_pts=0&quot;</span> <span class="at">-c:</span>v libx264 <span class="at">-c:</span>a aac output.mp4</span></code></pre></div>
+<p>Combining <code>-fflags +genpts</code> on the input with the
+<code>aresample</code> audio filter guarantees that both video and audio
+streams share an identical timeline, regardless of defects in the
+original DVD source.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/fix-audio-sync-when-converting-vo-bs-with-f-fmpeg';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

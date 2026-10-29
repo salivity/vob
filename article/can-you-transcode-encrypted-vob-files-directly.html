@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Can You Transcode Encrypted VOB Files Directly? - vob</title>
+    <meta name="description" content="Transcoding an encrypted VOB (Video Object) file directly into another format without decrypting it first is technically impossible. Transcoding software requires access to the underlying, uncompressed audio and video bitstreams to decode frames and re-en">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/can-you-transcode-encrypted-vob-files-directly">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Can You Transcode Encrypted VOB Files Directly? - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/can-you-transcode-encrypted-vob-files-directly" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Transcoding an encrypted VOB (Video Object) file directly into another format without decrypting it first is technically impossible. Transcoding software requires access to the underlying, uncompressed audio and video bitstreams to decode frames and re-en" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="can-you-transcode-encrypted-vob-files-directly">Can You
+Transcode Encrypted VOB Files Directly?</h1>
+<p>Transcoding an encrypted VOB (Video Object) file directly into
+another format without decrypting it first is technically impossible.
+Transcoding software requires access to the underlying, uncompressed
+audio and video bitstreams to decode frames and re-encode them into a
+target format like MP4 or MKV. Because encryption scrambles these data
+packets, any attempt to transcode an encrypted VOB file directly will
+result in read errors, corrupted output, or complete failure.</p>
+<h3 id="why-direct-transcoding-fails">Why Direct Transcoding Fails</h3>
+<p>VOB files found on commercial DVDs are typically protected by the
+Content Scramble System (CSS) or similar Digital Rights Management (DRM)
+schemes. Encryption alters the payload data of the MPEG-2 video and
+AC-3/DTS audio streams using cryptographic keys.</p>
+<p>A video transcoder operates in two primary stages: decoding the
+source material into raw pixel and audio samples, and then encoding
+those raw samples into the destination codec. When a transcoder
+encounters an encrypted VOB file without the proper decryption keys, it
+cannot parse the container's elementary streams. The mathematical
+algorithms used to compress and decompress video cannot interpret
+scrambled binary data, leading the software to misidentify the file as
+corrupt or unreadable.</p>
+<h3 id="what-happens-when-you-try">What Happens When You Try</h3>
+<p>If you feed a raw, encrypted VOB file directly into standard
+transcoding tools like FFmpeg or HandBrake without decryption
+capabilities enabled, one of three things occurs:</p>
+<ul>
+<li><strong>Immediate Failure:</strong> The software throws an error
+such as "invalid data found when processing input" or "header missing"
+and aborts the process.</li>
+<li><strong>Corrupted Output:</strong> The transcoder processes the
+unencrypted container headers but cannot parse the packet payloads,
+resulting in heavy artifacting, loud audio noise, or an entirely green,
+gray, or pixelated screen.</li>
+<li><strong>Zero-Byte Output:</strong> The encoder finishes in seconds,
+producing an empty file or a video that is only a fraction of a second
+long.</li>
+</ul>
+<h3 id="on-the-fly-decryption-vs-direct-transcoding">On-the-Fly
+Decryption vs. Direct Transcoding</h3>
+<p>Some applications appear to convert encrypted commercial DVDs
+directly to modern formats in a single step. However, this is not
+"transcoding without decrypting."</p>
+<p>Instead, these tools utilize access libraries (such as
+<code>libdvdcss</code>) to bypass or decrypt the CSS scrambling in real
+time. The decryption happens in system memory immediately before the
+data is passed to the decoding pipeline. The data hitting the
+transcoding engine is always completely decrypted, even if an
+intermediate unencrypted file is never physically saved to your storage
+drive.</p>
+<h3 id="the-correct-workflow">The Correct Workflow</h3>
+<p>To convert an encrypted VOB file successfully, you must decrypt the
+content. This is achieved through one of two methods:</p>
+<ol type="1">
+<li><strong>Rip and Decrypt First:</strong> Use dedicated ripping
+software to remove the CSS protection and copy the raw, unencrypted VOB
+files or an unencrypted MKV container to your hard drive. Once
+decrypted, any standard transcoder can process the media.</li>
+<li><strong>Stream Through a Decryption Layer:</strong> Use software
+with integrated playback and decryption keys capable of reading the
+original media, decrypting the stream in memory, and piping that clean
+stream straight into the transcoding pipeline.</li>
+</ol></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/can-you-transcode-encrypted-vob-files-directly';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

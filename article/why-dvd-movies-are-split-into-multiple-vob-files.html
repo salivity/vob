@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why DVD Movies Are Split Into Multiple VOB Files - vob</title>
+    <meta name="description" content="When browsing the files inside a standard DVD’s VIDEOTS folder, you will notice that a single continuous movie is divided into multiple sequential files, such as VTS011.VOB and VTS012.VOB. This article explains why DVDs split feature films into these 1 GB">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/why-dvd-movies-are-split-into-multiple-vob-files">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why DVD Movies Are Split Into Multiple VOB Files - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/why-dvd-movies-are-split-into-multiple-vob-files" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="When browsing the files inside a standard DVD’s VIDEOTS folder, you will notice that a single continuous movie is divided into multiple sequential files, such as VTS011.VOB and VTS012.VOB. This article explains why DVDs split feature films into these 1 GB" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-dvd-movies-are-split-into-multiple-vob-files">Why DVD Movies
+Are Split Into Multiple VOB Files</h1>
+<p>When browsing the files inside a standard DVD’s <code>VIDEO_TS</code>
+folder, you will notice that a single continuous movie is divided into
+multiple sequential files, such as <code>VTS_01_1.VOB</code> and
+<code>VTS_01_2.VOB</code>. This article explains why DVDs split feature
+films into these 1 GB chunks, focusing on historical file system
+constraints, hardware buffer limitations in early standalone players,
+and how the DVD navigation structure stitches these files together for
+seamless playback.</p>
+<h3 id="the-1-gb-specification-limit">The 1 GB Specification Limit</h3>
+<p>The primary reason for splitting video files is the official
+DVD-Video specification established by the DVD Forum in the mid-1990s.
+The specification explicitly dictates that no single VOB (Video Object)
+file can exceed 1 GiB (1,048,576 KB, or exactly 1,073,741,824 bytes).
+Because a standard full-length feature film compressed in MPEG-2 format
+typically ranges between 4 GB and 8 GB, the authoring software is
+required to divide the video stream across multiple sequential
+files.</p>
+<h3 id="file-system-and-operating-system-compatibility">File System and
+Operating System Compatibility</h3>
+<p>During the development of the DVD standard, compatibility across
+varying operating systems was a major hurdle.</p>
+<ul>
+<li><strong>File Systems:</strong> Many legacy operating systems used
+file systems with low file-size ceilings. For example, older formats
+struggled with files larger than 2 GB, while FAT32 capped file sizes at
+4 GB.</li>
+<li><strong>UDF Bridge:</strong> DVDs use a hybrid file system called
+UDF/ISO 9660 Bridge (specifically UDF 1.02). Restricting individual
+files to 1 GB guaranteed that any computer, regardless of its operating
+system (Windows 95/98, Mac OS, or Linux), could read and copy the files
+off the disc without triggering file-size errors.</li>
+</ul>
+<h3 id="hardware-limitations-of-early-standalone-players">Hardware
+Limitations of Early Standalone Players</h3>
+<p>When DVD players first entered the consumer market in 1996 and 1997,
+they were powered by low-cost, low-memory microcontrollers.</p>
+<ul>
+<li><strong>Memory Buffers:</strong> These early devices had minimal
+random-access memory (RAM). Managing 32-bit pointers for files several
+gigabytes in size was computationally intensive for primitive
+decoders.</li>
+<li><strong>Data Seeking:</strong> Handling smaller chunks made tracking
+file pointers, addressing data sectors, and recovering from read errors
+or disc scratches significantly simpler and more reliable for hardware
+players.</li>
+</ul>
+<h3 id="how-seamless-playback-works">How Seamless Playback Works</h3>
+<p>Despite being stored as separate files on the disc, a movie plays
+continuously without visible pauses or interruptions. This seamless
+experience is managed by companion files found in the same
+directory:</p>
+<ul>
+<li><strong>IFO Files (Information):</strong> Files such as
+<code>VTS_01_0.IFO</code> hold the navigation tables and playback
+instructions. The IFO file tells the player the exact sector locations
+of chapters, audio tracks, and subtitles.</li>
+<li><strong>Continuous Stream:</strong> The DVD player does not treat
+<code>VTS_01_1.VOB</code> and <code>VTS_01_2.VOB</code> as separate
+entities. Instead, the laser reads the physical sectors sequentially as
+directed by the IFO data, processing the split files as one unbroken
+data stream.</li>
+</ul></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/why-dvd-movies-are-split-into-multiple-vob-files';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

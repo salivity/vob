@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why Merging VOB Files Causes Audio Desync - vob</title>
+    <meta name="description" content="Naively concatenating DVD VOB files using binary merge commands or basic file joiners frequently results in severe audio-video desynchronization. This issue arises because VOB (Video Object) files are not standalone media containers; they are arbitrary fi">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/why-merging-vob-files-causes-audio-desync">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why Merging VOB Files Causes Audio Desync - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/why-merging-vob-files-causes-audio-desync" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Naively concatenating DVD VOB files using binary merge commands or basic file joiners frequently results in severe audio-video desynchronization. This issue arises because VOB (Video Object) files are not standalone media containers; they are arbitrary fi" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-merging-vob-files-causes-audio-desync">Why Merging VOB Files
+Causes Audio Desync</h1>
+<p>Naively concatenating DVD VOB files using binary merge commands or
+basic file joiners frequently results in severe audio-video
+desynchronization. This issue arises because VOB (Video Object) files
+are not standalone media containers; they are arbitrary file segments
+governed by external DVD metadata. When combined without re-evaluating
+the underlying MPEG-2 Program Stream timestamps, codec frame alignments,
+and navigation instructions found in associated IFO files, media players
+fail to maintain proper timing between the video and audio tracks.</p>
+<h3 id="arbitrary-file-split-boundaries">Arbitrary File Split
+Boundaries</h3>
+<p>On standard DVD-Video discs, the UDF/ISO 9660 file system limits
+individual file sizes to roughly 1 GB. Because of this, authoring
+software splits continuous MPEG-2 Program Streams into sequential chunks
+(<code>VTS_01_1.VOB</code>, <code>VTS_01_2.VOB</code>, etc.) purely
+based on byte count rather than logical audio or video frame boundaries.
+A VOB file may terminate mid-packet, mid-frame, or between mismatched
+audio and video intervals. A naive binary concatenation (such as the
+<code>cat</code> command in Linux or <code>copy /b</code> in Windows)
+treats these splits as linear file streams, introducing structural
+stream corruption at every junction point.</p>
+<h3 id="presentation-timestamp-pts-discontinuities">Presentation
+Timestamp (PTS) Discontinuities</h3>
+<p>Digital media playback relies on Presentation Timestamps (PTS) and
+Decoding Timestamps (DTS) embedded within the packetized elementary
+stream (PES) headers to keep audio and video frames in sync. In DVD
+authoring:</p>
+<ul>
+<li>Timestamps across separate VOB files do not necessarily continue in
+a perfect, linear mathematical progression.</li>
+<li>Timestamps may reset back to zero, encounter sudden jumps, or
+contain non-monotonic gaps across segment boundaries.</li>
+<li>A media player reading a concatenated file often assumes a
+continuous, uniform timecode. When it encounters unexpected timestamp
+resets or gaps at the boundary of what used to be a separate VOB file,
+the audio decoder and video decoder react differently—one stream may
+pause or skip while the other continues, throwing the two out of sync
+for the remainder of the timeline.</li>
+</ul>
+<h3 id="frame-length-and-packet-misalignment">Frame Length and Packet
+Misalignment</h3>
+<p>Video and audio frames operate on entirely different time spans:</p>
+<ul>
+<li>NTSC video frames occur roughly every 33.36 milliseconds; PAL frames
+occur every 40 milliseconds.</li>
+<li>AC-3 (Dolby Digital) audio frames typically cover 32 milliseconds of
+audio, while DTS or LPCM audio formats utilize completely different
+frame durations.</li>
+</ul>
+<p>Because audio and video frame durations do not share identical time
+lengths, an audio frame rarely finishes at the precise millisecond a
+video frame or VOB byte limit ends. At the split boundary, there is
+almost always a fractional trailing audio or video packet. When naively
+joined, these unaligned fractional frames accumulate as milliseconds of
+drift at each boundary. Over a full-length film spanning four or five
+VOB files, this cumulative drift produces several seconds of noticeable
+desynchronization.</p>
+<h3 id="missing-ifo-metadata-and-audio-delay-values">Missing IFO
+Metadata and Audio Delay Values</h3>
+<p>The true structural intelligence of a DVD resides in the
+<code>.IFO</code> files, not the <code>.VOB</code> files. The IFO file
+contains the Program Chain (PGC) information, cell transition flags, and
+precise audio delay values:</p>
+<ul>
+<li>Many DVDs incorporate an explicit audio delay (often positive or
+negative offsets of tens to hundreds of milliseconds) applied to
+specific chapters or cells to ensure synchronization.</li>
+<li>The IFO dictates whether a boundary transition is "seamless" or
+requires a decoder buffer flush.</li>
+<li>Naive concatenation strips away all IFO instructions, leaving the
+playback software blind to intended audio delay offsets and cell start
+positions.</li>
+</ul>
+<h3 id="resolving-the-desynchronization">Resolving the
+Desynchronization</h3>
+<p>To merge sequential VOB files without desynchronization, the files
+must be parsed by tools that decode and rebuild the container structure
+or extract the elementary streams based on the DVD's IFO table. Modern
+remuxing tools—such as MakeMKV, HandBrake, or FFmpeg using proper stream
+mapping rather than protocol-level concatenation—read the container
+timestamps, apply the designated audio delay offsets, pad or drop
+fractional audio frames at cell cuts, and produce a unified file with
+linear, continuous timecodes.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/why-merging-vob-files-causes-audio-desync';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

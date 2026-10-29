@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why Media Players Struggle with Anamorphic VOB Video - vob</title>
+    <meta name="description" content="Modern media players often distort the aspect ratio of anamorphic VOB files by displaying a squished or stretched image instead of the intended widescreen presentation. This occurs primarily because VOB files rely on legacy DVD architecture, where non-squ">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/why-media-players-struggle-with-anamorphic-vob-video">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why Media Players Struggle with Anamorphic VOB Video - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/why-media-players-struggle-with-anamorphic-vob-video" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Modern media players often distort the aspect ratio of anamorphic VOB files by displaying a squished or stretched image instead of the intended widescreen presentation. This occurs primarily because VOB files rely on legacy DVD architecture, where non-squ" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-media-players-struggle-with-anamorphic-vob-video">Why Media
+Players Struggle with Anamorphic VOB Video</h1>
+<p>Modern media players often distort the aspect ratio of anamorphic VOB
+files by displaying a squished or stretched image instead of the
+intended widescreen presentation. This occurs primarily because VOB
+files rely on legacy DVD architecture, where non-square pixels and
+external metadata files dictate dimensions. When modern video
+players—built predominantly for square-pixel progressive web video—read
+a standalone VOB file, they frequently fail to detect the correct
+display instructions, defaulting instead to raw pixel counts.</p>
+<h3 id="the-mechanism-of-anamorphic-dvds">The Mechanism of Anamorphic
+DVDs</h3>
+<p>Standard-definition DVDs do not store true widescreen resolutions
+like 1920x1080 or 1280x720. Instead, both standard (4:3) and widescreen
+(16:9) content are stored at identical raw resolutions: 720x480 for NTSC
+or 720x576 for PAL.</p>
+<p>To achieve a 16:9 picture, DVD mastering uses "anamorphic
+widescreen," horizontally compressing the 16:9 image to fit onto the
+720-pixel-wide sensor grid. During playback, the decoding device must
+apply a Pixel Aspect Ratio (PAR) multiplier—stretching the non-square
+pixels horizontally to achieve the correct Display Aspect Ratio
+(DAR).</p>
+<h3 id="missing-context-from-ifo-files">Missing Context from IFO
+Files</h3>
+<p>The most common cause of playback failure is separating a VOB file
+from its original DVD folder structure. In standard DVD-Video
+specifications, the definitive instructions for aspect ratio, menus, and
+chapter timing reside in <code>.IFO</code> (Information) files, not
+inside the <code>.VOB</code> (Video Object) containers.</p>
+<p>When you play a single <code>.VOB</code> file directly, the media
+player must rely solely on the internal MPEG-2 video stream headers for
+aspect ratio cues. Many DVD authoring tools placed default or generic
+flags (often 4:3) inside the VOB stream itself, relying on the external
+<code>.IFO</code> file to enforce 16:9 playback. Stripped of the
+<code>.IFO</code> file, players default to the wrong shape.</p>
+<h3 id="hardware-acceleration-and-square-pixel-assumptions">Hardware
+Acceleration and Square-Pixel Assumptions</h3>
+<p>Modern media engines, mobile devices, and web-based players are
+optimized for modern codecs such as H.264, HEVC, and AV1. These modern
+formats almost universally rely on square pixels (a 1:1 PAR), where the
+display dimensions match the stored pixel dimensions.</p>
+<p>Many contemporary GPU hardware decoders bypass legacy MPEG-2 display
+extension parsing to prioritize decoding speed. Consequently, the player
+reads 720x480 as roughly 3:2, or falls back to standard 4:3, resulting
+in vertical stretching and black bars where they do not belong.</p>
+<h3 id="conflicting-stream-headers">Conflicting Stream Headers</h3>
+<p>MPEG-2 streams can contain aspect ratio flags in multiple places,
+such as the Sequence Header and the Sequence Display Extension. In
+poorly mastered or fragmented VOB files, these flags can contradict each
+other. While legacy DVD hardware players were built with rigid firmware
+to resolve these conflicts in favor of the intended display, modern
+universal players often lack the specific fallback logic required to
+arbitrate conflicting legacy tags.</p>
+<h3 id="how-to-resolve-the-issue">How to Resolve the Issue</h3>
+<p>To correct the aspect ratio without losing video quality:</p>
+<ul>
+<li><strong>Remux into MKV:</strong> Use tools like MKVToolNix or
+MakeMKV to repackage the MPEG-2 stream into an MKV container while
+explicitly setting the Display Aspect Ratio flag to 16:9. This process
+does not re-encode the video and finishes in seconds.</li>
+<li><strong>Re-encode with Square Pixels:</strong> Use an encoder like
+HandBrake to convert the anamorphic MPEG-2 stream into a modern codec
+(H.264 or H.265) using square pixels scaled to a standard 16:9
+resolution, such as 854x480 or 1024x576.</li>
+</ul></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/why-media-players-struggle-with-anamorphic-vob-video';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

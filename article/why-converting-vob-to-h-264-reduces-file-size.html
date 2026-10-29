@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why Converting VOB to H.264 Reduces File Size - vob</title>
+    <meta name="description" content="Converting a VOB (Video Object) file to the H.264 format significantly reduces file size because of the vast technological gap between their underlying compression codecs. VOB files rely on legacy MPEG-2 compression originally designed for physical DVD me">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/why-converting-vob-to-h-264-reduces-file-size">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why Converting VOB to H.264 Reduces File Size - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/why-converting-vob-to-h-264-reduces-file-size" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Converting a VOB (Video Object) file to the H.264 format significantly reduces file size because of the vast technological gap between their underlying compression codecs. VOB files rely on legacy MPEG-2 compression originally designed for physical DVD me" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-converting-vob-to-h264-reduces-file-size">Why Converting VOB
+to H.264 Reduces File Size</h1>
+<p>Converting a VOB (Video Object) file to the H.264 format
+significantly reduces file size because of the vast technological gap
+between their underlying compression codecs. VOB files rely on legacy
+MPEG-2 compression originally designed for physical DVD media, whereas
+H.264 (MPEG-4 AVC) uses modern, highly efficient compression algorithms.
+This transition eliminates redundant image data, strips away legacy
+container overhead, and uses advanced predictive encoding to retain
+visual quality at a fraction of the original bitrate.</p>
+<h3 id="generational-gap-mpeg-2-vs-h264">Generational Gap: MPEG-2 vs.
+H.264</h3>
+<p>A VOB file is a container format based on the MPEG-2 Program Stream,
+standardized in the mid-1990s. At that time, decoding hardware was
+limited, requiring simpler compression algorithms that demanded higher
+bitrates (often 4,000 to 9,000 kbps) to maintain standard-definition
+visual quality.</p>
+<p>H.264 (MPEG-4 Part 10), standardized roughly a decade later, was
+engineered to deliver comparable or superior video quality at roughly
+half—or even a quarter—of the bitrate required by MPEG-2. Because file
+size is directly determined by bitrate and duration (File Size = Bitrate
+× Duration), slashing the required bitrate immediately slashes the
+resulting file size.</p>
+<h3 id="superior-motion-estimation-and-prediction">Superior Motion
+Estimation and Prediction</h3>
+<p>Video codecs achieve most of their compression through temporal
+compression, which stores only the changes between consecutive frames
+rather than saving complete images. H.264 dramatically outperforms
+MPEG-2 in this area through:</p>
+<ul>
+<li><strong>Flexible Block Sizes:</strong> MPEG-2 relies on rigid 16x16
+pixel macroblocks for motion compensation. H.264 uses variable
+block-tree sizes down to 4x4 pixels, allowing it to isolate and encode
+only the precise areas of a frame that change.</li>
+<li><strong>Quarter-Pixel Precision:</strong> H.264 predicts motion
+vectors with quarter-pixel accuracy, compared to the half-pixel accuracy
+of MPEG-2, drastically cutting down residual errors that waste
+bits.</li>
+<li><strong>Multiple Reference Frames:</strong> While MPEG-2 references
+only one previous or future frame to predict motion, H.264 can reference
+multiple previous frames, reusing recurring visual data over a longer
+timeline.</li>
+</ul>
+<h3 id="spatial-intra-frame-prediction">Spatial Intra-Frame
+Prediction</h3>
+<p>For individual static frames (I-frames), MPEG-2 compresses pixels in
+isolation using discrete cosine transforms without predicting
+neighboring pixels. H.264 introduces directional intra-prediction,
+mathematically predicting blocks of pixels from the pixels immediately
+adjacent to them. Only the difference between the prediction and the
+actual image is stored, significantly reducing spatial redundancy.</p>
+<h3 id="advanced-entropy-coding">Advanced Entropy Coding</h3>
+<p>Once visual data is analyzed, it must be converted into binary code.
+MPEG-2 uses older, static Huffman coding techniques. H.264 implements
+Context-Adaptive Binary Arithmetic Coding (CABAC) and Context-Adaptive
+Variable-Length Coding (CAVLC). CABAC adapts dynamically to the
+statistical probabilities of the video stream, resulting in up to 10% to
+15% better lossless data compression on the encoded stream alone.</p>
+<h3 id="stripping-dvd-overhead-and-fixed-padding">Stripping DVD Overhead
+and Fixed Padding</h3>
+<p>VOB files are designed for seamless optical disc playback. They often
+contain interleaved data such as navigation menus, private streams,
+padding packets to maintain constant transfer rates, and uncompressed or
+minimally compressed audio (like multi-channel AC-3 or LPCM). Converting
+to an H.264 format (typically inside an MP4 or MKV container) strips out
+unnecessary disc navigation packets and typically re-encodes the audio
+to modern codecs like AAC, further reducing overall storage space.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/why-converting-vob-to-h-264-reduces-file-size';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How Lossless Remuxing Preserves VOB Bitstream Quality - vob</title>
+    <meta name="description" content="Lossless remuxing preserves the exact bitstream quality of a VOB (Video Object) file by transferring its underlying video and audio data into a modern container format without decoding or re-encoding the streams. Because the original compressed data packe">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/how-lossless-remuxing-preserves-vob-bitstream-quality">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How Lossless Remuxing Preserves VOB Bitstream Quality - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/how-lossless-remuxing-preserves-vob-bitstream-quality" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Lossless remuxing preserves the exact bitstream quality of a VOB (Video Object) file by transferring its underlying video and audio data into a modern container format without decoding or re-encoding the streams. Because the original compressed data packe" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-lossless-remuxing-preserves-vob-bitstream-quality">How
+Lossless Remuxing Preserves VOB Bitstream Quality</h1>
+<p>Lossless remuxing preserves the exact bitstream quality of a VOB
+(Video Object) file by transferring its underlying video and audio data
+into a modern container format without decoding or re-encoding the
+streams. Because the original compressed data packets remain completely
+untouched during the process, there is zero generation loss, ensuring
+that the resulting file retains 100% of the original DVD's visual and
+auditory fidelity.</p>
+<h2 id="understanding-the-vob-container">Understanding the VOB
+Container</h2>
+<p>A VOB file is a container format based on the MPEG-2 Program Stream
+standard, commonly found on standard-definition commercial DVDs. Inside
+a single VOB container, several distinct data streams are interleaved
+(multiplexed):</p>
+<ul>
+<li><strong>Video Stream:</strong> Typically MPEG-2 video.</li>
+<li><strong>Audio Streams:</strong> Formats such as AC-3 (Dolby
+Digital), DTS, or uncompressed LPCM.</li>
+<li><strong>Subtitle Streams:</strong> DVD subpictures (VobSub
+bitmaps).</li>
+<li><strong>Navigation Data:</strong> Timestamps, chapter markers, and
+stream synchronization headers.</li>
+</ul>
+<p>Because standard media players and modern operating systems often
+struggle to parse raw VOB structures or DVD menu architectures directly,
+users frequently move the content into more versatile containers like
+Matroska (MKV) or MP4.</p>
+<h2 id="the-difference-between-transcoding-and-remuxing">The Difference
+Between Transcoding and Remuxing</h2>
+<p>To understand how bitstream quality is preserved, it is critical to
+distinguish between transcoding and remuxing.</p>
+<ul>
+<li><strong>Transcoding (Re-encoding):</strong> Decompresses the MPEG-2
+bitstream back into raw pixel data, applies a new compression algorithm
+(such as H.264, H.265, or AV1), and discards data to reduce file size.
+This introduces "generation loss"—permanent visual artifacts and
+degraded fidelity.</li>
+<li><strong>Remuxing (Multiplexing):</strong> Bypasses decompression and
+compression entirely. The software acts purely at the container level,
+extracting the raw data packets and placing them directly into a new
+container without altering the payload.</li>
+</ul>
+<h2 id="how-lossless-remuxing-works-step-by-step">How Lossless Remuxing
+Works Step-by-Step</h2>
+<p>Lossless remuxing achieves a bit-for-bit accurate output through a
+three-stage pipeline:</p>
+<h3 id="1-demultiplexing-demuxing">1. Demultiplexing (Demuxing)</h3>
+<p>The remuxing tool parses the VOB container and strips away the
+DVD-specific wrapper layer. It separates the interleaved streams into
+distinct elementary streams: raw MPEG-2 video frames, untouched AC-3 or
+DTS audio packets, and image-based subtitle tracks.</p>
+<h3 id="2-header-and-timestamp-normalization">2. Header and Timestamp
+Normalization</h3>
+<p>DVDs often split long movies across multiple sequential 1 GB VOB
+files (<code>VTS_01_1.VOB</code>, <code>VTS_01_2.VOB</code>), which can
+cause timestamp resets or discontinuities. During remuxing, the utility
+recalculates presentation timestamps (PTS) and decoding timestamps (DTS)
+across the contiguous video and audio segments to ensure seamless
+synchronization throughout the entire timeline.</p>
+<h3 id="3-multiplexing-muxing">3. Multiplexing (Muxing)</h3>
+<p>The elementary streams are packaged into a target container (most
+commonly MKV). The new container encapsulates the original data blocks
+with updated index tables and headers, enabling fast seeking and wide
+playback compatibility.</p>
+<h2 id="why-the-bitstream-remains-identical">Why the Bitstream Remains
+Identical</h2>
+<p>The core reason remuxing is completely lossless lies in the
+mathematical preservation of the data payloads:</p>
+<ul>
+<li><strong>No Transformation of Coefficients:</strong> Lossy
+compression algorithms use Discrete Cosine Transform (DCT) and
+quantization matrices to eliminate imperceptible data. Remuxing never
+invokes these algorithms; the DCT coefficients inside the MPEG-2
+macroblocks remain identical.</li>
+<li><strong>Packet-Level Copying:</strong> Every byte representing a
+frame of video (I-frames, P-frames, and B-frames) is copied verbatim. If
+a hash check (such as MD5 or SHA-256) is run on the extracted raw
+elementary video stream before and after remuxing, the hashes will
+match.</li>
+<li><strong>Intact Audio and Subtitles:</strong> Audio channels, sample
+rates, bit depths, and bitrates are untouched, preventing spatial
+dynamic range compression or sample conversion artifacts.</li>
+</ul>
+<h2 id="advantages-of-vob-remuxing">Advantages of VOB Remuxing</h2>
+<ul>
+<li><strong>100% Original Quality:</strong> Identical image clarity,
+color accuracy, and sound dynamic range to the source DVD.</li>
+<li><strong>Extreme Speed:</strong> Because no heavy encoding
+computations occur, remuxing is limited only by storage read and write
+speeds, often completing a full feature film in seconds.</li>
+<li><strong>Broad Compatibility:</strong> Formats like MKV support the
+original MPEG-2 and DVD subtitle tracks while functioning smoothly
+across modern media servers, smart TVs, and mobile devices.</li>
+</ul></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/how-lossless-remuxing-preserves-vob-bitstream-quality';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

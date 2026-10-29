@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How NV_PCK Functions in DVD VOB Files - vob</title>
+    <meta name="description" content="In the DVD-Video standard, a Navigation Pack (NVPCK) is a mandatory control block positioned at the absolute start of every Video Object Unit (VOBU) within a VOB file. This article explains the technical role of the NVPCK, breaking down how its specialize">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/how-nv-pck-functions-in-dvd-vob-files">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How NV_PCK Functions in DVD VOB Files - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/how-nv-pck-functions-in-dvd-vob-files" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="In the DVD-Video standard, a Navigation Pack (NVPCK) is a mandatory control block positioned at the absolute start of every Video Object Unit (VOBU) within a VOB file. This article explains the technical role of the NVPCK, breaking down how its specialize" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-nv_pck-functions-in-dvd-vob-files">How NV_PCK Functions in
+DVD VOB Files</h1>
+<p>In the DVD-Video standard, a Navigation Pack (NV_PCK) is a mandatory
+control block positioned at the absolute start of every Video Object
+Unit (VOBU) within a VOB file. This article explains the technical role
+of the NV_PCK, breaking down how its specialized data
+packets—Presentation Control Information (PCI) and Data Search
+Information (DSI)—govern playback timing, user permissions, non-linear
+navigation, and trick-play operations like fast-forward and rewind.</p>
+<h3 id="the-structure-of-a-vobu-and-nv_pck">The Structure of a VOBU and
+NV_PCK</h3>
+<p>A VOB (Video Object) file is divided into VOBUs, which typically
+represent 0.4 to 1.0 seconds of presentation time and usually contain
+one Group of Pictures (GOP). Every VOBU must begin with an NV_PCK. Like
+all DVD standard packs, an NV_PCK is exactly 2,048 bytes (one DVD
+logical sector).</p>
+<p>Unlike the audio, video, or sub-picture packs that follow it, the
+NV_PCK contains no actual media content. Instead, it serves as the
+control header for the subsequent packs in that VOBU. It contains two
+distinct sub-packets: the Presentation Control Information (PCI) buffer
+and the Data Search Information (DSI) buffer.</p>
+<h3 id="presentation-control-information-pci">Presentation Control
+Information (PCI)</h3>
+<p>The PCI packet occupies the first half of the NV_PCK payload and
+dictates how the VOBU is presented to the viewer in real time. Its
+primary functions include:</p>
+<ul>
+<li><strong>Presentation Timestamps:</strong> It defines the exact start
+and end presentation times (PTS) for the media contained in the VOBU,
+ensuring audio and video maintain synchronization relative to the System
+Clock Reference (SCR).</li>
+<li><strong>User Operation Prohibitions (UOP):</strong> The PCI
+specifies which remote-control actions are blocked during this specific
+VOBU. For example, it can disable the skip, fast-forward, or menu
+buttons during mandatory warnings or unskippable logos.</li>
+<li><strong>Angle and Sub-picture Control:</strong> If multiple camera
+angles or dynamic sub-picture streams are used, the PCI tells the player
+which stream offsets apply to the current segment.</li>
+<li><strong>Highlight Information (HLI):</strong> For interactive DVD
+menus, the PCI stores button coordinates, colors, and activation
+commands, allowing the player to highlight options when a user navigates
+with a remote.</li>
+</ul>
+<h3 id="data-search-information-dsi">Data Search Information (DSI)</h3>
+<p>The DSI packet occupies the second half of the NV_PCK and provides
+the physical addressing required for seeking, branching, and trick-play
+modes. Its primary functions include:</p>
+<ul>
+<li><strong>Fast-Forward and Rewind (Trick Play):</strong> The DSI
+contains a comprehensive list of forward and backward reference pointers
+(VOBU_SRI). These pointers specify the relative sector offsets to nearby
+VOBUs (e.g., +1, +2, +4, +8, +16, +32 VOBUs ahead, and corresponding
+values behind). When a user fast-forwards at 8x speed, the DVD player
+does not decode every frame; it reads the DSI pointer to jump directly
+to the target VOBU's NV_PCK, decodes only the I-frame, and repeats the
+process.</li>
+<li><strong>Seamless Branching:</strong> For multi-angle scenes or
+parental-control cuts, the DSI contains Interleaved Unit (ILVU)
+navigation flags. This enables the player's optical pickup to jump
+between alternate video segments on the disc without dropping frames or
+interrupting audio.</li>
+<li><strong>VOBU Boundaries:</strong> It defines the exact end address
+of the current VOBU and the sector location of the first reference frame
+(the video I-frame), allowing the player to parse the data stream
+efficiently.</li>
+</ul>
+<h3 id="operational-lifecycle">Operational Lifecycle</h3>
+<p>When a DVD player reads a VOB stream, it parses the NV_PCK before
+decoding any visual or auditory data. By reading the NV_PCK first, the
+player configures its internal registers for the incoming data, locks
+out prohibited user commands, updates the on-screen display timer, and
+prepares navigation jump tables for the next sector read. This structure
+makes random access, trick play, and interactive menu handling possible
+on hardware with minimal memory and processing capabilities.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/how-nv-pck-functions-in-dvd-vob-files';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

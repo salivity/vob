@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why Multi-Angle DVD Rips Have Duplicate Scenes - vob</title>
+    <meta name="description" content="Ripping a multi-angle DVD often results in duplicate, repetitive scenes when the software parses the underlying VOB files as a simple, continuous video stream rather than interpreting the disc&#39;s structural metadata. Because DVD video stores alternative ca">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/why-multi-angle-dvd-rips-have-duplicate-scenes">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why Multi-Angle DVD Rips Have Duplicate Scenes - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/why-multi-angle-dvd-rips-have-duplicate-scenes" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Ripping a multi-angle DVD often results in duplicate, repetitive scenes when the software parses the underlying VOB files as a simple, continuous video stream rather than interpreting the disc&#39;s structural metadata. Because DVD video stores alternative ca" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-multi-angle-dvd-rips-have-duplicate-scenes">Why Multi-Angle
+DVD Rips Have Duplicate Scenes</h1>
+<p>Ripping a multi-angle DVD often results in duplicate, repetitive
+scenes when the software parses the underlying VOB files as a simple,
+continuous video stream rather than interpreting the disc's structural
+metadata. Because DVD video stores alternative camera angles together in
+an interleaved format inside the same container, failing to read the
+accompanying IFO navigation files forces the ripper to decode every
+angle sequentially. This article explains the technical mechanics of
+multi-angle DVD storage, why improper parsing causes repeated footage,
+and how modern ripping tools resolve the issue.</p>
+<h3 id="the-architecture-of-multi-angle-dvds">The Architecture of
+Multi-Angle DVDs</h3>
+<p>On a standard DVD-Video disc, video, audio, and subtitle tracks are
+multiplexed into VOB (Video Object) containers. When a title features
+multiple angles—such as different camera perspectives or localized text
+in opening credits—the DVD specification cannot store these variations
+as entirely separate movie files without rapidly exceeding the disc's
+storage capacity.</p>
+<p>Instead, the DVD-Video standard uses an architecture known as
+Interleaved Video Units (ILVU). In an ILVU structure:</p>
+<ul>
+<li>The movie is broken down into small blocks of video frames.</li>
+<li>Scenes with multiple angles are split into alternating chunks (e.g.,
+Angle 1 - Block A, Angle 2 - Block A, Angle 1 - Block B, Angle 2 - Block
+B).</li>
+<li>During playback, a standalone DVD player reads the designated angle
+block and physically skips the optical laser over the unwanted angle
+blocks in real time, ensuring a seamless visual transition.</li>
+</ul>
+<h3 id="the-disconnect-between-vobs-and-ifos">The Disconnect Between
+VOBs and IFOs</h3>
+<p>A raw VOB file is merely a media container; it contains no intrinsic
+playback logic. The instructions governing <em>which</em> blocks to
+play, <em>when</em> to skip, and <em>how</em> to branch between angles
+reside entirely in the disc's IFO (Information) files.</p>
+<p>The IFO file contains the Program Chain (PGC) and cell playback
+tables. When a player encounters an ILVU section, the IFO instructions
+command the player to only decode the cell tagged for the user's active
+angle setting (usually Angle 1 by default).</p>
+<h3 id="why-incorrect-parsing-produces-duplicates">Why Incorrect Parsing
+Produces Duplicates</h3>
+<p>Duplicate scenes occur when a ripping program treats the VOB files as
+a linear, chronological media file—often referred to as direct stream
+dumping or simple file concatenation.</p>
+<p>If a ripping tool simply decrypts and merges
+<code>VTS_01_1.VOB</code>, <code>VTS_01_2.VOB</code>, and so on, without
+parsing the IFO file:</p>
+<ol type="1">
+<li><strong>Linear Processing:</strong> The parser reads the file from
+byte zero to the end in pure sequential order.</li>
+<li><strong>Failure to Branch:</strong> Because the parser ignores the
+IFO's skipping instructions, it cannot identify that adjacent video
+units represent alternate versions of the exact same timestamp.</li>
+<li><strong>Consecutive Playback:</strong> The encoder processes the
+video frames for Angle 1, followed immediately by the video frames for
+Angle 2, and then Angle 3.</li>
+</ol>
+<p>To the viewer, this manifests as a jarring repetition: a character
+might open a door, and then the exact same action plays again from a
+slightly different camera position, or an intro crawl appears in English
+and is immediately followed by the same crawl in French and Spanish.</p>
+<h3 id="how-proper-parsers-prevent-duplicates">How Proper Parsers
+Prevent Duplicates</h3>
+<p>Modern DVD rippers and transcoders avoid this issue by integrating
+navigation engines (such as <code>libdvdnav</code> or
+<code>libdvdread</code>). Instead of reading VOB files linearly from the
+file system, these tools read the disc structure virtually:</p>
+<ul>
+<li><strong>Title Extraction:</strong> The software parses the IFO file
+first to map the specific Program Chain.</li>
+<li><strong>Angle Selection:</strong> The user or software selects a
+single angle stream (e.g., Angle 1).</li>
+<li><strong>ILVU De-interleaving:</strong> As the software reads the VOB
+data, it dynamically discards all interleaved units tagged for other
+angles, preserving only the chosen stream and producing a continuous,
+duplication-free video.</li>
+</ul></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/why-multi-angle-dvd-rips-have-duplicate-scenes';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

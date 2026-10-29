@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why Binary Merging VOB Files Causes Timestamp Jumps - vob</title>
+    <meta name="description" content="Merging DVD VOB (Video Object) files using simple binary concatenation commands—such as cat on Unix-based systems or copy /b on Windows—frequently leads to severe playback issues, including erratic timestamp jumps, audio/video desynchronization, and broke">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/why-binary-merging-vob-files-causes-timestamp-jumps">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why Binary Merging VOB Files Causes Timestamp Jumps - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/why-binary-merging-vob-files-causes-timestamp-jumps" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Merging DVD VOB (Video Object) files using simple binary concatenation commands—such as cat on Unix-based systems or copy /b on Windows—frequently leads to severe playback issues, including erratic timestamp jumps, audio/video desynchronization, and broke" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-binary-merging-vob-files-causes-timestamp-jumps">Why Binary
+Merging VOB Files Causes Timestamp Jumps</h1>
+<p>Merging DVD VOB (Video Object) files using simple binary
+concatenation commands—such as <code>cat</code> on Unix-based systems or
+<code>copy /b</code> on Windows—frequently leads to severe playback
+issues, including erratic timestamp jumps, audio/video
+desynchronization, and broken seek bars. While binary concatenation is
+fast and appears to work on the surface, it ignores the internal
+architecture of MPEG-2 Program Streams, the presence of DVD-specific
+navigation packets, and the discontinuous nature of internal
+presentation timestamps.</p>
+<h3 id="the-illusion-of-simple-concatenation">The Illusion of Simple
+Concatenation</h3>
+<p>Tools like <code>copy /b</code> or <code>cat</code> operate strictly
+at the byte level. They take the raw binary payload of subsequent files
+and append them to the end of the initial file. For completely uniform,
+headerless data formats, this approach can work. However, VOB files are
+not raw audio/video streams; they are specialized containers based on
+the MPEG-2 Program Stream (MPEG-PS) specification, designed specifically
+for DVD-Video media.</p>
+<h3 id="non-monotonic-presentation-time-stamps-pts">Non-Monotonic
+Presentation Time Stamps (PTS)</h3>
+<p>Within an MPEG-PS container, playback synchronization depends on
+embedded timing metadata:</p>
+<ul>
+<li><strong>PTS (Presentation Time Stamp):</strong> Dictates when a
+specific decoded video frame or audio packet should be presented on
+screen.</li>
+<li><strong>DTS (Decoding Time Stamp):</strong> Dictates when a
+compressed frame must be decoded by the hardware or software
+decoder.</li>
+<li><strong>SCR (System Clock Reference):</strong> Synchronizes the
+player's internal master clock to the stream's timeline.</li>
+</ul>
+<p>When a DVD title spans multiple 1 GB VOB files (such as
+<code>VTS_01_1.VOB</code>, <code>VTS_01_2.VOB</code>), the internal
+timestamps do not necessarily continue linearly across physical file
+splits. In many authoring setups, timestamps reset to zero at the
+beginning of a new cell, chapter, or file boundary.</p>
+<p>When you use a binary copy, the end of the first file might have a
+PTS indicating 20 minutes (e.g., PTS = 108,000,000 at 90 kHz), while the
+start of the next file's payload suddenly drops back to zero or an
+arbitrary starting offset. Media players expect timestamps to increase
+monotonically (strictly progressing forward). Encountering an abrupt
+drop or jump causes the player's playback engine to stall, miscalculate
+the total duration, or lose synchronization between the audio and video
+tracks.</p>
+<h3 id="the-absence-of-dvd-navigation-ifo-context">The Absence of DVD
+Navigation (IFO) Context</h3>
+<p>Standalone VOB files on a DVD were never intended to be parsed
+linearly without their companion files:</p>
+<ul>
+<li><strong>NAV Packs (Navigation Packets):</strong> DVD VOBs contain
+embedded PCI (Presentation Control Information) and DSI (Data Search
+Information) packets. These packets handle angle changes, menu
+highlights, and fast-forward/rewind indexing.</li>
+<li><strong>IFO Files:</strong> The <code>.IFO</code> files contain the
+true playback instructions, mapping how cells and programs sequence
+together, how clock discontinuities must be handled, and which
+audio/subtitle streams correspond to which tracks.</li>
+</ul>
+<p>When VOBs are merged via a binary copy, the player encounters
+internal NAV packs and padding streams that expect external guidance
+from an IFO file. Without this context, the decoder treats the newly
+joined data as a corrupted stream, leading to erratic timeline behavior
+during playback.</p>
+<h3 id="audio-and-video-packet-interleaving-mismatches">Audio and Video
+Packet Interleaving Mismatches</h3>
+<p>MPEG-2 Program Streams multiplex video, audio, and private data into
+discrete packets. At the end of a single VOB split, the stream may
+terminate mid-GOP (Group of Pictures) or with an incomplete audio frame,
+relying on the DVD player to clear buffers and align the subsequent
+cell. A binary merge blindly glues these incomplete buffers together,
+causing packet loss and buffer underflows/overflows in the decoder,
+which manifests as timeline skips and audio dropouts.</p>
+<h3 id="the-correct-method-to-merge-vobs">The Correct Method to Merge
+VOBs</h3>
+<p>To prevent timestamp jumps, VOB files must be remuxed rather than
+appended:</p>
+<ol type="1">
+<li><strong>Container Parsing:</strong> A dedicated multiplexer or media
+tool parses the underlying video (MPEG-2) and audio (AC-3, DTS, or LPCM)
+elementary streams.</li>
+<li><strong>NAV Pack Stripping:</strong> DVD-specific navigation packs
+must be discarded, as they are invalid in modern containers like MP4 or
+MKV.</li>
+<li><strong>Timestamp Normalization:</strong> The remuxing utility
+recalculates the PTS, DTS, and SCR values, rewriting them so that each
+packet increases linearly from <code>00:00:00</code> to the true end of
+the timeline without gaps or resets.</li>
+</ol></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/why-binary-merging-vob-files-causes-timestamp-jumps';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

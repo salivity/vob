@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why Splitting VOB Mid-GOP Needs Pack Alignment - vob</title>
+    <meta name="description" content="Splitting a VOB file in the middle of a Group of Pictures (GOP) requires precise pack alignment to maintain stream readability and prevent decoder failure. Because DVD-Video VOB files are strictly structured into fixed 2048-byte sectors containing multipl">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/why-splitting-vob-mid-gop-needs-pack-alignment">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why Splitting VOB Mid-GOP Needs Pack Alignment - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/why-splitting-vob-mid-gop-needs-pack-alignment" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Splitting a VOB file in the middle of a Group of Pictures (GOP) requires precise pack alignment to maintain stream readability and prevent decoder failure. Because DVD-Video VOB files are strictly structured into fixed 2048-byte sectors containing multipl" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-splitting-vob-mid-gop-needs-pack-alignment">Why Splitting
+VOB Mid-GOP Needs Pack Alignment</h1>
+<p>Splitting a VOB file in the middle of a Group of Pictures (GOP)
+requires precise pack alignment to maintain stream readability and
+prevent decoder failure. Because DVD-Video VOB files are strictly
+structured into fixed 2048-byte sectors containing multiplexed data,
+cutting a file without aligning to these exact pack boundaries corrupts
+the MPEG-2 Program Stream syntax. Combined with the inter-frame
+dependencies inherent to a GOP, failing to align splits to valid pack
+boundaries leads to broken packet headers, desynchronized audio and
+video timestamps, and unplayable media.</p>
+<h3 id="the-2048-byte-pack-architecture">The 2048-Byte Pack
+Architecture</h3>
+<p>VOB (Video Object) files are implementations of the MPEG-2 Program
+Stream standard, tailored specifically for DVD-Video. The core unit of
+this container is the "pack." Every pack in a VOB file is exactly 2,048
+bytes long, matching the physical sector size of standard optical
+media.</p>
+<p>Each pack contains:</p>
+<ul>
+<li>A 14-byte pack header containing a System Clock Reference
+(SCR).</li>
+<li>One or more Packetized Elementary Stream (PES) packets containing
+video, audio, or subtitle data.</li>
+<li>Padding or stuffing bytes to ensure the pack reaches exactly 2,048
+bytes.</li>
+</ul>
+<p>If a file split occurs at an arbitrary byte offset rather than on a
+2,048-byte boundary, the cut severs the container structure. The
+resulting files will contain truncated packs that downstream demuxers
+and decoders cannot parse, triggering immediate read errors.</p>
+<h3 id="pes-packet-fragmentation-across-sector-boundaries">PES Packet
+Fragmentation Across Sector Boundaries</h3>
+<p>Compressed video frames rarely fit into a single 2,048-byte sector. A
+single high-bitrate I-frame or P-frame routinely spans multiple
+consecutive packs.</p>
+<p>When a split occurs mid-GOP, cutting must happen cleanly between
+complete packs. If a cut is made inside a pack:</p>
+<ul>
+<li>The PES header is separated from its elementary stream payload.</li>
+<li>MPEG-2 slice headers within the video payload are bisected,
+destroying macroblock data.</li>
+<li>Demuxers fail to locate the start codes required to interpret
+subsequent stream components.</li>
+</ul>
+<p>By aligning the split to pack boundaries, demuxers can gracefully
+parse the final complete PES payload and recognize where the elementary
+stream terminates.</p>
+<h3 id="managing-mid-gop-temporal-dependencies">Managing Mid-GOP
+Temporal Dependencies</h3>
+<p>A GOP consists of an intra-coded frame (I-frame) followed by
+predictive (P-frame) and bidirectional (B-frame) frames. These frames
+rely on temporal compression:</p>
+<ul>
+<li><strong>P-frames</strong> require data from the previous I- or
+P-frame.</li>
+<li><strong>B-frames</strong> require reference data from both preceding
+and succeeding anchor frames.</li>
+</ul>
+<p>Splitting mid-GOP inherently breaks these temporal references. The
+trailing segment will begin with P- or B-frames that lack their
+reference frames, causing severe visual artifacts or frozen video until
+the next I-frame arrives.</p>
+<p>Because the video data is already vulnerable at the elementary stream
+level during a mid-GOP split, maintaining perfect structural integrity
+at the container level is critical. Precise pack alignment ensures that
+the decoder receives valid syntactical structures, allowing it to
+discard undecodable reference-dependent frames cleanly instead of
+crashing on corrupt byte streams.</p>
+<h3 id="timestamp-synchronization-and-buffer-management">Timestamp
+Synchronization and Buffer Management</h3>
+<p>Every pack header includes a System Clock Reference (SCR), and PES
+headers include Presentation Time Stamps (PTS) and Decoding Time Stamps
+(DTS). DVD players use these timing mechanisms to regulate the Video
+Buffer Verifier (VBV) and synchronize audio with video.</p>
+<p>Splitting mid-GOP disrupts this timing continuity:</p>
+<ul>
+<li><strong>Buffer Overflow/Underflow:</strong> Arbitrary cuts break the
+expected timing intervals dictated by the SCR, causing decoder buffers
+to empty or overflow prematurely.</li>
+<li><strong>A/V Desynchronization:</strong> Audio and video streams are
+multiplexed into separate packs. Splitting mid-GOP requires cutting on a
+pack boundary where both the video and corresponding audio packets can
+be parsed independently to maintain synchronization.</li>
+</ul>
+<p>Precise pack alignment ensures that all remaining packets preserve
+their complete header metadata, allowing player decoders to parse the
+timestamps, reset their internal clocks, and resynchronize playback as
+soon as the next keyframe appears.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/why-splitting-vob-mid-gop-needs-pack-alignment';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

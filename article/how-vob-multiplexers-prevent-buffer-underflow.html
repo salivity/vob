@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How VOB Multiplexers Prevent Buffer Underflow - vob</title>
+    <meta name="description" content="This article explains how multiplexers avoid buffer underflow when interleaving high-bitrate video, audio, and subtitle streams into a DVD Video Object (VOB) file. It details the role of the MPEG-2 System Target Decoder (STD) model, predictive buffer simu">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/how-vob-multiplexers-prevent-buffer-underflow">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How VOB Multiplexers Prevent Buffer Underflow - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/how-vob-multiplexers-prevent-buffer-underflow" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains how multiplexers avoid buffer underflow when interleaving high-bitrate video, audio, and subtitle streams into a DVD Video Object (VOB) file. It details the role of the MPEG-2 System Target Decoder (STD) model, predictive buffer simu" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-vob-multiplexers-prevent-buffer-underflow">How VOB
+Multiplexers Prevent Buffer Underflow</h1>
+<p>This article explains how multiplexers avoid buffer underflow when
+interleaving high-bitrate video, audio, and subtitle streams into a DVD
+Video Object (VOB) file. It details the role of the MPEG-2 System Target
+Decoder (STD) model, predictive buffer simulation, precise timestamp
+scheduling via System Clock Reference (SCR) and Presentation Time Stamps
+(PTS), and strategic interleaving within DVD physical bit-rate
+constraints.</p>
+<h3 id="the-buffer-underflow-problem">The Buffer Underflow Problem</h3>
+<p>In DVD-Video authoring, a VOB file interleaves separate elementary
+streams (MPEG-2 video, AC-3/LPCM audio, and sub-pictures) into a unified
+stream constrained to a maximum overall delivery rate of 10.08 Mbps.
+Buffer underflow occurs when the hardware decoder's internal buffer
+empties before the next required frame or audio sample arrives, causing
+playback stutter or frozen frames. Preventing this requires the
+multiplexer (muxer) to act not just as a file packager, but as a
+real-time hardware simulator.</p>
+<h3 id="simulation-via-the-system-target-decoder-std">Simulation via the
+System Target Decoder (STD)</h3>
+<p>Multiplexers prevent underflow primarily by implementing a
+mathematical simulation of the MPEG-2 System Target Decoder (STD). The
+DVD specification defines exact buffer sizes for each component:</p>
+<ul>
+<li><strong>Video Buffer (VBV/STD):</strong> Typically 224 KB (1.835
+Mb).</li>
+<li><strong>Audio Buffer:</strong> Typically 4 KB for AC-3, larger for
+LPCM.</li>
+<li><strong>Sub-picture Buffer:</strong> Typically 16 KB.</li>
+</ul>
+<p>Before writing data to the VOB container, the multiplexer simulates
+the behavior of these decoders in memory. It tracks the exact byte
+occupancy of each buffer for every microsecond of planned playback,
+ensuring that a stream's instantaneous consumption never exceeds the
+data supplied by the disc drive.</p>
+<h3 id="timestamp-synchronization-scr-dts-and-pts">Timestamp
+Synchronization (SCR, DTS, and PTS)</h3>
+<p>Data delivery and consumption are governed by a strictly synchronized
+clock system running at 27 MHz:</p>
+<ol type="1">
+<li><strong>System Clock Reference (SCR):</strong> Encoded into the
+header of each 2048-byte VOB pack, the SCR tells the player the exact
+time that specific pack must arrive at the demultiplexer.</li>
+<li><strong>Decoding Time Stamp (DTS):</strong> Specifies the exact
+moment a compressed picture must be removed from the buffer and
+decoded.</li>
+<li><strong>Presentation Time Stamp (PTS):</strong> Specifies when the
+uncompressed frame must be shown to the user.</li>
+</ol>
+<p>To prevent underflow, the multiplexer adjusts the SCR schedule so
+that packets arrive well in advance of their DTS. If a complex video
+scene demands a sudden surge in bitrate, the multiplexer must advance
+the delivery of those video packs relative to their decode time.</p>
+<h3 id="look-ahead-analysis-and-pre-buffering">Look-Ahead Analysis and
+Pre-buffering</h3>
+<p>High-bitrate scenes (peaks approaching 9.8 Mbps for video alone)
+cannot be transferred strictly "just-in-time" because disc read limits
+cap the maximum intake. A modern multiplexer performs look-ahead
+analysis across the entire presentation:</p>
+<ul>
+<li><strong>Pre-filling the Buffer:</strong> During low-action,
+low-bitrate scenes preceding a high-bitrate spike, the multiplexer
+allocates excess delivery bandwidth to the video stream. This gradually
+fills the 224 KB buffer near maximum capacity before the complex scene
+begins.</li>
+<li><strong>Drain Management:</strong> When the high-bitrate scene
+occurs, the decoder draws data from its buffer faster than the 10.08
+Mbps drive transfer limit can replenish it. Because the buffer was
+pre-filled, it drains smoothly without hitting empty (underflow) before
+the peak subsides.</li>
+</ul>
+<h3 id="interleaving-strategy-and-vobu-construction">Interleaving
+Strategy and VOBU Construction</h3>
+<p>VOB files are divided into Video Object Units (VOBUs), each
+representing 0.4 to 1.0 seconds of content, aligned with an MPEG-2 Group
+of Pictures (GOP). Within each VOBU, 2048-byte packs are dynamically
+ordered.</p>
+<p>The multiplexer constantly evaluates buffer "run-out times." If the
+audio decoder buffer is 80 milliseconds away from starvation while the
+video buffer has 300 milliseconds of safety margin, the multiplexer
+interrupts the video stream to insert an audio pack. By constantly
+prioritizing the stream closest to its lower threshold, the multiplexer
+ensures all concurrent decoders remain adequately supplied.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/how-vob-multiplexers-prevent-buffer-underflow';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

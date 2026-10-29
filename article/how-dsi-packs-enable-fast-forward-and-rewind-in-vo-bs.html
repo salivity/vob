@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How DSI Packs Enable Fast-Forward and Rewind in VOBs - vob</title>
+    <meta name="description" content="This article explains the role of Data Search Information (DSI) packs in DVD-Video navigation, detailing how they allow media players to perform trick-play functions such as fast-forward and rewind. By embedding precise sector offsets and reference tables">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/how-dsi-packs-enable-fast-forward-and-rewind-in-vo-bs">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How DSI Packs Enable Fast-Forward and Rewind in VOBs - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/how-dsi-packs-enable-fast-forward-and-rewind-in-vo-bs" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains the role of Data Search Information (DSI) packs in DVD-Video navigation, detailing how they allow media players to perform trick-play functions such as fast-forward and rewind. By embedding precise sector offsets and reference tables" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-dsi-packs-enable-fast-forward-and-rewind-in-vobs">How DSI
+Packs Enable Fast-Forward and Rewind in VOBs</h1>
+<p>This article explains the role of Data Search Information (DSI) packs
+in DVD-Video navigation, detailing how they allow media players to
+perform trick-play functions such as fast-forward and rewind. By
+embedding precise sector offsets and reference tables inside the Video
+Object (VOB) structure, DSI packs eliminate the need for full stream
+decoding during high-speed navigation, enabling seamless jumps between
+key video frames.</p>
+<h3 id="the-role-of-the-dsi-pack-in-vob-architecture">The Role of the
+DSI Pack in VOB Architecture</h3>
+<p>A Video Object (VOB) file is structured as a collection of Video
+Object Units (VOBUs). Each VOBU typically contains 0.4 to 1.0 seconds of
+multiplexed video, audio, and sub-picture data. At the very beginning of
+every VOBU sits a Navigation Pack (NV_PCK), which contains two distinct
+sub-packets:</p>
+<ol type="1">
+<li><strong>PCI (Presentation Control Information):</strong> Handles
+real-time display aspects, such as angle changes and highlight
+buttons.</li>
+<li><strong>DSI (Data Search Information):</strong> Contains the spatial
+and navigational metadata required to locate data within the VOB stream
+without parsing the entire file.</li>
+</ol>
+<p>Because MPEG-2 compression relies heavily on inter-frame dependencies
+(using I-frames, P-frames, and B-frames), a player cannot easily decode
+video in reverse or skip arbitrarily without knowing where the next
+independent Intra-frame (I-frame) resides. The DSI pack solves this
+problem by functioning as a localized roadmap.</p>
+<h3 id="the-vobu-search-information-vobu_sri-table">The VOBU Search
+Information (VOBU_SRI) Table</h3>
+<p>The primary mechanism within the DSI pack that facilitates
+fast-forward and rewind is the VOBU Search Information (VOBU_SRI)
+table.</p>
+<p>The VOBU_SRI contains an array of relative sector addresses pointing
+to other VOBUs located both forward and backward in time relative to the
+current position. These pointers are categorized into fixed time
+intervals, typically covering:</p>
+<ul>
+<li><strong>Forward targets:</strong> +0.5 seconds, +1.0 second, +1.5
+seconds, up to several minutes ahead.</li>
+<li><strong>Backward targets:</strong> -0.5 seconds, -1.0 second, -1.5
+seconds, down to several minutes behind.</li>
+</ul>
+<p>Each entry in the table stores the relative block address (RLBN) of
+the target VOBU. If a target VOBU does not exist (for example, seeking
+backward from the very beginning of a title), the table marks the entry
+with an end-of-search flag.</p>
+<h3 id="how-fast-forward-operates">How Fast-Forward Operates</h3>
+<p>During high-speed forward playback (such as 2x, 4x, or 16x speed),
+decoding every frame is computationally expensive and unnecessary. The
+player utilizes the DSI pack as follows:</p>
+<ol type="1">
+<li>The player reads the NV_PCK of the current VOBU and parses the DSI
+block.</li>
+<li>It references the VOBU_SRI table to locate a future VOBU
+corresponding to the selected multiplier speed (e.g., jumping 1.0 second
+forward for a 2x rate).</li>
+<li>The drive optical pickup seeks directly to the target sector defined
+by the forward pointer, skipping all intermediate B-frames, P-frames,
+and non-video data.</li>
+<li>The player decodes only the first I-frame of that target VOBU,
+renders it to the screen, reads its corresponding DSI pack, and repeats
+the process.</li>
+</ol>
+<h3 id="how-rewind-operates">How Rewind Operates</h3>
+<p>Rewinding compressed video is inherently difficult because standard
+MPEG streams are unidirectional; P-frames and B-frames reference past
+frames and cannot be decoded backward. The DSI pack bypasses this
+limitation entirely:</p>
+<ol type="1">
+<li>When the user initiates a rewind command, the player reads the
+current VOBU's DSI pack.</li>
+<li>It looks up the backward pointers in the VOBU_SRI table to identify
+preceding VOBUs at the required temporal offset.</li>
+<li>The player seeks backward to the sector specified by the
+pointer.</li>
+<li>It extracts and decodes the standalone I-frame found at that
+location and displays it.</li>
+<li>The player then reads the DSI pack of this older VOBU to find the
+next backward target, effectively jumping backward from I-frame to
+I-frame.</li>
+</ol>
+<h3 id="maintaining-stream-consistency">Maintaining Stream
+Consistency</h3>
+<p>In addition to jump tables, the DSI pack contains reference addresses
+for the first reference frame (the start of the I-frame) and the end
+address of the reference frame within the current VOBU. This ensures
+that the decoding hardware reads only the minimal amount of data
+necessary to construct an image before moving the read head to the next
+sector, ensuring responsive and jitter-free trick-play performance.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/how-dsi-packs-enable-fast-forward-and-rewind-in-vo-bs';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

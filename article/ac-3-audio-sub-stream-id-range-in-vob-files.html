@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AC-3 Audio Sub-Stream ID Range in VOB Files - vob</title>
+    <meta name="description" content="This article provides an overview of the specific sub-stream identification numbers reserved for AC-3 (Dolby Digital) audio tracks within DVD Video Object (VOB) containers. It explains how MPEG-2 Program Streams organize private data streams and defines t">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/ac-3-audio-sub-stream-id-range-in-vob-files">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="AC-3 Audio Sub-Stream ID Range in VOB Files - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/ac-3-audio-sub-stream-id-range-in-vob-files" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article provides an overview of the specific sub-stream identification numbers reserved for AC-3 (Dolby Digital) audio tracks within DVD Video Object (VOB) containers. It explains how MPEG-2 Program Streams organize private data streams and defines t" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="ac-3-audio-sub-stream-id-range-in-vob-files">AC-3 Audio
+Sub-Stream ID Range in VOB Files</h1>
+<p>This article provides an overview of the specific sub-stream
+identification numbers reserved for AC-3 (Dolby Digital) audio tracks
+within DVD Video Object (VOB) containers. It explains how MPEG-2 Program
+Streams organize private data streams and defines the exact byte range
+demuxers use to locate and extract AC-3 audio streams.</p>
+<h3 id="the-ac-3-sub-stream-id-range">The AC-3 Sub-Stream ID Range</h3>
+<p>Inside a standard DVD VOB container, the reserved sub-stream ID range
+for AC-3 audio is <strong>0x80 to 0x87</strong> (hexadecimal), which
+corresponds to <strong>128 to 135</strong> in decimal notation.</p>
+<p>Because the DVD-Video standard allows a maximum of eight independent
+audio tracks per title, these eight identifiers map directly to the
+available audio slots:</p>
+<ul>
+<li><strong>0x80:</strong> AC-3 Audio Stream 0 (Default / Primary
+track)</li>
+<li><strong>0x81:</strong> AC-3 Audio Stream 1</li>
+<li><strong>0x82:</strong> AC-3 Audio Stream 2</li>
+<li><strong>0x83:</strong> AC-3 Audio Stream 3</li>
+<li><strong>0x84:</strong> AC-3 Audio Stream 4</li>
+<li><strong>0x85:</strong> AC-3 Audio Stream 5</li>
+<li><strong>0x86:</strong> AC-3 Audio Stream 6</li>
+<li><strong>0x87:</strong> AC-3 Audio Stream 7</li>
+</ul>
+<h3 id="how-vob-containers-handle-ac-3-audio">How VOB Containers Handle
+AC-3 Audio</h3>
+<p>A VOB file is fundamentally an MPEG-2 Program Stream (MPEG-PES).
+Standard MPEG-2 specifications do not natively define stream IDs for
+third-party audio codecs such as Dolby Digital (AC-3) or DTS. To work
+around this limitation, DVD authoring formats encapsulate these tracks
+inside <strong>Private Stream 1</strong>, designated by the stream ID
+byte <code>0xBD</code>.</p>
+<p>To distinguish between different formats sharing Private Stream 1,
+the format inserts a secondary header at the start of the PES packet
+payload. The very first byte of this payload is the sub-stream ID. When
+a demultiplexer reads a packet marked with stream ID <code>0xBD</code>,
+it checks this payload byte:</p>
+<ul>
+<li>If the byte falls between <strong>0x80 and 0x87</strong>, the
+demuxer processes the payload as AC-3 audio.</li>
+<li>If the byte falls between <strong>0x88 and 0x8F</strong>, it is
+identified as DTS audio.</li>
+<li>If the byte falls between <strong>0xA0 and 0xA7</strong>, it is
+parsed as Linear PCM (LPCM).</li>
+<li>If the byte falls between <strong>0x20 and 0x3F</strong>, it is
+routed to the DVD sub-picture (subtitle) decoder.</li>
+</ul>
+<p>Following the <code>0x80</code>–<code>0x87</code> sub-stream byte in
+an AC-3 packet, there is typically a 3-byte audio header containing
+frame configuration details before the standard AC-3 syncword
+(<code>0x0B77</code>) begins the actual compressed audio frame.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/ac-3-audio-sub-stream-id-range-in-vob-files';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

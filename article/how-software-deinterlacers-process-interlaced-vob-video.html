@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How Software Deinterlacers Process Interlaced VOB Video - vob</title>
+    <meta name="description" content="This article explains how software deinterlacers process interlaced video streams extracted from DVD VOB (Video Object) files. It covers the initial demuxing and parsing of MPEG-2 data, the determination of field order, the mechanics of common deinterlaci">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/how-software-deinterlacers-process-interlaced-vob-video">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How Software Deinterlacers Process Interlaced VOB Video - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/how-software-deinterlacers-process-interlaced-vob-video" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains how software deinterlacers process interlaced video streams extracted from DVD VOB (Video Object) files. It covers the initial demuxing and parsing of MPEG-2 data, the determination of field order, the mechanics of common deinterlaci" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-software-deinterlacers-process-interlaced-vob-video">How
+Software Deinterlacers Process Interlaced VOB Video</h1>
+<p>This article explains how software deinterlacers process interlaced
+video streams extracted from DVD VOB (Video Object) files. It covers the
+initial demuxing and parsing of MPEG-2 data, the determination of field
+order, the mechanics of common deinterlacing algorithms, the distinction
+between true interlacing and telecine, and the final reconstruction of
+progressive frames.</p>
+<h3 id="1-demuxing-and-stream-parsing">1. Demuxing and Stream
+Parsing</h3>
+<p>A VOB file is a container format based on the MPEG-2 Program Stream
+specification. When video is extracted, the deinterlacer or host media
+framework (such as FFmpeg, HandBrake, or AviSynth) demuxes the container
+to isolate the raw MPEG-2 elementary video stream.</p>
+<p>During decoding, the software reads picture headers to identify
+whether the video was encoded as field-structured pictures or
+frame-structured pictures with interlaced field coding. The stream
+typically consists of 480i (NTSC) or 576i (PAL) resolutions.</p>
+<h3 id="2-identifying-field-order-parity">2. Identifying Field Order
+(Parity)</h3>
+<p>Interlaced video records motion in alternating lines: top fields
+(even lines) and bottom fields (odd lines), captured at different points
+in time. Before altering any pixels, the deinterlacer must determine the
+field cadence:</p>
+<ul>
+<li><strong>Top Field First (TFF):</strong> The top field contains the
+earlier temporal moment.</li>
+<li><strong>Bottom Field First (BFF):</strong> The bottom field contains
+the earlier temporal moment.</li>
+</ul>
+<p>This information is typically flagged in the MPEG-2 bitstream
+metadata. If a deinterlacer misinterprets the field order, temporal
+sequencing is reversed, resulting in severe jitter and stuttering during
+playback.</p>
+<h3 id="3-inverse-telecine-ivtc-check">3. Inverse Telecine (IVTC)
+Check</h3>
+<p>Before applying destructive deinterlacing, advanced software checks
+if the video is truly interlaced or merely telecined. Many NTSC VOB
+files contain 24-frame-per-second film converted to 29.97 fps via a 3:2
+pulldown technique.</p>
+<p>Software like IVTC filters detects repeating field patterns, drops
+redundant fields, and weaves the original progressive frames back
+together without quality loss. If the source is native video (such as
+recorded live television or camcorder footage), true deinterlacing is
+required.</p>
+<h3 id="4-processing-fields-via-deinterlacing-algorithms">4. Processing
+Fields via Deinterlacing Algorithms</h3>
+<p>For native interlaced content, each field represents a
+half-resolution image captured at distinct intervals. A software
+deinterlacer uses one of several mathematical approaches to eliminate
+combing artifacts ("mouse teeth") and produce progressive frames:</p>
+<h4 id="basic-methods">Basic Methods</h4>
+<ul>
+<li><strong>Weave:</strong> Combines adjacent top and bottom fields into
+a single frame. Static areas retain full vertical resolution, but moving
+areas display heavy interlacing artifacts.</li>
+<li><strong>Blend:</strong> Merges adjacent fields together using a
+blend filter. Combing is eliminated, but the result suffers from
+ghosting and reduced sharpness.</li>
+<li><strong>Bob (Line Doubling):</strong> Takes each individual field
+and scales it up to a full frame, often using linear or cubic
+interpolation. This doubles the frame rate (e.g., 29.97i becomes
+59.94p), preserving full temporal resolution, but causes vertical jitter
+("bobbing") in static areas.</li>
+</ul>
+<h4 id="motion-adaptive-deinterlacing-eg-yadif">Motion-Adaptive
+Deinterlacing (e.g., YADIF)</h4>
+<p>Motion-adaptive deinterlacers analyze differences between successive
+fields:</p>
+<ul>
+<li>Static areas are processed using the weave algorithm to maintain
+full spatial resolution.</li>
+<li>Moving areas are processed using spatial interpolation (bobbing) to
+eliminate combing.</li>
+</ul>
+<p>Filters like YADIF (Yet Another Deinterlacing Filter) look at the
+current field alongside the preceding and succeeding fields to
+dynamically map motion thresholds across pixel blocks.</p>
+<h4 id="motion-compensated-deinterlacing-eg-qtgmc">Motion-Compensated
+Deinterlacing (e.g., QTGMC)</h4>
+<p>State-of-the-art processors use motion vectors to track how objects
+move across fields over time. Instead of simply interpolating missing
+lines vertically, the algorithm searches adjacent fields for the missing
+pixel data along the path of motion.</p>
+<p>These algorithms perform noise reduction, temporal consistency
+checks, and sub-pixel interpolation. This preserves sharp edges,
+eliminates line shimmer, and smoothly reconstructs full-resolution
+progressive frames at double the original frame rate.</p>
+<h3 id="5-final-progressive-frame-reconstruction">5. Final Progressive
+Frame Reconstruction</h3>
+<p>After applying the spatial and temporal calculations, the
+deinterlacer outputs a fully progressive pixel grid (such as 720x480p).
+Depending on the user's settings, the video is output at single frame
+rate (discarding half the temporal information to produce 25p or 29.97p)
+or double frame rate (generating 50p or 59.94p to match the original
+field capture rate), ready for modern progressive displays or
+re-encoding into formats like H.264 or HEVC.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/how-software-deinterlacers-process-interlaced-vob-video';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

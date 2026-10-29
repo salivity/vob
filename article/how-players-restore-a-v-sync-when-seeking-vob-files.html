@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How Players Restore A/V Sync When Seeking VOB Files - vob</title>
+    <meta name="description" content="When a media player seeks forward in a large VOB (Video Object) file, it recovers audio/video (A/V) synchronization by locating the nearest video keyframe, parsing embedded Presentation Time Stamps (PTS), discarding mismatched audio packets, and locking b">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/how-players-restore-a-v-sync-when-seeking-vob-files">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How Players Restore A/V Sync When Seeking VOB Files - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/how-players-restore-a-v-sync-when-seeking-vob-files" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="When a media player seeks forward in a large VOB (Video Object) file, it recovers audio/video (A/V) synchronization by locating the nearest video keyframe, parsing embedded Presentation Time Stamps (PTS), discarding mismatched audio packets, and locking b" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-players-restore-av-sync-when-seeking-vob-files">How Players
+Restore A/V Sync When Seeking VOB Files</h1>
+<p>When a media player seeks forward in a large VOB (Video Object) file,
+it recovers audio/video (A/V) synchronization by locating the nearest
+video keyframe, parsing embedded Presentation Time Stamps (PTS),
+discarding mismatched audio packets, and locking both streams to a
+central reference clock. Because VOB files are MPEG-2 Program Streams
+containing multiplexed elementary streams, the player must independently
+parse, align, and trim both audio and video data to restore a seamless
+presentation without introducing drift or distortion.</p>
+<h3 id="1-jumping-to-the-nearest-keyframe-vobu-alignment">1. Jumping to
+the Nearest Keyframe (VOBU Alignment)</h3>
+<p>VOB files are divided into Video Object Units (VOBUs), each typically
+starting with a Navigation Pack (NAV pack) followed by an MPEG-2 Group
+of Pictures (GOP). Because video compression relies on temporal
+prediction (P-frames and B-frames), a player cannot resume video
+playback mid-GOP. When you seek forward:</p>
+<ul>
+<li>The player uses internal index tables or navigates via NAV pack
+offsets to locate the target byte position.</li>
+<li>It seeks forward or backward to the closest preceding
+<strong>I-frame</strong> (Intra-coded frame).</li>
+<li>Decoding begins at this I-frame, as it is the only frame capable of
+full reconstruction without reference to previous data.</li>
+</ul>
+<h3 id="2-reading-timestamps-scr-pts-and-dts">2. Reading Timestamps:
+SCR, PTS, and DTS</h3>
+<p>MPEG-2 Program Streams rely on three timing indicators to manage
+synchronization:</p>
+<ul>
+<li><strong>SCR (System Clock Reference):</strong> Governs the timing of
+data delivery into the demuxer buffers.</li>
+<li><strong>DTS (Decode Time Stamp):</strong> Tells the decoder when to
+process an elementary packet.</li>
+<li><strong>PTS (Presentation Time Stamp):</strong> Tells the player the
+exact time a decoded audio frame or video picture must be presented to
+the user.</li>
+</ul>
+<p>Upon landing at the target VOBU, the demuxer parses the elementary
+stream headers to extract new PTS values for both video and audio. These
+timestamps dictate how far apart the two streams are relative to the
+target timeline.</p>
+<h3 id="3-audio-packet-discarding-and-flushing">3. Audio Packet
+Discarding and Flushing</h3>
+<p>Video decoding involves a variable delay because modern decoders
+buffer multiple frames to resolve temporal dependencies. Audio frames,
+typically formatted in AC-3, LPCM, or DTS within a VOB, decode
+instantaneously.</p>
+<p>To prevent audio from playing ahead of the video:</p>
+<ol type="1">
+<li><strong>Buffer Flushing:</strong> The demuxer flushes existing
+hardware and software audio/video buffers immediately upon the seek
+command.</li>
+<li><strong>Audio Pruning:</strong> The demuxer reads audio packets from
+the newly acquired stream but drops any packet whose PTS is earlier than
+the PTS of the first presentable I-frame.</li>
+<li><strong>Pre-roll/Padding:</strong> If the audio stream starts
+slightly later than the video I-frame, the audio subsystem temporarily
+outputs silence until the audio PTS matches the current timeline.</li>
+</ol>
+<h3 id="4-clock-master-arbitration-and-resynchronization">4. Clock
+Master Arbitration and Resynchronization</h3>
+<p>Once both streams start outputting decoded data, the player regulates
+their speed using a clock synchronization method:</p>
+<ul>
+<li><strong>Audio-as-Master (Standard):</strong> The human ear is far
+more sensitive to pitch changes, pops, and stutter than the eye is to
+dropped frames. Therefore, most players use the audio PTS clock as the
+primary timeline. The video renderer compares its own PTS against the
+audio clock. If video is behind, it drops intermediate non-reference
+frames (B-frames) to catch up; if video is ahead, it holds the current
+frame until the audio timeline matches.</li>
+<li><strong>External System Clock:</strong> If audio is absent or
+discontinuous, the player matches both video PTS and audio PTS to an
+internal high-resolution monotonic system clock, dynamically adjusting
+presentation delays for both streams until the delta approaches
+zero.</li>
+</ul>
+<p>Through this combination of GOP-aligned seeking, PTS realignment,
+buffer flushing, and master clock arbitration, the player eliminates
+drift and restores tight A/V synchronization within a fraction of a
+second.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/how-players-restore-a-v-sync-when-seeking-vob-files';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

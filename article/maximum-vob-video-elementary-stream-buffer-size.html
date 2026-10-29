@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maximum VOB Video Elementary Stream Buffer Size - vob</title>
+    <meta name="description" content="This article details the maximum allowed buffer size for the video elementary stream contained within a DVD Video Object (VOB) file. It covers the specific Video Buffer Verifier (VBV) buffer constraints dictated by the DVD-Video standard, explains the und">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/maximum-vob-video-elementary-stream-buffer-size">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Maximum VOB Video Elementary Stream Buffer Size - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/maximum-vob-video-elementary-stream-buffer-size" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article details the maximum allowed buffer size for the video elementary stream contained within a DVD Video Object (VOB) file. It covers the specific Video Buffer Verifier (VBV) buffer constraints dictated by the DVD-Video standard, explains the und" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="maximum-vob-video-elementary-stream-buffer-size">Maximum VOB
+Video Elementary Stream Buffer Size</h1>
+<p>This article details the maximum allowed buffer size for the video
+elementary stream contained within a DVD Video Object (VOB) file. It
+covers the specific Video Buffer Verifier (VBV) buffer constraints
+dictated by the DVD-Video standard, explains the underlying MPEG-2
+specifications, and clarifies the relationship between elementary stream
+buffering and the system-level multiplex buffers.</p>
+<h3 id="the-maximum-video-elementary-stream-buffer-vbv">The Maximum
+Video Elementary Stream Buffer (VBV)</h3>
+<p>In a standard DVD-Video VOB file, video is encoded using the MPEG-2
+standard (specifically Main Profile at Main Level, or MP@ML). The
+maximum allowed buffer size for the video elementary stream is dictated
+by the MPEG-2 Video Buffer Verifier (VBV) specification adopted by the
+DVD Forum:</p>
+<ul>
+<li><strong>Maximum VBV Buffer Size:</strong> <strong>1,835,008
+bits</strong> (exactly <strong>224 KB</strong> or <strong>229,376
+bytes</strong>).</li>
+</ul>
+<p>In MPEG-2 video stream headers, this value is signaled via the
+<code>vbv_buffer_size_value</code> field (a 10-bit integer) and
+optionally the <code>vbv_buffer_size_extension</code>. For DVD-compliant
+MP@ML MPEG-2 video streams, this allocation cannot exceed 112 units of
+16-Kbit blocks (112 × 16,384 bits = 1,835,008 bits).</p>
+<p>If a VOB contains an MPEG-1 video elementary stream (allowed under
+constrained parameters for low-resolution content), the maximum VBV
+buffer size is <strong>327,680 bits</strong> (40 KB).</p>
+<h3
+id="elementary-stream-vs-system-target-decoder-p-std-buffer">Elementary
+Stream vs. System Target Decoder (P-STD) Buffer</h3>
+<p>A distinction must be made between the raw elementary stream buffer
+(VBV) and the container-level buffer in the DVD Program Stream System
+Target Decoder (P-STD):</p>
+<ol type="1">
+<li><strong>VBV Buffer (<span
+class="math inline">\(B_n\)</span>):</strong> Holds the raw compressed
+video data awaiting decompression by the MPEG video decoder. This is
+strictly capped at <strong>224 KB</strong>.</li>
+<li><strong>P-STD Video Input Buffer (<span
+class="math inline">\(B_v\)</span>):</strong> The total physical video
+buffer allocated in the multiplexer system target decoder, which
+includes room for multiplex overhead and PES (Packetized Elementary
+Stream) packet assembly. Under the DVD-Video specification, <span
+class="math inline">\(B_v\)</span> is capped at <strong>232 KB</strong>
+(237,568 bytes).</li>
+</ol>
+<h3 id="why-the-limit-is-enforced">Why the Limit Is Enforced</h3>
+<p>Hardware DVD players contain fixed amounts of onboard memory
+allocated according to the 1996 DVD-Video specification. Encoders must
+model the decoder buffer accurately:</p>
+<ul>
+<li><strong>Buffer Underflow:</strong> Occurs if frames are too large to
+be transmitted before their Presentation Time Stamp (PTS), causing
+visual stutter.</li>
+<li><strong>Buffer Overflow:</strong> Occurs if incoming data fills the
+224 KB / 232 KB memory allocations faster than frames are removed,
+resulting in dropped packets and playback failure.</li>
+</ul></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/maximum-vob-video-elementary-stream-buffer-size';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How Video Players Handle 1080p in VOB Files - vob</title>
+    <meta name="description" content="When a non-standard 1080p video stream is forcefully multiplexed into a VOB (Video Object) container, modern software media players generally succeed in playing the file, provided it is opened directly as a standalone video rather than through a DVD navig">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/how-video-players-handle-1080-p-in-vob-files">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How Video Players Handle 1080p in VOB Files - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/how-video-players-handle-1080-p-in-vob-files" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="When a non-standard 1080p video stream is forcefully multiplexed into a VOB (Video Object) container, modern software media players generally succeed in playing the file, provided it is opened directly as a standalone video rather than through a DVD navig" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-video-players-handle-1080p-in-vob-files">How Video Players
+Handle 1080p in VOB Files</h1>
+<p>When a non-standard 1080p video stream is forcefully multiplexed into
+a VOB (Video Object) container, modern software media players generally
+succeed in playing the file, provided it is opened directly as a
+standalone video rather than through a DVD navigation menu. Because
+popular players like VLC, MPV, and MPC-HC rely on flexible multimedia
+frameworks such as FFmpeg and LAV Filters, they treat the file as a
+generic MPEG Program Stream (MPEG-PS) rather than enforcing strict
+DVD-Video standard-definition limitations. However, while decoding the
+raw 1080p stream is usually straightforward for modern decoders, the
+mismatch between high-definition streams and legacy container metadata
+frequently leads to issues with aspect ratios, timestamp
+synchronization, and hardware acceleration.</p>
+<h3 id="container-architecture-and-demuxing">Container Architecture and
+Demuxing</h3>
+<p>The VOB format is fundamentally an extension of the MPEG-2 Program
+Stream (MPEG-PS). Under the official DVD-Video specification, VOB files
+are strictly restricted to standard-definition resolutions—specifically
+720x480 (NTSC) or 720x576 (PAL).</p>
+<p>When a 1080p stream (whether encoded in MPEG-2, H.264, or another
+codec) is multiplexed into a VOB file, it violates DVD standards but
+does not necessarily break the underlying MPEG-PS packet structure.
+Modern demuxers, such as FFmpeg's <code>libavformat</code>, parse the
+file at the bitstream level. They inspect the elementary stream headers
+inside the Packetized Elementary Stream (PES) packets rather than
+trusting the container wrapper. If the demuxer encounters a sequence
+header defining a 1920x1080 frame size, it simply passes those
+dimensions and the underlying payload to the decoder.</p>
+<h3 id="standalone-file-playback-vs-dvd-navigation-mode">Standalone File
+Playback vs. DVD Navigation Mode</h3>
+<p>The behavior of a player depends heavily on how the file is
+opened:</p>
+<ul>
+<li><strong>Direct File Mode:</strong> If the user drags and drops the
+<code>.vob</code> file directly into the player, modern software
+disables DVD-specific navigation routines. The software invokes standard
+file splitters (such as LAV Splitter), decodes the high-definition
+payload, and outputs 1080p video without artificial resolution
+clamps.</li>
+<li><strong>DVD Navigation Mode:</strong> If the player attempts to read
+the file as part of a traditional DVD directory structure (via a
+<code>VIDEO_TS.IFO</code> file or an optical drive emulator), the DVD
+virtual machine engine takes over. Most DVD navigators expect
+standard-definition MPEG-2. In this scenario, the player may crash,
+throw an unsupported format error, or severely crop and distort the
+image because the <code>.IFO</code> metadata contradicts the actual
+1080p dimensions of the <code>.VOB</code>.</li>
+</ul>
+<h3 id="decoding-and-hardware-acceleration">Decoding and Hardware
+Acceleration</h3>
+<p>Once demuxed, the elementary stream goes to the video decoder:</p>
+<ul>
+<li><strong>MPEG-2 at 1080p:</strong> If the 1080p stream is encoded
+using MPEG-2 Main Profile @ High Level (MP@HL), modern software decoders
+handle it effortlessly. Hardware decoders (via DXVA2, D3D11VA, NVDEC, or
+VA-API) can also decode 1080p MPEG-2, though some hardware drivers may
+fail to initialize acceleration if the demuxer signals a DVD container
+type, forcing fallback to CPU software decoding.</li>
+<li><strong>Non-MPEG-2 Codecs (e.g., H.264/AVC):</strong> Multiplexing
+H.264 into an MPEG-PS container is non-standard. While modern splitters
+can detect AVC Network Abstraction Layer (NAL) units inside PES packets,
+older or less permissive players will search exclusively for MPEG-2
+sequence headers, resulting in a black screen or an "unsupported codec"
+error.</li>
+</ul>
+<h3 id="common-playback-artifacts">Common Playback Artifacts</h3>
+<p>Even when a player renders the 1080p video, the structural hack often
+introduces playback anomalies:</p>
+<ul>
+<li><strong>Aspect Ratio Distortion:</strong> DVD VOBs rely heavily on
+non-square pixels and specific Sample Aspect Ratio (SAR) flags defined
+in the container or MPEG-2 headers. A 1080p stream natively uses square
+pixels (1:1 SAR). If the player misinterprets the VOB wrapper as
+requiring 4:3 or 16:9 anamorphic stretching, it may stretch or squish
+the 1920x1080 image.</li>
+<li><strong>Timestamp and Seeking Issues:</strong> VOB timing relies on
+a 90 kHz Presentation Time Stamp (PTS) clock. Non-standard bitrates and
+resolutions can cause buffer underflows or overflows in the parser,
+leading to broken seek bars, stuttering audio-video desynchronization,
+or failures when scrubbing through the timeline.</li>
+</ul></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/how-video-players-handle-1080-p-in-vob-files';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

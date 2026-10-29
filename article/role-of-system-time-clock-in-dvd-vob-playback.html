@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Role of System Time Clock in DVD VOB Playback - vob</title>
+    <meta name="description" content="The System Time Clock (STC) in DVD player hardware acts as the master synchronization reference required to decode and present multiplexed multimedia streams accurately. When reading a Video Object (VOB) file—which is formatted as an MPEG-2 Program Stream">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/role-of-system-time-clock-in-dvd-vob-playback">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Role of System Time Clock in DVD VOB Playback - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/role-of-system-time-clock-in-dvd-vob-playback" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The System Time Clock (STC) in DVD player hardware acts as the master synchronization reference required to decode and present multiplexed multimedia streams accurately. When reading a Video Object (VOB) file—which is formatted as an MPEG-2 Program Stream" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="role-of-system-time-clock-in-dvd-vob-playback">Role of System
+Time Clock in DVD VOB Playback</h1>
+<p>The System Time Clock (STC) in DVD player hardware acts as the master
+synchronization reference required to decode and present multiplexed
+multimedia streams accurately. When reading a Video Object (VOB)
+file—which is formatted as an MPEG-2 Program Stream—the player relies on
+the STC to coordinate video frames, multiple audio tracks, and
+sub-picture overlays so they render in precise unison without drifting
+out of sync.</p>
+<p>At the physical and firmware level, the STC is a high-frequency
+hardware counter running at 27 MHz, with a 90 kHz divider used for
+presentation timing. Because separate internal crystal oscillators in
+consumer electronics naturally drift over time, the player cannot rely
+solely on its own free-running clock. It must continuously align its
+internal STC with the timing embedded in the disc media.</p>
+<p>This synchronization begins with the System Clock Reference (SCR).
+VOB files are divided into 2048-byte packs, and pack headers contain SCR
+timestamps. As the optical drive reads the VOB data, these SCR values
+are fed into the hardware decoder's phase-locked loop (PLL). The PLL
+dynamically adjusts the STC frequency to match the encoder's original
+clock rate, ensuring that the player's internal time base mirrors the
+rate at which the disc was authored.</p>
+<p>Once the STC is synchronized to the incoming SCR, it dictates when
+buffered data is decoded and displayed using two types of metadata
+embedded in the stream:</p>
+<ul>
+<li><strong>Decode Time Stamps (DTS):</strong> Specify the exact STC
+moment an encoded frame must be removed from the buffer and decoded by
+the hardware.</li>
+<li><strong>Presentation Time Stamps (PTS):</strong> Specify the exact
+STC moment the decoded frame, audio sample, or subtitle must be shown on
+screen or sent to the audio output.</li>
+</ul>
+<p>During playback, the DVD player constantly compares the advancing STC
+against the PTS of the decoded elementary streams. If a video frame's
+PTS matches the current STC value, that frame is drawn to the display.
+If the STC has not yet reached the PTS, the frame waits in the
+presentation buffer. If the STC exceeds the PTS, the player knows the
+frame is late and may drop it to prevent lag.</p>
+<p>The STC also prevents buffer overflow and underflow. Because
+compressed audio and video require variable bitrates, the synchronized
+clock regulates the flow of packets through the track buffers, ensuring
+that decoders neither run out of data nor receive data faster than they
+can process it.</p>
+<p>Finally, the STC manages playback discontinuities. VOB files
+frequently contain breaks in timecode, such as when switching between
+titles, chapters, camera angles, or non-seamless cells. Pack headers
+signal these breaks using discontinuity flags. Upon encountering a flag,
+the DVD hardware re-initializes or offsets its STC to the new incoming
+SCR baseline, allowing seamless transitions across edits and branch
+points without crashing the audio/video decoder pipeline.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/role-of-system-time-clock-in-dvd-vob-playback';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

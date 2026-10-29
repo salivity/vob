@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seamless Branching and Split VOB Chunks Explained - vob</title>
+    <meta name="description" content="Seamless branching is an optical disc authoring technology used on DVDs and Blu-rays that allows multiple versions of a movie—such as theatrical releases, director&#39;s cuts, and unrated editions—to share space on a single disc without duplicating identical">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/seamless-branching-and-split-vob-chunks-explained">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Seamless Branching and Split VOB Chunks Explained - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/seamless-branching-and-split-vob-chunks-explained" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Seamless branching is an optical disc authoring technology used on DVDs and Blu-rays that allows multiple versions of a movie—such as theatrical releases, director&#39;s cuts, and unrated editions—to share space on a single disc without duplicating identical" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="seamless-branching-and-split-vob-chunks-explained">Seamless
+Branching and Split VOB Chunks Explained</h1>
+<p>Seamless branching is an optical disc authoring technology used on
+DVDs and Blu-rays that allows multiple versions of a movie—such as
+theatrical releases, director's cuts, and unrated editions—to share
+space on a single disc without duplicating identical footage. By
+dividing video assets into modular Video Object (VOB) chunks, the disc’s
+playback engine can dynamically stitch together common and unique scenes
+in real time. This article breaks down the mechanics of seamless
+branching, how split VOB files enable alternate cuts, and the technical
+mechanisms that prevent playback interruptions.</p>
+<h3 id="understanding-seamless-branching">Understanding Seamless
+Branching</h3>
+<p>In traditional disc authoring, including two versions of a two-hour
+film on one disc would require encoding two separate video streams. This
+would consume twice the storage space, often resulting in degraded video
+quality via heavy compression or necessitating a multi-disc set.</p>
+<p>Seamless branching solves this issue by identifying identical footage
+between different cuts. The common material is encoded only once, while
+the alternate scenes (additions, deletions, or replacements) are encoded
+as separate, smaller segments. During playback, the player reads
+instructions mapped to a specific cut and plays the corresponding
+sequence of segments without any perceptible freeze, pause, or audio
+drop.</p>
+<h3 id="the-role-of-split-vob-chunks">The Role of Split VOB Chunks</h3>
+<p>DVD-Video relies on the Video Object (VOB) container format to store
+multiplexed video, audio, and subtitle streams. In standard linear
+playback, VOB files play consecutively. With seamless branching, the
+content is split into smaller, discrete VOB segments or chunks:</p>
+<ul>
+<li><strong>Shared Chunks:</strong> Video sequences that appear across
+all versions of the film (e.g., the introduction, standard dialogue
+scenes, and the climax).</li>
+<li><strong>Branching Chunks:</strong> Video segments unique to a
+specific version (e.g., an extended scene for the director’s cut or an
+alternate ending for the unrated version).</li>
+</ul>
+<p>To construct a specific cut, the disc uses Program Chains (PGCs). A
+PGC is essentially a playlist composed of defined cells and programs
+that reference specific VOB chunks. When a viewer selects the
+"Theatrical Cut" from the menu, the player executes PGC 1, which chains
+together Shared Chunk A, Theatrical Chunk B1, and Shared Chunk C. If the
+viewer selects the "Extended Cut," the player executes PGC 2, chaining
+Shared Chunk A, Extended Chunk B2, and Shared Chunk C.</p>
+<h3 id="physical-placement-and-interleaving-ilvu">Physical Placement and
+Interleaving (ILVU)</h3>
+<p>The optical pickup head (the laser) in a disc player physically moves
+across the disc surface to read data. Jumping across large disc areas to
+access alternate scenes can introduce mechanical lag, resulting in
+visible stutter or audio dropouts.</p>
+<p>To maintain continuous playback, DVD authoring uses Interleaved Units
+(ILVUs). The alternate VOB chunks are physically arranged on the disc
+track in an alternating, interleaved pattern:</p>
+<ol type="1">
+<li>Shared Segment A finishes.</li>
+<li>The disc contains Interleaved Block: [Chunk B1 - Part 1] followed
+immediately by [Chunk B2 - Part 1], followed by [Chunk B1 - Part 2], and
+so forth.</li>
+<li>The laser reads only the packets flagged for the selected PGC while
+skipping the packets belonging to the alternate cut.</li>
+</ol>
+<h3 id="buffer-management">Buffer Management</h3>
+<p>Because the laser must skip over unselected data chunks, the playback
+engine depends heavily on an internal track buffer (cache memory).</p>
+<p>Before the laser skips non-relevant VOB chunks, the player reads data
+at a rate higher than the presentation rate (bitrate) of the video,
+filling its buffer. While the laser repositions itself or skips over the
+alternate footage, the player empties the buffer to output uninterrupted
+audio and video. Once repositioned, the read rate accelerates again to
+replenish the buffer before the next branch point.</p>
+<h3 id="benefits-and-application">Benefits and Application</h3>
+<ul>
+<li><strong>Storage Efficiency:</strong> Enables multiple cuts to fit on
+a single dual-layer DVD (DVD-9) or Blu-ray (BD-50) with maximum video
+bitrate.</li>
+<li><strong>Censorship and Localization:</strong> Allows regional
+censorship cuts or localized title screens/credits to be substituted
+dynamically depending on player settings or region codes.</li>
+<li><strong>Seamless Transition:</strong> Eliminates the legacy
+multi-angle switching delay, providing an uninterrupted cinematic
+experience indistinguishable from a dedicated encode.</li>
+</ul></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/seamless-branching-and-split-vob-chunks-explained';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

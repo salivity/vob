@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Sync Issues When VOB Streams Drop Frames - vob</title>
+    <meta name="description" content="When a DVD Video Object (VOB) stream drops elementary stream packets, the precise timing relationship between video and audio is compromised, frequently resulting in lip-sync drift or playback stutter. A VOB file is an MPEG-2 Program Stream containing mul">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/audio-sync-issues-when-vob-streams-drop-frames">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Audio Sync Issues When VOB Streams Drop Frames - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/audio-sync-issues-when-vob-streams-drop-frames" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="When a DVD Video Object (VOB) stream drops elementary stream packets, the precise timing relationship between video and audio is compromised, frequently resulting in lip-sync drift or playback stutter. A VOB file is an MPEG-2 Program Stream containing mul" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="audio-sync-issues-when-vob-streams-drop-frames">Audio Sync
+Issues When VOB Streams Drop Frames</h1>
+<p>When a DVD Video Object (VOB) stream drops elementary stream packets,
+the precise timing relationship between video and audio is compromised,
+frequently resulting in lip-sync drift or playback stutter. A VOB file
+is an MPEG-2 Program Stream containing multiplexed video, audio, and
+subtitle elementary streams that rely on shared hardware clock
+references to maintain alignment. When packets are lost due to physical
+media degradation, stream corruption, or improper demuxing, the playback
+system's behavior determines whether synchronization recovers
+immediately, drifts permanently, or causes playback to halt
+altogether.</p>
+<h3 id="the-role-of-scr-and-pts-in-vob-containers">The Role of SCR and
+PTS in VOB Containers</h3>
+<p>To understand the failure mode, it is necessary to examine how VOB
+streams regulate playback. VOB containers synchronize separate media
+tracks using two core mechanisms:</p>
+<ul>
+<li><strong>System Clock Reference (SCR):</strong> Embedded within the
+pack header of the Program Stream, the SCR acts as the master clock,
+telling the decoder at what time a packet should arrive at the input
+buffer.</li>
+<li><strong>Presentation Time Stamp (PTS):</strong> Embedded within
+individual Packetized Elementary Stream (PES) headers, the PTS dictates
+the exact moment a decoded audio frame or video picture must be
+presented to the user relative to the master clock.</li>
+</ul>
+<p>Under normal conditions, a media player compares the PTS of the audio
+and video buffers against the reference clock. As long as packets arrive
+sequentially without interruption, playback remains synchronized within
+milliseconds.</p>
+<h3 id="what-happens-when-video-packets-are-dropped">What Happens When
+Video Packets Are Dropped</h3>
+<p>When elementary video packets are dropped, the decoder misses key
+structural elements—such as picture headers, macroblocks, or entire
+frames (I, P, or B frames).</p>
+<p>Because MPEG-2 uses temporal compression (inter-frame prediction),
+losing a single reference frame (an I-frame or P-frame) corrupts
+subsequent predicted frames until the next keyframe arrives. During this
+interval, most decoders will either display macroblock artifacts, freeze
+on the last valid frame, or discard the corrupted Group of Pictures
+(GOP).</p>
+<p>If the audio stream remains intact, audio will continue to play
+smoothly. When the video decoder encounters the next valid I-frame with
+a fresh PTS, a PTS-aware player immediately skips the missing duration
+and resynchronizes the video to the audio clock. However, if the
+playback engine relies on frame-counting rather than timestamp
+reconciliation, the video will permanently lag behind the audio by the
+exact duration of the lost frames.</p>
+<h3 id="what-happens-when-audio-packets-are-dropped">What Happens When
+Audio Packets Are Dropped</h3>
+<p>Audio streams in VOB files (typically AC-3, DTS, or LPCM) consist of
+discrete, self-contained frames. When audio elementary packets are
+dropped, the impact on synchronization depends heavily on the demuxer
+and decoder architecture:</p>
+<ol type="1">
+<li><strong>Timestamp-Aware Decoders (Dynamic
+Resynchronization):</strong> A standard-compliant player detects a gap
+in the audio PTS sequence. To preserve synchronization with the running
+video stream, the decoder inserts synthetic silence or repeats adjacent
+samples across the missing duration. Once valid audio packets resume,
+sound immediately matches the video without drift.</li>
+<li><strong>Linear Decoders (Cumulative Desynchronization):</strong>
+Less robust decoders or naive conversion tools (such as poorly
+configured transcoders) stitch together the remaining audio packets
+sequentially without accounting for the missing time gap. This collapses
+the audio timeline. As a result, the audio leads the video (plays early)
+from the drop point onward, with the offset worsening if multiple packet
+drops occur throughout the file.</li>
+</ol>
+<h3 id="timestamp-discontinuities-and-buffer-underruns">Timestamp
+Discontinuities and Buffer Underruns</h3>
+<p>Severe packet loss can also destroy the stream's timeline
+continuity:</p>
+<ul>
+<li><strong>Decoder Buffer Underrun:</strong> If too many packets drop
+consecutively, the decoder buffer starves, causing the media player to
+pause playback while it attempts to buffer data that will never
+arrive.</li>
+<li><strong>PTS Discontinuity Flags:</strong> VOB streams can contain
+explicit timeline resets, common across DVD chapter boundaries or
+multi-angle transitions. If packet loss damages the sector containing
+the discontinuity indicator, the player may misinterpret the new PTS
+values, causing the audio to instantly jump minutes ahead or behind the
+video track.</li>
+</ul>
+<p>In summary, dropped elementary packets in a VOB stream force the
+decoder to choose between dropping frames to maintain timestamp parity
+or playing consecutive valid frames at the expense of timeline accuracy.
+While modern players typically recover within one GOP interval by
+inserting silence or dropping frames, legacy players and offline
+conversion pipelines frequently suffer permanent audio drift.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/audio-sync-issues-when-vob-streams-drop-frames';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

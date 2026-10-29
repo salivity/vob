@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How Plex Handles Raw DVD VOB Files - vob</title>
+    <meta name="description" content="Plex Media Server does not officially support raw DVD structures, including VIDEOTS folders and VOB files. While the server may occasionally recognize and play individual VOB files, doing so typically results in playback errors, broken metadata matching,">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/how-plex-handles-raw-dvd-vob-files">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How Plex Handles Raw DVD VOB Files - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/how-plex-handles-raw-dvd-vob-files" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Plex Media Server does not officially support raw DVD structures, including VIDEOTS folders and VOB files. While the server may occasionally recognize and play individual VOB files, doing so typically results in playback errors, broken metadata matching," />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-plex-handles-raw-dvd-vob-files">How Plex Handles Raw DVD VOB
+Files</h1>
+<p>Plex Media Server does not officially support raw DVD structures,
+including VIDEO_TS folders and VOB files. While the server may
+occasionally recognize and play individual VOB files, doing so typically
+results in playback errors, broken metadata matching, and fragmented
+viewing. This guide explains how Plex interacts with raw VOB files, why
+issues occur, and the recommended solutions for integrating DVD content
+seamlessly into your library.</p>
+<h2 id="plexs-official-policy-on-disc-image-formats">Plex’s Official
+Policy on Disc Image Formats</h2>
+<p>Plex officially discontinued support for disc image formats and raw
+disc folder structures (such as ISO, IMG, and VIDEO_TS/AUDIO_TS
+folders). The architecture of Plex is designed to stream individual,
+continuous video files rather than navigate complex optical disc
+hierarchies.</p>
+<p>Because Plex expects each media entry to be a distinct file (e.g., a
+single movie or a single television episode), placing a raw DVD
+structure into your media folder causes immediate indexing
+conflicts.</p>
+<h2 id="issues-when-using-vob-files-in-plex">Issues When Using VOB Files
+in Plex</h2>
+<p>If you place raw <code>.vob</code> files into your Plex library, you
+will encounter several practical limitations:</p>
+<ul>
+<li><strong>Fragmented Playback:</strong> Standard DVDs split
+feature-length videos into sequential 1 GB chunks
+(<code>VTS_01_1.VOB</code>, <code>VTS_01_2.VOB</code>, etc.). Plex will
+often treat each chunk as a separate movie or episode rather than one
+continuous stream. While Plex supports multi-part naming conventions,
+its behavior with VOB splits is notoriously unreliable and leads to
+stuttering or gaps at file boundaries.</li>
+<li><strong>Lack of Menu Support:</strong> Plex does not emulate DVD
+menus. The interactive menus, scene selection screens, and special
+feature menus contained in VOB files cannot be navigated.</li>
+<li><strong>Audio and Subtitle Track Desync:</strong> VOB containers
+bundle multiplexed MPEG-2 video, multiple AC3/DTS audio streams, and
+VobSub subtitle tracks. Plex often fails to correctly identify, switch,
+or sync these tracks when reading the raw VOB container directly.</li>
+<li><strong>Transcoding Inefficiencies:</strong> DVDs use the MPEG-2
+video codec, frequently with interlaced video (480i or 576i). Many
+modern client devices cannot natively decode interlaced MPEG-2, forcing
+your Plex Media Server to deinterlace and transcode the video on the
+fly, consuming significant CPU or GPU resources.</li>
+<li><strong>Metadata Scraping Failures:</strong> Plex’s automated
+scanners rely on standard naming conventions (e.g.,
+<code>Movie Title (Year).ext</code>). DVD file names like
+<code>VTS_01_0.VOB</code> cannot be matched automatically by Plex
+agents, requiring manual library fixes.</li>
+</ul>
+<h2 id="recommended-alternatives">Recommended Alternatives</h2>
+<p>To ensure full compatibility, stability, and high quality within
+Plex, DVD content should be extracted and converted into a standard
+container format such as MKV or MP4.</p>
+<h3 id="1-remuxing-with-makemkv-lossless-and-fast">1. Remuxing with
+MakeMKV (Lossless and Fast)</h3>
+<p>If you want to preserve the exact original audio and video quality of
+the DVD without any re-encoding:</p>
+<ul>
+<li>Use <strong>MakeMKV</strong> to read the DVD, ISO, or VIDEO_TS
+folder.</li>
+<li>MakeMKV extracts the raw MPEG-2 video, audio tracks, and subtitles
+from the VOB files and places them into a single, continuous
+<code>.mkv</code> file.</li>
+<li>This process takes only a few minutes per disc because the video is
+not compressed, preserving 100% of the original data while providing a
+format Plex can parse natively.</li>
+</ul>
+<h3 id="2-re-encoding-with-handbrake-smaller-file-size">2. Re-encoding
+with HandBrake (Smaller File Size)</h3>
+<p>If server storage space is a priority or if you want to avoid
+transcoding on older client devices:</p>
+<ul>
+<li>Open the source DVD or VOB set in <strong>HandBrake</strong>.</li>
+<li>Select the main title track and encode the video to
+<strong>H.264</strong> or <strong>H.265</strong> inside an
+<strong>MP4</strong> or <strong>MKV</strong> container.</li>
+<li>Enable the "Decomb" or "Deinterlace" filter to resolve any
+interlacing artifacts present in the original DVD transfer.</li>
+<li>The resulting file will be significantly smaller and broadly
+compatible with nearly all Plex client devices without server
+transcoding.</li>
+</ul></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/how-plex-handles-raw-dvd-vob-files';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

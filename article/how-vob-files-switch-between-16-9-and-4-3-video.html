@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How VOB Files Switch Between 16:9 and 4:3 Video - vob</title>
+    <meta name="description" content="This article explains how DVD-Video structures and VOB (Video Object) containers handle aspect ratio transitions between a 16:9 main feature and 4:3 bonus materials. It details the interaction between MPEG-2 stream metadata, Video Title Set (VTS) architec">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/how-vob-files-switch-between-16-9-and-4-3-video">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How VOB Files Switch Between 16:9 and 4:3 Video - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/how-vob-files-switch-between-16-9-and-4-3-video" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains how DVD-Video structures and VOB (Video Object) containers handle aspect ratio transitions between a 16:9 main feature and 4:3 bonus materials. It details the interaction between MPEG-2 stream metadata, Video Title Set (VTS) architec" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-vob-files-switch-between-169-and-43-video">How VOB Files
+Switch Between 16:9 and 4:3 Video</h1>
+<p>This article explains how DVD-Video structures and VOB (Video Object)
+containers handle aspect ratio transitions between a 16:9 main feature
+and 4:3 bonus materials. It details the interaction between MPEG-2
+stream metadata, Video Title Set (VTS) architecture, and IFO navigation
+files that instruct hardware and software players to adjust their
+display outputs dynamically.</p>
+<h3 id="fixed-resolutions-and-non-square-pixels">Fixed Resolutions and
+Non-Square Pixels</h3>
+<p>DVD video does not store video in native widescreen or standard
+definition pixel grids. Regardless of the intended display ratio,
+standard-definition video stored in a VOB container uses a fixed frame
+buffer:</p>
+<ul>
+<li><strong>NTSC:</strong> 720×480 pixels</li>
+<li><strong>PAL:</strong> 720×576 pixels</li>
+</ul>
+<p>Because both 16:9 and 4:3 share the exact same resolution, the VOB
+container does not alter its pixel dimensions when switching formats.
+Instead, it relies on non-square pixels and metadata flags to instruct
+the display device how to stretch or scale the video buffer—a process
+known as anamorphic scaling.</p>
+<h3 id="video-title-set-vts-isolation">Video Title Set (VTS)
+Isolation</h3>
+<p>The official DVD-Video specification dictates that all video titles
+grouped within a single Video Title Set (VTS) must share identical video
+attributes, including resolution, standard (NTSC/PAL), and aspect
+ratio.</p>
+<p>To present a 16:9 widescreen feature alongside 4:3 bonus features,
+standard-compliant DVDs isolate these assets into separate Video Title
+Sets:</p>
+<ol type="1">
+<li><strong>The 16:9 Feature:</strong> Housed in
+<code>VTS_01_1.VOB</code>, <code>VTS_01_2.VOB</code>, etc.</li>
+<li><strong>The 4:3 Extras:</strong> Housed in an entirely separate set,
+such as <code>VTS_02_1.VOB</code>.</li>
+</ol>
+<p>The aspect ratio information is not strictly governed by the VOB file
+in isolation during playback on a DVD system. Instead, the corresponding
+information files (<code>VTS_01_0.IFO</code> and
+<code>VTS_02_0.IFO</code>) define the global video attributes for each
+title set. When a user selects a bonus feature from the DVD menu:</p>
+<ul>
+<li>The DVD player reads navigation commands directing it to jump from
+VTS 1 to VTS 2.</li>
+<li>The player reads <code>VTS_02_0.IFO</code> and reconfigures its
+video output processing to 4:3 mode.</li>
+<li>The player starts decoding the VOB files within VTS 2.</li>
+</ul>
+<h3 id="mpeg-2-sequence-headers-inside-the-vob">MPEG-2 Sequence Headers
+Inside the VOB</h3>
+<p>While the DVD navigation architecture uses IFO files for global
+control, raw VOB files are essentially MPEG-2 Program Streams. Within
+the video stream itself, aspect ratio data is encoded directly into
+MPEG-2 <strong>Sequence Headers</strong>.</p>
+<p>Every MPEG-2 sequence header contains a 4-bit aspect ratio code:</p>
+<ul>
+<li><strong>Value <code>2</code>:</strong> Specifies a 4:3 aspect
+ratio.</li>
+<li><strong>Value <code>3</code>:</strong> Specifies a 16:9 aspect
+ratio.</li>
+</ul>
+<p>These headers repeat frequently throughout the stream (typically once
+every Group of Pictures, or every half-second). Modern software media
+players that play standalone <code>.VOB</code> files directly—bypassing
+the IFO navigation structure—rely on these embedded Sequence Headers.
+When the player encounters a new Sequence Header with an altered aspect
+ratio flag, it recalculates the Display Aspect Ratio (DAR) on the fly,
+instantly adjusting the playback window or adding pillarbox/letterbox
+bars.</p>
+<h3 id="player-display-handling">Player Display Handling</h3>
+<p>When an aspect ratio switch occurs—either triggered by an IFO
+transition or an in-stream Sequence Header—the player applies formatting
+rules based on the connected display type:</p>
+<ul>
+<li><strong>On a 16:9 Display:</strong> The player sends the full 16:9
+frame for the main movie, filling the screen. When switching to 4:3
+bonus content, the player either adds black bars to the left and right
+(pillarboxing) or instructs the television to adjust its display ratio
+to 4:3.</li>
+<li><strong>On a 4:3 Display:</strong> The player formats the 16:9 movie
+using Letterbox (black bars top and bottom) or Pan-and-Scan mode,
+depending on user settings. When switching to the 4:3 bonus features, it
+presents the video fullscreen without horizontal or vertical
+cropping.</li>
+</ul></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/how-vob-files-switch-between-16-9-and-4-3-video';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How DVD VBV Simulates Buffer Fullness in VOBs - vob</title>
+    <meta name="description" content="The Video Buffer Verifier (VBV) is a theoretical decoder model defined in the MPEG-2 standard (ISO/IEC 13818-2) that guarantees a compliant video stream can be decoded by hardware without memory underflow or overflow. When authoring and validating DVD Vid">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/how-dvd-vbv-simulates-buffer-fullness-in-vo-bs">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How DVD VBV Simulates Buffer Fullness in VOBs - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/how-dvd-vbv-simulates-buffer-fullness-in-vo-bs" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The Video Buffer Verifier (VBV) is a theoretical decoder model defined in the MPEG-2 standard (ISO/IEC 13818-2) that guarantees a compliant video stream can be decoded by hardware without memory underflow or overflow. When authoring and validating DVD Vid" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-dvd-vbv-simulates-buffer-fullness-in-vobs">How DVD VBV
+Simulates Buffer Fullness in VOBs</h1>
+<p>The Video Buffer Verifier (VBV) is a theoretical decoder model
+defined in the MPEG-2 standard (ISO/IEC 13818-2) that guarantees a
+compliant video stream can be decoded by hardware without memory
+underflow or overflow. When authoring and validating DVD Video Object
+(VOB) files, the VBV model simulates the precise state of the decoder’s
+input buffer over time. By calculating constant or variable data
+delivery from the disc against instantaneous picture data extraction at
+designated timestamps, the model ensures that the physical hardware
+buffer never starves for data or exceeds its strict memory limit.</p>
+<h3 id="the-vbv-buffer-architecture-for-dvd-video">The VBV Buffer
+Architecture for DVD-Video</h3>
+<p>In the context of DVD-Video, the VOB container encapsulates an MPEG-2
+Program Stream. The DVD specification dictates strict limits on the
+video decoder buffer:</p>
+<ul>
+<li><strong>Buffer Capacity (<span
+class="math inline">\(B_{max}\)</span>):</strong> The VBV buffer size is
+fixed at 1,835,008 bits (224 KB), matching the hardware memory
+constraints of standard DVD players.</li>
+<li><strong>Maximum Bitrate (<span
+class="math inline">\(R_{max}\)</span>):</strong> While the total
+multiplex rate for DVD (audio, video, subpictures, and system data) caps
+at 10.08 Mbps, the peak video bitrate alone is limited to 9.8 Mbps.</li>
+<li><strong>FIFO Memory Structure:</strong> The buffer acts as a
+First-In, First-Out (FIFO) queue where incoming compressed data enters
+at a defined channel rate and is removed frame by frame.</li>
+</ul>
+<h3 id="data-inflow-ingestion-into-the-buffer">Data Inflow: Ingestion
+into the Buffer</h3>
+<p>The VBV simulation models the ingestion of video elementary stream
+packets extracted from VOB packs. In a DVD stream, delivery is governed
+either by Constant Bitrate (CBR) or Variable Bitrate (VBR) models:</p>
+<ol type="1">
+<li><strong>Continuous Delivery:</strong> In CBR mode, data enters the
+VBV buffer at a continuous, fixed rate (<span
+class="math inline">\(R\)</span>).</li>
+<li><strong>Burst/Constrained Delivery:</strong> In VBR mode (standard
+for DVD), data enters at a rate dictated by the Program Stream's System
+Clock Reference (SCR) and the multiplex rate of the specific VOB packs.
+Data input pauses if the buffer reaches its maximum capacity, simulating
+the drive pausing read operations to avoid overflow.</li>
+</ol>
+<p>The cumulative data entering the buffer over a time interval <span
+class="math inline">\(\Delta t = t_n - t_{n-1}\)</span> is determined by
+integrating the input rate <span class="math inline">\(R(t)\)</span>
+over that interval:</p>
+<p><span class="math display">\[\text{Data In} = \int_{t_{n-1}}^{t_n}
+R(t) \, dt\]</span></p>
+<h3 id="initial-delay-and-vbv_delay">Initial Delay and
+<code>vbv_delay</code></h3>
+<p>Before decoding begins, the VBV buffer must achieve a defined
+fullness to prevent immediate underflow. The MPEG-2 specification
+handles this via the <code>vbv_delay</code> parameter, a 16-bit field
+found in the picture header of each frame:</p>
+<ul>
+<li>The parameter measures the exact number of 90 kHz clock ticks that
+the first bit of the frame must wait in the buffer before that frame is
+drawn out.</li>
+<li>During stream authoring, the encoder calculates
+<code>vbv_delay</code> to instruct the verifier how full the buffer must
+be before extracting the sequence's first picture.</li>
+<li>For VBR streams, <code>vbv_delay</code> is frequently set to
+<code>0xFFFF</code>, signaling that the decoder should instead rely on
+Decoding Time Stamps (DTS) and Presentation Time Stamps (PTS) carried in
+the Packetized Elementary Stream (PES) headers.</li>
+</ul>
+<h3 id="data-outflow-instantaneous-removal">Data Outflow: Instantaneous
+Removal</h3>
+<p>Unlike data ingress, which occurs continuously across time, data
+egress in the VBV model is idealized as instantaneous.</p>
+<p>When the Decoding Time Stamp (<span
+class="math inline">\(t_n\)</span>) for picture <span
+class="math inline">\(n\)</span> is reached, the VBV model immediately
+removes all bits (<span class="math inline">\(S_n\)</span>) associated
+with that compressed picture from the buffer. The instantaneous removal
+reflects the assumption that modern decoders extract and begin
+processing an entire compressed frame buffer within a negligible slice
+of the frame period.</p>
+<p>The buffer fullness immediately after the removal of picture <span
+class="math inline">\(n\)</span>, denoted as <span
+class="math inline">\(B(t_n^+)\)</span>, is simulated with the
+recurrence relation:</p>
+<p><span class="math display">\[B(t_n^+) = B(t_n^-) - S_n\]</span></p>
+<p>Where:</p>
+<ul>
+<li><span class="math inline">\(B(t_n^-)\)</span> is the buffer fullness
+just before picture extraction: <span class="math inline">\(B(t_n^-) =
+B(t_{n-1}^+) + \text{Data In}\)</span>.</li>
+<li><span class="math inline">\(S_n\)</span> is the total bit count of
+picture <span class="math inline">\(n\)</span> (including slice headers,
+macroblock data, and coefficients).</li>
+</ul>
+<h3 id="underflow-and-overflow-detection">Underflow and Overflow
+Detection</h3>
+<p>The VBV verifier continually checks that the simulated buffer value
+<span class="math inline">\(B(t)\)</span> remains strictly within
+allowed operational thresholds throughout playback:</p>
+<ul>
+<li><strong>Buffer Underflow (<span class="math inline">\(B(t_n^-) &lt;
+S_n\)</span>):</strong> If the data available in the buffer is less than
+the bit size of picture <span class="math inline">\(n\)</span> when its
+DTS arrives, an underflow occurs. On physical hardware, this leads to
+frame dropping, decoding artifacts, or playback freezing. In the VBV
+model, underflow registers as a compliance failure.</li>
+<li><strong>Buffer Overflow (<span class="math inline">\(B(t) &gt;
+B_{max}\)</span>):</strong> If incoming stream data exceeds 1,835,008
+bits before an extraction occurs, an overflow occurs. Physical decoders
+would discard the excess bits due to memory exhaustion, corrupting the
+subsequent slice data.</li>
+</ul>
+<h3 id="closed-loop-rate-control-in-encoders">Closed-Loop Rate Control
+in Encoders</h3>
+<p>DVD encoders implement the VBV simulation internally as a closed-loop
+feedback mechanism during the compression pass:</p>
+<ol type="1">
+<li><strong>Complexity Allocation:</strong> The encoder assigns fewer
+bits to simpler frames and more bits to complex intra-coded (I) frames
+while projecting the future state of the VBV.</li>
+<li><strong>Adaptive Quantization:</strong> If the internal VBV model
+projects an impending underflow, the rate controller increases the
+quantization scale parameter (<span class="math inline">\(Q\)</span>)
+for upcoming macroblocks, reducing their bit consumption.</li>
+<li><strong>Zero-Padding/Rate Throttling:</strong> If an overflow is
+projected in CBR operations, the encoder inserts stuffing bits to
+deliberately drain processing capacity or adjust pack schedules. In VBR
+VOB authoring, the multiplexer alters pack scheduling so audio or
+padding occupies sector space until video buffer levels fall within safe
+operational bounds.</li>
+</ol></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/how-dvd-vbv-simulates-buffer-fullness-in-vo-bs';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

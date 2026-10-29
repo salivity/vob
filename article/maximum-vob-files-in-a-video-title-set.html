@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maximum VOB Files in a Video Title Set - vob</title>
+    <meta name="description" content="This article explains the technical limitations on split Video Object (VOB) files within a single Video Title Set (VTS) under the DVD-Video specification. A standard DVD-Video layout enforces strict file-naming conventions and file-size caps to maintain c">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/maximum-vob-files-in-a-video-title-set">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Maximum VOB Files in a Video Title Set - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/maximum-vob-files-in-a-video-title-set" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains the technical limitations on split Video Object (VOB) files within a single Video Title Set (VTS) under the DVD-Video specification. A standard DVD-Video layout enforces strict file-naming conventions and file-size caps to maintain c" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="maximum-vob-files-in-a-video-title-set">Maximum VOB Files in a
+Video Title Set</h1>
+<p>This article explains the technical limitations on split Video Object
+(VOB) files within a single Video Title Set (VTS) under the DVD-Video
+specification. A standard DVD-Video layout enforces strict file-naming
+conventions and file-size caps to maintain compatibility across legacy
+operating systems and standalone players. Readers will learn the exact
+number of content and menu VOB files allowed per title set, the
+reasoning behind the split limit, and how DVD authoring handles content
+that exceeds these constraints.</p>
+<p>In a single Video Title Set, the maximum number of split content VOB
+files permitted is <strong>9</strong>.</p>
+<p>Under the DVD-Video specification, content files are named following
+the pattern <code>VTS_xx_y.VOB</code>, where <code>xx</code> represents
+the title set number (from 01 to 99) and <code>y</code> represents the
+individual file sequence number:</p>
+<ul>
+<li><strong>Menu VOB (<code>VTS_xx_0.VOB</code>):</strong> The index
+<code>0</code> is reserved exclusively for the menu of that specific
+title set. It cannot be split; there is only ever a maximum of one menu
+VOB per VTS.</li>
+<li><strong>Content/Title VOBs (<code>VTS_xx_1.VOB</code> through
+<code>VTS_xx_9.VOB</code>):</strong> The indices <code>1</code> through
+<code>9</code> are assigned to the actual video and audio content.</li>
+</ul>
+<p>Because the specification only allocates a single digit for the
+sequence number <code>y</code>, a single title set cannot exceed
+<code>VTS_xx_9.VOB</code>. Including the optional menu file, the
+absolute maximum number of total VOB files of any kind in a single VTS
+is <strong>10</strong> (one menu VOB plus nine content VOBs).</p>
+<p>This splitting mechanism exists because DVD filesystems (UDF 1.02 and
+MicroUDF) require individual files to remain below 1 GiB (1,073,741,824
+bytes, or 1.024 GB) to ensure compatibility with 32-bit file systems
+such as FAT32. Consequently, a single continuous video title cannot
+exceed roughly 9 GiB across its 9 split files.</p>
+<p>If a video project requires more capacity or exceeds 9 content VOB
+files, the author must divide the content across multiple Video Title
+Sets. The DVD standard allows up to 99 separate Video Title Sets
+(<code>VTS_01</code> through <code>VTS_99</code>) on a single disc,
+controlled by the global Video Manager (<code>VIDEO_TS.IFO</code>).</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/maximum-vob-files-in-a-video-title-set';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

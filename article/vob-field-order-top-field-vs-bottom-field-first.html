@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VOB Field Order: Top Field vs Bottom Field First - vob</title>
+    <meta name="description" content="In standard-definition interlaced video, field order defines the temporal sequence in which the alternating sets of horizontal lines—either the odd lines (Top Field) or the even lines (Bottom Field)—are rendered on screen. In a VOB (Video Object) file, ty">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/vob-field-order-top-field-vs-bottom-field-first">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="VOB Field Order: Top Field vs Bottom Field First - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/vob-field-order-top-field-vs-bottom-field-first" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="In standard-definition interlaced video, field order defines the temporal sequence in which the alternating sets of horizontal lines—either the odd lines (Top Field) or the even lines (Bottom Field)—are rendered on screen. In a VOB (Video Object) file, ty" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="vob-field-order-top-field-vs-bottom-field-first">VOB Field
+Order: Top Field vs Bottom Field First</h1>
+<p>In standard-definition interlaced video, field order defines the
+temporal sequence in which the alternating sets of horizontal
+lines—either the odd lines (Top Field) or the even lines (Bottom
+Field)—are rendered on screen. In a VOB (Video Object) file, typically
+used on DVD-Video, setting the correct field order is critical.
+Mismatching this order leads to severe playback degradation, resulting
+in a distinct visual jitter where motion appears to jump backward and
+forward rapidly, introducing comb-like artifacts and destroying the
+smoothness of the video.</p>
+<h3 id="understanding-interlaced-fields-in-vob-files">Understanding
+Interlaced Fields in VOB Files</h3>
+<p>VOB files use the MPEG-2 video format, which supports both
+progressive and interlaced scanning. Standard-definition broadcast
+standards like NTSC and PAL historically used interlacing to double the
+apparent frame rate without increasing bandwidth. A single video frame
+consists of two fields captured at slightly different points in
+time:</p>
+<ul>
+<li><strong>Top Field First (TFF):</strong> The lines containing the
+odd-numbered scanlines (1, 3, 5, etc.) are displayed first, followed by
+the even-numbered scanlines (2, 4, 6, etc.).</li>
+<li><strong>Bottom Field First (BFF):</strong> The even-numbered lines
+(2, 4, 6, etc.) are displayed first, followed by the odd-numbered
+lines.</li>
+</ul>
+<p>Standard DVD VOB files generally expect Top Field First (TFF).
+However, video sourced from consumer digital camcorders (such as DV-AVI)
+natively uses Bottom Field First (BFF). If such video is converted into
+a VOB without correctly translating or flagging the field order,
+playback problems emerge.</p>
+<h3 id="visual-impact-of-an-incorrect-field-order">Visual Impact of an
+Incorrect Field Order</h3>
+<p>When the field order in the MPEG-2 stream header does not match the
+actual temporal sequence of the recorded frames, playback hardware and
+software display the fields out of chronological order (Field 2 displays
+before Field 1). This causes distinct visual problems:</p>
+<ul>
+<li><strong>Temporal Judder ("Stutter"):</strong> Moving objects or
+camera pans do not move smoothly across the screen. Instead, the video
+jumps two steps forward, one step back, producing a distinct, vibrating
+stutter during motion. Static scenes appear normal, but any movement
+becomes jarring.</li>
+<li><strong>Combing and Ghosting Artifacts:</strong> Modern displays
+(LCD, OLED) and media players apply deinterlacing algorithms to convert
+fields into full frames. When fields are chronologically reversed,
+deinterlacing fails, resulting in intense horizontal serration
+("combing") along the edges of moving objects.</li>
+<li><strong>Loss of Detail and Eye Strain:</strong> The rapid
+oscillation between out-of-order fields degrades perceived vertical
+resolution and creates substantial visual fatigue for the viewer.</li>
+</ul>
+<h3 id="display-and-player-handling">Display and Player Handling</h3>
+<p>Playback behavior varies depending on the viewing equipment:</p>
+<ul>
+<li><strong>CRT Televisions:</strong> Native interlaced displays rely
+purely on hardware timing. An inverted field order directly displays the
+fields out of sequence, producing maximum jitter on motion.</li>
+<li><strong>Modern Flat Panels and Software Players:</strong> Digital
+TVs and media players (such as VLC) use progressive scanning and must
+weave or interpolate fields into complete frames. When feeding
+out-of-sequence fields into a motion-adaptive deinterlacer, the
+algorithm misinterprets real motion as noise, amplifying motion blur and
+edge tearing.</li>
+</ul>
+<h3 id="correcting-field-order-issues-in-vob">Correcting Field Order
+Issues in VOB</h3>
+<p>To ensure optimal playback, the temporal order of the video data must
+align with the flags stored in the MPEG-2 video headers:</p>
+<ol type="1">
+<li><strong>Header Flagging:</strong> If the video data itself is intact
+but the MPEG-2 stream is flagged incorrectly, the header flag can often
+be toggled between TFF and BFF using utility software (such as ReStream)
+without re-encoding the video.</li>
+<li><strong>Re-encoding:</strong> If the video frames were encoded out
+of order during authoring, the source must be re-encoded. Video editing
+and encoding software allow the user to explicitly define the field
+dominance or shift the scanlines by one pixel to align the field order
+to the standard TFF format required by DVD specifications.</li>
+</ol></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/vob-field-order-top-field-vs-bottom-field-first';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

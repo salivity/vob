@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Can a VOB File Support 96 kHz Audio? - vob</title>
+    <meta name="description" content="Yes, a VOB (Video Object) file can contain high-sample-rate audio streams sampled at 96 kHz. Although standard DVD-Video content typically uses 48 kHz audio, the DVD-Video specification explicitly supports uncompressed Linear PCM (LPCM) audio at sample ra">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/can-a-vob-file-support-96-k-hz-audio">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Can a VOB File Support 96 kHz Audio? - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/can-a-vob-file-support-96-k-hz-audio" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Yes, a VOB (Video Object) file can contain high-sample-rate audio streams sampled at 96 kHz. Although standard DVD-Video content typically uses 48 kHz audio, the DVD-Video specification explicitly supports uncompressed Linear PCM (LPCM) audio at sample ra" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="can-a-vob-file-support-96-khz-audio">Can a VOB File Support 96
+kHz Audio?</h1>
+<p>Yes, a VOB (Video Object) file can contain high-sample-rate audio
+streams sampled at 96 kHz. Although standard DVD-Video content typically
+uses 48 kHz audio, the DVD-Video specification explicitly supports
+uncompressed Linear PCM (LPCM) audio at sample rates of up to 96 kHz
+with bit depths of 16, 20, or 24 bits. This article explains how 96 kHz
+audio works within VOB containers, the technical limitations involved,
+and which formats support these high sample rates.</p>
+<h3 id="the-standard-dvd-video-specification-and-lpcm">The Standard
+DVD-Video Specification and LPCM</h3>
+<p>VOB files are based on the MPEG-2 Program Stream format and serve as
+the core container for DVD-Video discs. While compressed formats like
+Dolby Digital (AC-3) and standard DTS are limited to 48 kHz on
+DVD-Video, the specification includes high-resolution Linear PCM (LPCM)
+audio tracks.</p>
+<p>Under the DVD-Video standard, LPCM audio can be encoded with the
+following parameters:</p>
+<ul>
+<li><strong>Sample Rates:</strong> 48 kHz or 96 kHz</li>
+<li><strong>Bit Depths:</strong> 16-bit, 20-bit, or 24-bit</li>
+<li><strong>Channels:</strong> Up to 8 channels at 48 kHz, but
+restricted at 96 kHz</li>
+</ul>
+<h3 id="channel-and-bandwidth-limitations-at-96-khz">Channel and
+Bandwidth Limitations at 96 kHz</h3>
+<p>While 96 kHz audio is fully supported, bandwidth limitations
+constrain the maximum number of channels allowed inside a standard VOB
+container.</p>
+<p>The maximum allowable audio bitrate for an LPCM stream on a DVD-Video
+disc is 6.144 Mbps, within an overall total stream limit (video, audio,
+and subtitles combined) of 10.08 Mbps. Because a 96 kHz, 24-bit audio
+stream requires roughly 4.6 Mbps for stereo, the format is restricted to
+two channels (stereo). You cannot run a 5.1 surround mix in uncompressed
+96 kHz LPCM inside a standard DVD-Video VOB file due to these bitrate
+ceilings.</p>
+<h3 id="formats-that-do-and-do-not-support-96-khz-in-vob">Formats That
+Do and Do Not Support 96 kHz in VOB</h3>
+<ul>
+<li><strong>Supported (LPCM):</strong> Stereo 96 kHz LPCM is the primary
+method used for commercial high-resolution audio on DVD-Video, commonly
+found on music releases, concert discs, and Digital Audio Discs
+(DADs).</li>
+<li><strong>Unsupported (Standard AC-3):</strong> Dolby Digital in
+DVD-Video is fixed at a 48 kHz sampling rate.</li>
+<li><strong>Special Cases (DTS 96/24):</strong> DTS 96/24 is an
+extension of the core DTS format that allows 96 kHz, 24-bit
+multi-channel audio within standard DVD-Video VOB structures. Compatible
+players extract the core stream at 48 kHz and use an extension stream to
+reconstruct the full 96 kHz output.</li>
+</ul>
+<h3 id="playback-compatibility">Playback Compatibility</h3>
+<p>Virtually all modern software media players (such as VLC, MPC-HC, and
+mpv) can decode 96 kHz LPCM or DTS 96/24 audio streams directly from
+standalone VOB files. On standalone hardware DVD and Blu-ray players,
+playback depends on the hardware's internal digital-to-analog converter
+(DAC). If the player's hardware does not support direct 96 kHz output or
+copy-protection restrictions apply via digital outputs, the player will
+automatically downsample the audio to 48 kHz.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/can-a-vob-file-support-96-k-hz-audio';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Understanding PCI Buffer Data in DVD VOB Files - vob</title>
+    <meta name="description" content="This article provides an overview of the Presentation Control Information (PCI) stored within DVD Video Object (VOB) files. It details the exact data structures housed inside the PCI buffer, explaining how playback timing, camera angle switching, interact">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/understanding-pci-buffer-data-in-dvd-vob-files">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Understanding PCI Buffer Data in DVD VOB Files - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/understanding-pci-buffer-data-in-dvd-vob-files" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article provides an overview of the Presentation Control Information (PCI) stored within DVD Video Object (VOB) files. It details the exact data structures housed inside the PCI buffer, explaining how playback timing, camera angle switching, interact" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="understanding-pci-buffer-data-in-dvd-vob-files">Understanding
+PCI Buffer Data in DVD VOB Files</h1>
+<p>This article provides an overview of the Presentation Control
+Information (PCI) stored within DVD Video Object (VOB) files. It details
+the exact data structures housed inside the PCI buffer, explaining how
+playback timing, camera angle switching, interactive menu highlights,
+and recording metadata are organized and utilized by DVD players during
+real-time media presentation.</p>
+<h3 id="the-role-of-the-pci-buffer">The Role of the PCI Buffer</h3>
+<p>In DVD-Video specifications, a VOB file is partitioned into Video
+Object Units (VOBUs). Every VOBU begins with a Navigation Pack (NV_PCK),
+which contains two primary 980-byte control data packets: the
+Presentation Control Information (PCI) and the Data Search Information
+(DSI).</p>
+<p>While the DSI handles navigation, forward/backward scanning, and
+seamless branching, the PCI buffer specifically stores real-time
+presentation control data necessary to display the audio/video content
+and render user interfaces. The PCI data is structured into four primary
+sections:</p>
+<h3 id="1-pci-general-information-pci_gi">1. PCI General Information
+(PCI_GI)</h3>
+<p>The PCI_GI block occupies the initial bytes of the PCI buffer and
+contains fundamental presentation parameters for the current VOBU:</p>
+<ul>
+<li><strong>NV_PCK_LBN:</strong> The Logical Block Number of the
+navigation pack itself, establishing relative disc positioning.</li>
+<li><strong>VOBU_CAT:</strong> VOBU Category flags, which define the
+operational state (such as whether analog copy protection or display
+restrictions apply).</li>
+<li><strong>VOBU_UOP_CTL:</strong> User Operation Control flags,
+specifying prohibited user actions during this VOBU (e.g., disabling the
+pause, skip, or menu buttons).</li>
+<li><strong>VOBU_S_PTM and VOBU_E_PTM:</strong> Start and End
+Presentation Time Stamps defining the exact playback duration of the
+VOBU based on the DVD system clock (90 kHz reference).</li>
+<li><strong>VOBU_SE_E_PTM:</strong> Sequence End Presentation Time
+Stamp, identifying when playback of an entire sequence ends.</li>
+<li><strong>C_ELTM:</strong> Cell Elapsed Time, indicating the exact
+playback time that has elapsed since the beginning of the current
+cell.</li>
+</ul>
+<h3 id="2-non-seamless-angle-information-nsml_agli">2. Non-Seamless
+Angle Information (NSML_AGLI)</h3>
+<p>This section contains destination addresses required for multi-angle
+DVD titles where angle switching is non-seamless:</p>
+<ul>
+<li><strong>NSML_AGL_DSTA:</strong> Destination addresses pointing to
+the start of the target VOBU for up to nine distinct camera angles. When
+a user changes the view angle, the player uses these offsets to quickly
+jump to the corresponding frame in the alternate video stream.</li>
+</ul>
+<h3 id="3-highlight-information-hli">3. Highlight Information (HLI)</h3>
+<p>The HLI section manages the interactive menu buttons overlaid on
+video streams. It dictates how the subpicture layer responds to user
+input and is subdivided into:</p>
+<ul>
+<li><strong>Highlight General Information (HL_GI):</strong> Contains
+global menu parameters, such as the active status of buttons, starting
+and ending presentation timestamps for the button display, the selected
+button number, and color palette definitions.</li>
+<li><strong>Button Color Information Table (BTN_COLIT):</strong>
+Contains color and contrast information for button states (normal,
+selected, and activated) across different color palettes.</li>
+<li><strong>Button Information Table (BTNIT):</strong> Contains explicit
+data for up to 36 menu buttons (or 18 in widescreen display modes). Each
+button entry includes:
+<ul>
+<li>Rectangular coordinates <span class="math inline">\((X_1,
+Y_1)\)</span> to <span class="math inline">\((X_2, Y_2)\)</span> mapping
+the button’s physical screen area.</li>
+<li>Neighboring navigation parameters defining which button gains focus
+when the user presses the Up, Down, Left, or Right directional
+keys.</li>
+<li>Navigation commands (DVD Virtual Machine bytecode) executed
+immediately when the button is activated, such as jumping to a specific
+Title, Program Chain (PGC), or Chapter.</li>
+</ul></li>
+</ul>
+<h3 id="4-recording-information-reci">4. Recording Information
+(RECI)</h3>
+<p>The RECI block contains International Standard Recording Code (ISRC)
+metadata and copy control information:</p>
+<ul>
+<li><strong>ISRC Video:</strong> Identifies ownership, country, and
+production year for the video stream.</li>
+<li><strong>ISRC Audio:</strong> Specific ISRC identifiers mapped to the
+corresponding audio streams within the VOBU.</li>
+<li><strong>ISRC Subpicture:</strong> Identifies licensing and tracking
+codes for active subpicture tracks.</li>
+</ul></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/understanding-pci-buffer-data-in-dvd-vob-files';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

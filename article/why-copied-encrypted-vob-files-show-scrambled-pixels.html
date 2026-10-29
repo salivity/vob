@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why Copied Encrypted VOB Files Show Scrambled Pixels - vob</title>
+    <meta name="description" content="Directly copying a VOB file from a commercial DVD to a hard drive results in heavily distorted, scrambled video artifacts because of the Content Scramble System (CSS) digital rights management scheme. When copied via standard file managers, the critical d">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/why-copied-encrypted-vob-files-show-scrambled-pixels">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why Copied Encrypted VOB Files Show Scrambled Pixels - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/why-copied-encrypted-vob-files-show-scrambled-pixels" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Directly copying a VOB file from a commercial DVD to a hard drive results in heavily distorted, scrambled video artifacts because of the Content Scramble System (CSS) digital rights management scheme. When copied via standard file managers, the critical d" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-copied-encrypted-vob-files-show-scrambled-pixels">Why Copied
+Encrypted VOB Files Show Scrambled Pixels</h1>
+<p>Directly copying a VOB file from a commercial DVD to a hard drive
+results in heavily distorted, scrambled video artifacts because of the
+Content Scramble System (CSS) digital rights management scheme. When
+copied via standard file managers, the critical decryption handshake
+between the optical drive and authorized playback software is completely
+bypassed. Consequently, the raw ciphertext is saved to your drive,
+leaving your media player attempting to render encrypted, pseudo-random
+data as regular MPEG-2 video frames.</p>
+<h3 id="the-role-of-css-and-drive-authentication">The Role of CSS and
+Drive Authentication</h3>
+<p>Commercial DVDs use CSS, a proprietary 40-bit stream cipher, to
+protect content from unauthorized duplication. The decryption process
+requires a cryptographic handshake between the DVD drive firmware and a
+licensed software player.</p>
+<p>During normal playback, the player performs an authentication
+challenge with the drive to read protected sectors in the disc's lead-in
+area. These sectors contain the Disc Key and Title Keys. Standard
+operating system utilities—such as Windows Explorer, macOS Finder, or
+command-line copy tools—do not initiate this authentication process.
+Instead, they read only the raw data blocks present on the file system,
+leaving the content in its original, encrypted state.</p>
+<h3 id="selective-encryption-in-mpeg-2-streams">Selective Encryption in
+MPEG-2 Streams</h3>
+<p>A VOB (Video Object) file is structured as an MPEG-2 Program Stream,
+consisting of small data packets divided into headers and payloads. To
+minimize computational overhead on consumer playback devices, CSS
+encrypts only the video payload, leaving the structural MPEG-2 headers
+and audio streams unencrypted.</p>
+<p>Because the packet headers remain intact, any standard media player
+can recognize the container format, frame rate, resolution, and audio
+tracks. The player assumes the data is ready for standard decompression
+and passes the payload directly to the MPEG-2 video decoder.</p>
+<h3 id="how-ciphertext-creates-visual-artifacts">How Ciphertext Creates
+Visual Artifacts</h3>
+<p>MPEG-2 video decoding relies heavily on predictable data structures,
+including Discrete Cosine Transform (DCT) coefficients, quantization
+matrices, and motion vectors to reconstruct video frames.</p>
+<p>When the decoder encounters the encrypted payload, it processes
+high-entropy ciphertext instead of valid compressed visual data:</p>
+<ul>
+<li><strong>Corrupted Motion Vectors:</strong> Motion compensation
+algorithms misinterpret encrypted bits as vector offsets, causing
+macroblocks to shift wildly across the screen.</li>
+<li><strong>Invalid DCT Coefficients:</strong> The mathematical
+algorithms (IDCT) fail to compute correct color values (YUV space) and
+pixel luminance, resulting in chaotic patches of bright green, pink, or
+gray mosaic squares.</li>
+<li><strong>Reference Frame Breakdown:</strong> Since P-frames and
+B-frames depend on previous I-frames, a single corrupted frame cascades
+downstream, tearing the entire visual sequence into rolling digital
+static until the next sequence header appears.</li>
+</ul>
+<p>Without proper DVD ripping software designed to negotiate the CSS
+authentication exchange or strip the encryption keys prior to saving,
+the resulting file remains fundamentally unreadable by design.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/why-copied-encrypted-vob-files-show-scrambled-pixels';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

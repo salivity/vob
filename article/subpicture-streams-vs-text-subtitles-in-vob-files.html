@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subpicture Streams vs Text Subtitles in VOB Files - vob</title>
+    <meta name="description" content="DVD Video Object (VOB) files manage subtitles differently than modern digital media containers, relying on graphical subpicture streams rather than plain text data. This article explores how DVD subpicture streams differ from traditional text-based subtit">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/subpicture-streams-vs-text-subtitles-in-vob-files">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Subpicture Streams vs Text Subtitles in VOB Files - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/subpicture-streams-vs-text-subtitles-in-vob-files" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="DVD Video Object (VOB) files manage subtitles differently than modern digital media containers, relying on graphical subpicture streams rather than plain text data. This article explores how DVD subpicture streams differ from traditional text-based subtit" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="subpicture-streams-vs-text-subtitles-in-vob-files">Subpicture
+Streams vs Text Subtitles in VOB Files</h1>
+<p>DVD Video Object (VOB) files manage subtitles differently than modern
+digital media containers, relying on graphical subpicture streams rather
+than plain text data. This article explores how DVD subpicture streams
+differ from traditional text-based subtitle formats—such as SRT or
+WebVTT—focusing on encoding methods, visual styling, multiplexing,
+interactive capabilities, and conversion requirements.</p>
+<h3 id="bitmap-graphics-vs-plain-text">Bitmap Graphics vs. Plain
+Text</h3>
+<p>The fundamental difference lies in the underlying data format.
+Traditional subtitles store dialogue as plain text strings accompanied
+by timing coordinates (e.g., hours, minutes, seconds, and milliseconds).
+Media players read these text strings and use a local font rendering
+engine to draw the text onto the screen.</p>
+<p>In contrast, VOB subpicture streams are bitmapped graphic overlays.
+Instead of storing characters, the subpicture stream stores pre-rendered
+image files compressed via run-length encoding (RLE). When you turn on
+subtitles on a DVD, the playback device is not rendering fonts; it is
+decoding and overlaying low-resolution images directly on top of the
+MPEG-2 video stream.</p>
+<h3 id="color-and-resolution-limitations">Color and Resolution
+Limitations</h3>
+<p>Because subpicture streams were standardized in the mid-1990s for
+standard-definition television, they operate under strict bandwidth and
+hardware constraints:</p>
+<ul>
+<li><strong>Palette Restrictions:</strong> A subpicture bitmap is a
+2-bit graphic, meaning each pixel can only reference one of four colors
+simultaneously. These four colors represent the background, primary text
+color, outline, and anti-aliasing edge. The colors themselves are drawn
+from a 16-color palette stored in the video’s IFO file (Color Look-Up
+Table or CLUT).</li>
+<li><strong>Resolution Limits:</strong> Subpictures are authored at the
+native resolution of the DVD (720x480 for NTSC or 720x576 for PAL). When
+scaled to modern 1080p or 4K displays, they often appear pixelated or
+blurry because they cannot scale dynamically like vector- or
+font-rendered text subtitles.</li>
+</ul>
+<h3 id="multiplexing-and-synchronization">Multiplexing and
+Synchronization</h3>
+<p>Text subtitles generally exist either as separate external files or
+as independent, asynchronous data tracks inside modern containers like
+MKV or MP4.</p>
+<p>In a VOB container, subpicture data is tightly interleaved into
+Packetized Elementary Stream (PES) packets alongside the MPEG-2 video
+and AC-3/DTS audio. Subpicture packets carry Presentation Time Stamps
+(PTS) that dictate precisely which video frame they align with. The DVD
+player’s hardware decoder processes these graphic packets in real time
+with minimal memory overhead, an essential design requirement for
+1990s-era playback hardware.</p>
+<h3 id="dual-use-functionality-menus-and-interaction">Dual-Use
+Functionality: Menus and Interaction</h3>
+<p>Traditional text subtitle tracks serve a single purpose: displaying
+dialogue or commentary. VOB subpicture streams serve dual purposes:</p>
+<ul>
+<li><strong>Subtitles:</strong> Standard dialogue and
+closed-caption-style visual overlays.</li>
+<li><strong>DVD Menus:</strong> Interactive DVD menu buttons use
+subpicture streams to show button highlights, selection states, and
+routing indicators. When a user navigates a DVD menu using a remote
+control, the player changes the color palette and transparency values of
+specific areas of the subpicture stream to indicate which button is
+selected or pressed.</li>
+</ul>
+<h3 id="editing-and-accessibility">Editing and Accessibility</h3>
+<p>Editing a traditional text-based subtitle requires only a basic text
+editor to fix typos, adjust timings, or translate dialogue.</p>
+<p>Modifying a VOB subpicture stream is significantly more complex.
+Because the text is embedded within bitmap images, editing requires
+Optical Character Recognition (OCR) software to read and extract the
+text, or specialized authoring tools to extract, alter, and re-encode
+the individual bitmap frames back into an MPEG-2/VOB stream.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/subpicture-streams-vs-text-subtitles-in-vob-files';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

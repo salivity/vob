@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How VOB Pack Header SCR Governs Buffer Management - vob</title>
+    <meta name="description" content="The System Clock Reference (SCR) found in a Video Object (VOB) pack header plays a foundational role in synchronizing the delivery of multiplexed data to a media player&#39;s decoding buffers. Based on the MPEG-2 Program Stream specification, VOB files rely o">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/how-vob-pack-header-scr-governs-buffer-management">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How VOB Pack Header SCR Governs Buffer Management - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/how-vob-pack-header-scr-governs-buffer-management" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The System Clock Reference (SCR) found in a Video Object (VOB) pack header plays a foundational role in synchronizing the delivery of multiplexed data to a media player&#39;s decoding buffers. Based on the MPEG-2 Program Stream specification, VOB files rely o" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-vob-pack-header-scr-governs-buffer-management">How VOB Pack
+Header SCR Governs Buffer Management</h1>
+<p>The System Clock Reference (SCR) found in a Video Object (VOB) pack
+header plays a foundational role in synchronizing the delivery of
+multiplexed data to a media player's decoding buffers. Based on the
+MPEG-2 Program Stream specification, VOB files rely on the SCR to
+establish the exact arrival timeline of incoming data packets. By
+dictating input delivery times, the SCR prevents both buffer overflow
+and underflow, synchronizes the player's internal clock, and ensures
+that elementary streams—such as video, audio, and sub-pictures—are
+successfully parsed and decoded in lockstep with downstream
+timestamps.</p>
+<h3 id="the-role-of-scr-in-the-mpeg-2--dvd-architecture">The Role of SCR
+in the MPEG-2 / DVD Architecture</h3>
+<p>A standard DVD VOB file consists of sequential 2,048-byte packs,
+aligning with the physical sector size of optical DVD media. Every pack
+begins with a pack header containing a 42-bit SCR field, divided into a
+33-bit base (clocked at 90 kHz) and a 9-bit extension (clocked at 27
+MHz).</p>
+<p>The System Target Decoder (STD) is a theoretical model used to
+specify how a compliant receiver processes these streams. Under this
+model, data is not consumed instantly; it flows from the storage medium
+into elementary stream buffers before decoding. The SCR defines the
+exact time at which the final byte of the pack header arrives at the
+input of the STD demultiplexer.</p>
+<h3 id="regulating-buffer-delivery-rate">Regulating Buffer Delivery
+Rate</h3>
+<p>Optical drives read data in bursts, but decoders require an orderly
+feed. The SCR acts as a gatekeeper for buffer management in several
+specific ways:</p>
+<ol type="1">
+<li><p><strong>Simulating Stream Delivery Timing:</strong> The SCR
+indicates when the pack should be ingested from the storage layer. By
+tracking the difference in SCR values between consecutive packs
+alongside the pack size, the decoder calculates the intended
+instantaneous bit rate: <span class="math display">\[\text{Bitrate} =
+\frac{\text{Pack Size}}{\Delta \text{SCR}}\]</span> This calculation
+ensures the demultiplexer feeds the elementary buffers at the exact bit
+rate designed during stream encoding and authoring.</p></li>
+<li><p><strong>Preventing Buffer Overflow:</strong> Decoder buffers have
+strictly limited physical memory (for example, standard DVD video
+typically allocates 232 KB for the video elementary stream buffer). If
+data is pushed into the buffer faster than it is consumed, an
+unrecoverable buffer overflow occurs, leading to dropped frames or
+corruption. The authoring system schedules SCR values spaced widely
+enough to ensure that previous contents have been extracted before new
+bytes are loaded.</p></li>
+<li><p><strong>Preventing Buffer Underflow:</strong> Buffer underflow
+occurs when the decoder requires a frame to decode, but the
+corresponding data has not yet completely arrived in the buffer. The SCR
+guarantees that bytes arrive sufficiently in advance of their scheduled
+extraction times.</p></li>
+</ol>
+<h3 id="synchronizing-the-system-time-clock-stc">Synchronizing the
+System Time Clock (STC)</h3>
+<p>A hardware or software playback engine maintains a local 27 MHz
+System Time Clock (STC) to govern presentation timing. Because local
+crystal oscillators drift over time, the decoder continuously compares
+its current STC against incoming SCR values in the VOB pack headers:</p>
+<ul>
+<li><strong>Frequency Locking:</strong> The decoder's Phase-Locked Loop
+(PLL) adjusts the local clock rate based on the delta between the
+expected SCR and the actual arrival time, correcting for disc rotation
+fluctuations or processing jitter.</li>
+<li><strong>Discontinuity Handling:</strong> During branch points,
+multi-angle scenes, or chapter skips, the SCR sequence may abruptly
+reset. The pack header can signal this discontinuity, allowing the
+buffer manager to reset its STC reference without flushing valid data
+prematurely.</li>
+</ul>
+<h3 id="interplay-between-scr-dts-and-pts">Interplay Between SCR, DTS,
+and PTS</h3>
+<p>Buffer management functions by coordinating three distinct timestamps
+embedded within the VOB file:</p>
+<ul>
+<li><strong>System Clock Reference (SCR):</strong> Governs the
+<strong>arrival</strong> time of bytes into the elementary stream
+buffers.</li>
+<li><strong>Decoding Time Stamp (DTS):</strong> Dictates the exact STC
+moment when the decoder <strong>removes</strong> an entire access unit
+(such as a compressed video frame) from the buffer to decode it.</li>
+<li><strong>Presentation Time Stamp (PTS):</strong> Dictates the exact
+STC moment when the decoded frame or audio sample is
+<strong>displayed</strong> or output to the listener.</li>
+</ul>
+<p>The residence time of any byte within an elementary buffer is
+explicitly defined as <span class="math inline">\(\text{DTS} -
+\text{SCR}\)</span>. By enforcing this relationship, the SCR allows
+authoring encoders to model buffer fullness dynamically across variable
+bit rate (VBR) spikes, ensuring that deep buffers hold complex sequences
+without violating the hardware constraints of the playback device.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/how-vob-pack-header-scr-governs-buffer-management';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

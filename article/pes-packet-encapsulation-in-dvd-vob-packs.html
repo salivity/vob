@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PES Packet Encapsulation in DVD VOB Packs - vob</title>
+    <meta name="description" content="DVD Video Object (VOB) files rely on the MPEG-2 Program Stream specification, dividing multimedia data into fixed-size 2048-byte blocks known as packs. Within each pack, raw audio, video, or subpicture elementary streams are wrapped into Packetized Elemen">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/pes-packet-encapsulation-in-dvd-vob-packs">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="PES Packet Encapsulation in DVD VOB Packs - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/pes-packet-encapsulation-in-dvd-vob-packs" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="DVD Video Object (VOB) files rely on the MPEG-2 Program Stream specification, dividing multimedia data into fixed-size 2048-byte blocks known as packs. Within each pack, raw audio, video, or subpicture elementary streams are wrapped into Packetized Elemen" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="pes-packet-encapsulation-in-dvd-vob-packs">PES Packet
+Encapsulation in DVD VOB Packs</h1>
+<p>DVD Video Object (VOB) files rely on the MPEG-2 Program Stream
+specification, dividing multimedia data into fixed-size 2048-byte blocks
+known as packs. Within each pack, raw audio, video, or subpicture
+elementary streams are wrapped into Packetized Elementary Stream (PES)
+packets. This article explains how these elementary streams are
+formatted, addressed, and encapsulated within an individual VOB pack,
+detailing the role of pack headers, stream identifiers, synchronization
+timestamps, and padding mechanisms to ensure DVD hardware
+compliance.</p>
+<h3 id="the-fixed-2048-byte-pack-structure">The Fixed 2048-Byte Pack
+Structure</h3>
+<p>A VOB file is a sequence of continuous packs, each exactly 2048 bytes
+(2 KB) to match the physical sector size of a standard DVD-ROM. Unlike
+generic MPEG-2 Program Streams that allow variable-length packs, DVD
+authoring rules mandate this strict 2048-byte boundary.</p>
+<p>An individual VOB pack typically encapsulates a single PES packet.
+The total byte budget of the pack is divided into:</p>
+<ol type="1">
+<li><strong>Pack Header</strong> (14 bytes)</li>
+<li><strong>System Header</strong> (Optional, typically 24 bytes when
+present in navigation or initial packs)</li>
+<li><strong>PES Packet</strong> (Variable length, consuming the bulk of
+the remaining bytes)</li>
+<li><strong>Padding Packet or Stuffing Bytes</strong> (Variable length,
+added when the PES payload does not fill the 2048-byte limit)</li>
+</ol>
+<h3 id="step-1-the-pack-header">Step 1: The Pack Header</h3>
+<p>Every VOB pack begins with a 14-byte Pack Header containing
+synchronization and multiplexing metadata:</p>
+<ul>
+<li><strong>Pack Start Code (<code>0x000001BA</code>):</strong> A 4-byte
+prefix identifying the start of a pack.</li>
+<li><strong>System Clock Reference (SCR):</strong> A 42-bit timestamp
+encoded across 6 bytes that synchronizes the decoder’s system time clock
+(STC) with the multiplexer's reference clock.</li>
+<li><strong>MPEG Multiplex Rate:</strong> A 22-bit integer indicating
+the maximum transmission rate of the stream.</li>
+<li><strong>Stuffing Length:</strong> Indicates any following pack
+stuffing bytes (typically set to 0 in standard VOBs).</li>
+</ul>
+<h3 id="step-2-pes-packet-encapsulation">Step 2: PES Packet
+Encapsulation</h3>
+<p>Directly following the Pack Header (or an optional System Header),
+the elementary stream data is framed by a PES header. The PES packet
+structure comprises the following fields:</p>
+<ul>
+<li><strong>Packet Start Code Prefix (<code>0x000001</code>):</strong> A
+3-byte sequence marking the start of a PES packet.</li>
+<li><strong>Stream ID (1 byte):</strong> Defines the type and nature of
+the encapsulated elementary data:
+<ul>
+<li><code>0xE0</code> – <code>0xEF</code>: MPEG-2 Video streams.</li>
+<li><code>0xBD</code>: Private Stream 1 (used for non-MPEG audio like
+AC-3, DTS, and LPCM, as well as subpicture subtitles).</li>
+<li><code>0xBF</code>: Private Stream 2 (used for DVD Navigation Packs,
+such as PCI and DSI data).</li>
+<li><code>0xC0</code> – <code>0xDF</code>: MPEG-1/2 Audio streams.</li>
+</ul></li>
+<li><strong>PES Packet Length (2 bytes):</strong> Specifies the number
+of bytes remaining in the PES packet, including any PES header
+extensions and the elementary payload.</li>
+</ul>
+<h3 id="step-3-pes-header-extensions-and-timing-data">Step 3: PES Header
+Extensions and Timing Data</h3>
+<p>Following the length field, the PES header includes optional flags
+and timing mechanisms essential for playback:</p>
+<ul>
+<li><strong>Scrambling and Priority Flags:</strong> Indicate encryption
+states and decoding priority.</li>
+<li><strong>PTS/DTS Flags:</strong> Indicate the presence of
+Presentation Time Stamps (PTS) and Decoding Time Stamps (DTS). PTS
+dictates when a video frame or audio sample must be displayed, while DTS
+dictates when compressed data must be extracted and decoded.</li>
+<li><strong>PES Header Data Length (1 byte):</strong> Specifies the
+length of the remaining header fields.</li>
+<li><strong>Sub-stream ID (Private Stream 1 only):</strong> For audio
+and subtitles wrapped in Stream ID <code>0xBD</code>, the first byte of
+the PES payload area is an internal sub-stream identifier (e.g.,
+<code>0x80</code>–<code>0x87</code> for AC-3,
+<code>0x20</code>–<code>0x3F</code> for subpictures) to route the data
+to the correct sub-decoder.</li>
+</ul>
+<h3 id="step-4-payload-insertion-and-sector-alignment">Step 4: Payload
+Insertion and Sector Alignment</h3>
+<p>The raw elementary stream (compressed video frames, audio frames, or
+run-length-encoded subtitle data) is placed into the PES payload.</p>
+<p>Because elementary stream frames rarely divide evenly into the
+remaining space of a 2048-byte sector:</p>
+<ul>
+<li>If the payload completes a frame and leaves unused space, a
+<strong>Padding Packet</strong> (Stream ID <code>0xBE</code>) is
+appended to the end of the pack. The padding packet consists of the
+<code>0x000001BE</code> start code, a 2-byte length field, and stuffing
+bytes (usually <code>0xFF</code>).</li>
+<li>Alternatively, standard PES header stuffing bytes (up to 32 bytes of
+<code>0xFF</code>) can be inserted into the PES extension header itself
+to fill smaller gaps.</li>
+</ul>
+<p>Once the payload and necessary padding bytes are assembled, the total
+block size equals precisely 2048 bytes, completing the encapsulation of
+the elementary stream into the VOB pack.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/pes-packet-encapsulation-in-dvd-vob-packs';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

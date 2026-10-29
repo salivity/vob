@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maximum Video Resolution for PAL VOB Files - vob</title>
+    <meta name="description" content="A PAL VOB (Video Object) file adheres strictly to standard DVD-Video specifications, which mandate a maximum permissible video resolution of 720 × 576 pixels. This guide details the technical specifications of PAL VOB files, including the maximum resoluti">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/maximum-video-resolution-for-pal-vob-files">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Maximum Video Resolution for PAL VOB Files - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/maximum-video-resolution-for-pal-vob-files" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="A PAL VOB (Video Object) file adheres strictly to standard DVD-Video specifications, which mandate a maximum permissible video resolution of 720 × 576 pixels. This guide details the technical specifications of PAL VOB files, including the maximum resoluti" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="maximum-video-resolution-for-pal-vob-files">Maximum Video
+Resolution for PAL VOB Files</h1>
+<p>A PAL VOB (Video Object) file adheres strictly to standard DVD-Video
+specifications, which mandate a maximum permissible video resolution of
+720 × 576 pixels. This guide details the technical specifications of PAL
+VOB files, including the maximum resolution limits, supported aspect
+ratios, frame rate requirements, and alternative valid resolutions
+within the PAL DVD-Video standard.</p>
+<h3 id="the-maximum-resolution-limit">The Maximum Resolution Limit</h3>
+<p>The absolute maximum video resolution allowed for a
+standard-compliant PAL VOB file is <strong>720 × 576 pixels</strong>
+(commonly known as Full D1). Because the VOB format is fundamentally
+designed for the DVD-Video standard, it cannot exceed
+standard-definition (SD) boundaries. Attempting to author or multiplex
+video with a resolution higher than 720 × 576—such as 720p or 1080p high
+definition—violates the DVD specification, resulting in files that will
+fail DVD authoring checks and will not play back on standard standalone
+DVD hardware.</p>
+<h3 id="key-technical-specifications">Key Technical Specifications</h3>
+<p>A PAL VOB file operating at the maximum 720 × 576 resolution must
+also conform to specific encoding parameters:</p>
+<ul>
+<li><strong>Frame Rate:</strong> 25 frames per second (fps), delivered
+either as 50 interlaced fields per second (576i) or progressive frames
+(576p).</li>
+<li><strong>Compression Standard:</strong> MPEG-2 (or MPEG-1 for lower
+resolutions).</li>
+<li><strong>Pixel Aspect Ratio (PAR):</strong> PAL video uses non-square
+(rectangular) pixels.</li>
+<li><strong>Display Aspect Ratio (DAR):</strong> While the storage
+resolution is fixed at 720 × 576, playback displays in either a standard
+4:3 or a widescreen 16:9 anamorphic format via display flags embedded in
+the stream.</li>
+<li><strong>Maximum Bitrate:</strong> The video stream bitrate can reach
+up to 9.8 Mbps, provided the total combined multiplexed stream (video,
+audio, and subtitles) does not exceed 10.08 Mbps.</li>
+</ul>
+<h3 id="alternative-permissible-pal-vob-resolutions">Alternative
+Permissible PAL VOB Resolutions</h3>
+<p>While 720 × 576 represents the maximum resolution, the PAL DVD-Video
+standard also permits three lower, officially compliant resolutions:</p>
+<ol type="1">
+<li><strong>704 × 576 pixels:</strong> Commonly used for broadcast
+television captures to remove edge-masking (blanking) areas.</li>
+<li><strong>352 × 576 pixels (Half D1):</strong> Frequently used for
+long-play recordings to conserve disc space while preserving vertical
+resolution.</li>
+<li><strong>352 × 288 pixels (CIF / SIF):</strong> The lowest
+permissible resolution, encoded via either MPEG-1 or MPEG-2, equivalent
+to Video CD (VCD) quality.</li>
+</ol>
+<p>Any resolution outside these four strict standards is not permissible
+for compliant PAL VOB authoring.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/maximum-video-resolution-for-pal-vob-files';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How DVD Authoring Tools Create VOB, IFO, and BUP Files - vob</title>
+    <meta name="description" content="DVD authoring is the technical process of converting raw digital video, audio, and subtitle streams into a strictly standardized file system that standalone DVD players can parse and play. This article explains how authoring software processes these eleme">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/how-dvd-authoring-tools-create-vob-ifo-and-bup-files">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How DVD Authoring Tools Create VOB, IFO, and BUP Files - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/how-dvd-authoring-tools-create-vob-ifo-and-bup-files" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="DVD authoring is the technical process of converting raw digital video, audio, and subtitle streams into a strictly standardized file system that standalone DVD players can parse and play. This article explains how authoring software processes these eleme" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-dvd-authoring-tools-create-vob-ifo-and-bup-files">How DVD
+Authoring Tools Create VOB, IFO, and BUP Files</h1>
+<p>DVD authoring is the technical process of converting raw digital
+video, audio, and subtitle streams into a strictly standardized file
+system that standalone DVD players can parse and play. This article
+explains how authoring software processes these elementary assets,
+multiplexes them into sector-aligned Video Object (VOB) containers, and
+calculates the navigational logic required to generate Information (IFO)
+and Backup (BUP) files inside the final <code>VIDEO_TS</code>
+directory.</p>
+<h3 id="1-asset-validation-and-demuxing">1. Asset Validation and
+Demuxing</h3>
+<p>Before authoring tools compile data, all raw media assets must
+strictly comply with the DVD-Video standard (DVD Forum specifications).
+If the source files are not already compliant, the software transcodes
+them:</p>
+<ul>
+<li><strong>Video:</strong> Must be MPEG-1 or MPEG-2, strictly capped at
+specific resolutions (such as 720×480 for NTSC or 720×576 for PAL) with
+a maximum bitrate of 9.8 Mbps. The GOP (Group of Pictures) structure
+must be closed and bounded (typically 15 frames for NTSC, 12 for PAL) to
+allow seamless seeking.</li>
+<li><strong>Audio:</strong> Formatted as Linear PCM, Dolby Digital
+(AC-3), or DTS, sampled strictly at 48 kHz.</li>
+<li><strong>Subtitles and Menus:</strong> Rendered into 4-color
+Run-Length Encoded (RLE) bitmapped subpicture streams rather than
+text-based formats.</li>
+</ul>
+<p>The tool parses these individual inputs as elementary streams,
+indexing their duration, frame timestamps, and sync points.</p>
+<h3 id="2-multiplexing-into-vob-files">2. Multiplexing into VOB
+Files</h3>
+<p>Once the elementary streams are prepared, the authoring engine runs a
+multiplexer (muxer). This is where raw assets transform into
+<code>.VOB</code> files:</p>
+<ul>
+<li><strong>Sector Packaging:</strong> The DVD physical specification
+mandates a 2,048-byte sector size. The muxer breaks the video, audio,
+and subpicture streams into packets and packs them into standard 2 KB
+MPEG-2 Program Stream (PS) packs.</li>
+<li><strong>Time-Division Interleaving:</strong> Audio, video, and
+subtitle packs are finely interleaved based on their Presentation Time
+Stamps (PTS) and Decoding Time Stamps (DTS) to guarantee buffer health
+in hardware players without underflows or overflows.</li>
+<li><strong>Navigation Packs (NV_PCKs):</strong> At the start of every
+Video Object Unit (VOBU)—roughly every 0.4 to 1.0 seconds—the authoring
+engine inserts a specialized Navigation Pack. These packets contain
+Real-Time Information (PCI) and Data Search Information (DSI), which
+provide forward and backward playback pointers, chapter entry markers,
+and button highlights for menus.</li>
+<li><strong>File Splitting:</strong> The muxer continuously writes these
+sectors to disk, splitting the continuous stream into maximum file
+chunks of 1 GB (1,048,576 KB) labeled sequentially
+(<code>VTS_01_1.VOB</code>, <code>VTS_01_2.VOB</code>, etc.) to maintain
+compatibility with the UDF 1.02 filesystem.</li>
+</ul>
+<h3 id="3-generating-navigation-logic-ifo-files">3. Generating
+Navigation Logic: IFO Files</h3>
+<p>While VOB files hold the actual audio-visual payload, they cannot be
+navigated without Information (<code>.IFO</code>) files. The authoring
+tool generates IFO files by acting as a compiler for the DVD Virtual
+Machine (VM):</p>
+<ul>
+<li><strong><code>VIDEO_TS.IFO</code> (Video Manager):</strong> This is
+the master index. The compiler writes the global region code, parental
+management settings, aspect ratios, and pointers to the first play
+program chain (First-Play PGC) and the Video Manager Menu
+(<code>VIDEO_TS.VOB</code>).</li>
+<li><strong><code>VTS_xx_0.IFO</code> (Video Title Set):</strong> Each
+title set gets its own IFO file. The authoring software maps out the
+exact sector addresses for every chapter, cell, and audio/subtitle track
+within that title set.</li>
+<li><strong>Command Tables:</strong> Any interactive behavior programmed
+in the authoring GUI—such as jumping to a specific title after a video
+ends, routing audio streams, or executing conditional menu branching—is
+compiled into low-level DVD VM bytecode (Pre-Commands, Post-Commands,
+and Cell Commands using 16 general-purpose registers).</li>
+</ul>
+<h3 id="4-creating-redundancy-bup-files">4. Creating Redundancy: BUP
+Files</h3>
+<p>Because optical media is susceptible to physical damage like
+scratches and read errors, optical drives require redundancy for
+critical playback data.</p>
+<p>For every <code>.IFO</code> file generated, the authoring tool writes
+an identical mirror file designated with the <code>.BUP</code> extension
+(e.g., <code>VIDEO_TS.BUP</code> and <code>VTS_01_0.BUP</code>). The
+authoring engine ensures that the BUP file is written to a physically
+separate set of sectors on the disc layout, usually placed after the
+corresponding VOB files. If the DVD player's optical pickup encounters
+corrupted sectors when reading an IFO file, it seeks to the backup
+sectors containing the BUP file to preserve navigation integrity.</p>
+<h3 id="5-final-output-compilation">5. Final Output Compilation</h3>
+<p>The final compilation stage organizes the files into a root directory
+containing an empty <code>AUDIO_TS</code> folder and a fully populated
+<code>VIDEO_TS</code> folder. When the authoring tool outputs an ISO
+disc image, it formats the sector allocation using the UDF/ISO 9660
+Bridge file system, aligning each file's starting location precisely to
+standard logical block addresses for physical disc pressing or
+burning.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/how-dvd-authoring-tools-create-vob-ifo-and-bup-files';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

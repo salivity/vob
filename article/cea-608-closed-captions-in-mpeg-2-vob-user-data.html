@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CEA-608 Closed Captions in MPEG-2 VOB User Data - vob</title>
+    <meta name="description" content="Closed captions adhering to the CEA-608 standard are embedded into DVD VOB files directly within the MPEG-2 video elementary stream rather than existing as separate subtitle streams. By utilizing the MPEG-2 &quot;User Data&quot; start codes found immediately after">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/cea-608-closed-captions-in-mpeg-2-vob-user-data">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="CEA-608 Closed Captions in MPEG-2 VOB User Data - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/cea-608-closed-captions-in-mpeg-2-vob-user-data" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Closed captions adhering to the CEA-608 standard are embedded into DVD VOB files directly within the MPEG-2 video elementary stream rather than existing as separate subtitle streams. By utilizing the MPEG-2 &quot;User Data&quot; start codes found immediately after" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="cea-608-closed-captions-in-mpeg-2-vob-user-data">CEA-608 Closed
+Captions in MPEG-2 VOB User Data</h1>
+<p>Closed captions adhering to the CEA-608 standard are embedded into
+DVD VOB files directly within the MPEG-2 video elementary stream rather
+than existing as separate subtitle streams. By utilizing the MPEG-2
+"User Data" start codes found immediately after picture headers,
+broadcast and DVD authoring systems carry these legacy Line 21 byte
+pairs frame-by-frame. This article details the specific structural
+layers, identifiers, and syntax required to encapsulate, synchronize,
+and extract CEA-608 caption data inside MPEG-2 VOB containers.</p>
+<h3 id="mpeg-2-hierarchy-and-placement">MPEG-2 Hierarchy and
+Placement</h3>
+<p>A VOB (Video Object) file is an MPEG-2 Program Stream containing
+multiplexed audio, video, and private streams. Unlike DVD subpictures,
+which exist in Private Stream 1 (<code>0xBD</code>), CEA-608 captions
+are embedded inside the MPEG-2 Video Elementary Stream
+(<code>0xE0</code>).</p>
+<p>Within the video stream, MPEG-2 permits arbitrary metadata via the
+User Data packet, marked by the 32-bit start code:</p>
+<p><code>0x00 0x00 0x01 0xB2</code></p>
+<p>While User Data can theoretically appear after Sequence, Group of
+Pictures (GOP), or Picture headers, CEA-608 captions are almost
+exclusively placed immediately after a <strong>Picture Coding
+Extension</strong> header. This frame-level placement ensures that the
+caption data remains strictly synchronized with the specific video field
+or frame being rendered.</p>
+<h3 id="container-signatures-atsc-a53-vs-dvd-video-format">Container
+Signatures: ATSC A/53 vs. DVD-Video Format</h3>
+<p>Once the <code>0x000001B2</code> start code is declared, a
+proprietary or standardized identifier follows to signal what type of
+data the packet contains. In VOB files, two primary encapsulation
+conventions exist:</p>
+<ol type="1">
+<li><strong>ATSC A/53 Specification:</strong> Originally designed for
+North American digital television broadcast, this format is also widely
+found in authored VOBs. It is identified by the 4-byte ASCII string
+<code>"GA94"</code> (<code>0x47 0x41 0x39 0x34</code>).</li>
+<li><strong>DVD-Video Specification:</strong> Standardized specifically
+for commercial DVDs, this format uses an authoring header commonly
+prefixed by the 2-byte ASCII marker <code>"CC"</code>
+(<code>0x43 0x43</code>) or a custom 4-byte registered format
+identifier.</li>
+</ol>
+<h3 id="atsc-a53-payload-structure">ATSC A/53 Payload Structure</h3>
+<p>When the <code>"GA94"</code> identifier is used, the data structure
+inside the user data payload proceeds as follows:</p>
+<ul>
+<li><strong>Identifier:</strong> <code>0x47413934</code> (GA94)</li>
+<li><strong>User Data Type Code:</strong> 1 byte, set to
+<code>0x03</code> to signify closed caption data.</li>
+<li><strong>Caption Flags and Count:</strong> 1 byte containing:
+<ul>
+<li>1-bit reserved flag.</li>
+<li>1-bit <code>process_cc_data_flag</code>.</li>
+<li>1-bit zero bit.</li>
+<li>5-bit <code>cc_count</code> value, indicating the number of 3-byte
+caption constructs that follow.</li>
+</ul></li>
+<li><strong>Reserved Byte:</strong> Usually <code>0xFF</code>.</li>
+<li><strong>Caption Constructs (3 bytes per construct):</strong>
+<ul>
+<li><strong>Byte 1 (Marker / Field Indicator):</strong> 5 bits of fixed
+marker bits (<code>11111</code>), 1 bit for <code>cc_valid</code>
+(validity flag), and 2 bits representing the field (<code>00</code> for
+Field 1, <code>01</code> for Field 2).</li>
+<li><strong>Byte 2 (cc_data_1):</strong> First CEA-608 data byte,
+including the odd parity bit.</li>
+<li><strong>Byte 3 (cc_data_2):</strong> Second CEA-608 data byte,
+including the odd parity bit.</li>
+</ul></li>
+</ul>
+<h3 id="dvd-video-native-cc-structure">DVD-Video Native CC
+Structure</h3>
+<p>When using the native DVD format (<code>0x4343</code>), the layout is
+more compact:</p>
+<ul>
+<li><strong>Identifier:</strong> <code>0x43 0x43</code></li>
+<li><strong>Header Structure:</strong> 1 byte indicating field presence
+flags, often <code>0x01</code> or <code>0x02</code> designating whether
+Field 1, Field 2, or both are carried.</li>
+<li><strong>Payload Length:</strong> A byte indicating the number of
+caption pairs present.</li>
+<li><strong>Line 21 Bytes:</strong> The raw 2-byte pairs containing the
+parity bit and 7-bit character/control data for the designated
+field.</li>
+</ul>
+<h3 id="processing-and-display">Processing and Display</h3>
+<p>Each CEA-608 construct conveys two bytes per field, matching the
+original 29.97 fps analog NTSC Line 21 transmission rate. Field 1
+carries CC1 (primary dialogue) and CC2, while Field 2 carries CC3
+(secondary language), CC4, and extended data services (XDS).</p>
+<p>To extract and display the captions, a decoder demultiplexes the VOB
+into its elementary video stream, scans the bitstream for
+<code>0x000001B2</code> directly following picture headers, verifies the
+caption identifier (<code>GA94</code> or <code>CC</code>), strips the
+parity bit from the 2-byte payloads, and sends the characters to the
+on-screen display (OSD) buffer.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/cea-608-closed-captions-in-mpeg-2-vob-user-data';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

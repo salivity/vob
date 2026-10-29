@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Can HTML5 Video Play VOB Files Natively? - vob</title>
+    <meta name="description" content="Modern web browsers cannot natively decode and play VOB files using the standard HTML5 &lt;video&gt; element. While HTML5 revolutionized media playback on the web by removing the need for third-party plugins, it relies on strict browser support for specific mul">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/can-html-5-video-play-vob-files-natively">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Can HTML5 Video Play VOB Files Natively? - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/can-html-5-video-play-vob-files-natively" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Modern web browsers cannot natively decode and play VOB files using the standard HTML5 &lt;video&gt; element. While HTML5 revolutionized media playback on the web by removing the need for third-party plugins, it relies on strict browser support for specific mul" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="can-html5-video-play-vob-files-natively">Can HTML5 Video Play
+VOB Files Natively?</h1>
+<p>Modern web browsers cannot natively decode and play VOB files using
+the standard HTML5 <code>&lt;video&gt;</code> element. While HTML5
+revolutionized media playback on the web by removing the need for
+third-party plugins, it relies on strict browser support for specific
+multimedia containers and codecs. This article explains why VOB files
+fail to play natively in web browsers and outlines the standard
+solutions for making this legacy video format accessible on the web.</p>
+<h2 id="why-vob-files-do-not-work-in-html5-video">Why VOB Files Do Not
+Work in HTML5 <code>&lt;video&gt;</code></h2>
+<p>A VOB (Video Object) file is a container format primarily used for
+DVD-Video media. It is based on the MPEG-2 Program Stream format and
+typically contains multiplexed streams of MPEG-2 video alongside audio
+encoded in formats like AC-3 (Dolby Digital), DTS, or uncompressed
+LPCM.</p>
+<p>Modern web browsers such as Google Chrome, Mozilla Firefox, Apple
+Safari, and Microsoft Edge lack native support for VOB files for several
+critical reasons:</p>
+<ul>
+<li><strong>Container Incompatibility:</strong> The HTML5 specification
+does not mandate support for the MPEG-2 Program Stream container. Modern
+browser media engines are designed to parse modern web containers,
+specifically MP4 (ISO Base Media File Format), WebM, and Ogg.</li>
+<li><strong>Lack of MPEG-2 Video Decoding:</strong> MPEG-2 is an older,
+computationally inefficient codec compared to modern standards. Because
+it is rarely used in web streaming and involves licensing constraints,
+most browser vendors do not include MPEG-2 decoders in their rendering
+engines.</li>
+<li><strong>Audio Codec Issues:</strong> VOB files commonly rely on AC-3
+or DTS audio tracks. Browser support for proprietary multi-channel
+surround sound formats like AC-3 is inconsistent across platforms due to
+licensing fees, meaning even if the container were read, the audio track
+would frequently fail to decode.</li>
+</ul>
+<p>Attempting to load a <code>.vob</code> source directly into an HTML5
+<code>&lt;video&gt;</code> tag will result in a blank frame, an
+unsupported format error, or prompt the browser to download the file
+instead of playing it.</p>
+<h2 id="the-standard-solution-transcoding">The Standard Solution:
+Transcoding</h2>
+<p>To stream or play video content originally stored in a VOB file on
+the modern web, the file must be converted (transcoded) into a
+web-standard container and codec configuration.</p>
+<p>The most universally supported combination across all modern browsers
+and devices is:</p>
+<ul>
+<li><strong>Container:</strong> MP4</li>
+<li><strong>Video Codec:</strong> H.264 (AVC)</li>
+<li><strong>Audio Codec:</strong> AAC</li>
+</ul>
+<p>Converting a VOB file using open-source tools like FFmpeg or
+HandBrake allows the video to be repackaged into an efficient,
+web-optimized format. A standard FFmpeg command to achieve full
+compatibility is:</p>
+<p><code>ffmpeg -i input.vob -c:v libx264 -crf 23 -preset medium -c:a aac -b:a 128k output.mp4</code></p>
+<p>Once converted, the resulting MP4 file can be embedded seamlessly
+into any webpage using standard HTML5:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode html"><code class="sourceCode html"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">video</span><span class="ot"> controls width</span><span class="op">=</span><span class="st">&quot;640&quot;</span><span class="ot"> height</span><span class="op">=</span><span class="st">&quot;360&quot;</span><span class="dt">&gt;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">source</span><span class="ot"> src</span><span class="op">=</span><span class="st">&quot;output.mp4&quot;</span><span class="ot"> type</span><span class="op">=</span><span class="st">&quot;video/mp4&quot;</span><span class="dt">&gt;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  Your browser does not support the video tag.</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">video</span><span class="dt">&gt;</span></span></code></pre></div>
+<h2 id="client-side-decoding-alternatives">Client-Side Decoding
+Alternatives</h2>
+<p>While native browser playback is impossible, advanced web
+applications can theoretically play VOB files using client-side software
+decoders compiled to WebAssembly (Wasm). A JavaScript application can
+fetch the raw byte array of a VOB file, demux the streams, decode the
+MPEG-2 video via a WebAssembly-compiled library, and render the frames
+to an HTML5 <code>&lt;canvas&gt;</code> element with audio routed
+through the Web Audio API.</p>
+<p>However, this approach is resource-intensive, drains battery life on
+mobile devices, and requires significant development overhead. For
+nearly all web delivery scenarios, server-side transcoding to MP4 or
+WebM remains the industry standard.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/can-html-5-video-play-vob-files-natively';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

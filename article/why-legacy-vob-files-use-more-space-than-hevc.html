@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why Legacy VOB Files Use More Space Than HEVC - vob</title>
+    <meta name="description" content="Legacy VOB (Video Object) files consume substantially more storage space per minute than modern HEVC (High Efficiency Video Coding) files primarily due to generational differences in video compression technology. Standardized in the mid-1990s for DVD medi">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/why-legacy-vob-files-use-more-space-than-hevc">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why Legacy VOB Files Use More Space Than HEVC - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/why-legacy-vob-files-use-more-space-than-hevc" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Legacy VOB (Video Object) files consume substantially more storage space per minute than modern HEVC (High Efficiency Video Coding) files primarily due to generational differences in video compression technology. Standardized in the mid-1990s for DVD medi" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-legacy-vob-files-use-more-space-than-hevc">Why Legacy VOB
+Files Use More Space Than HEVC</h1>
+<p>Legacy VOB (Video Object) files consume substantially more storage
+space per minute than modern HEVC (High Efficiency Video Coding) files
+primarily due to generational differences in video compression
+technology. Standardized in the mid-1990s for DVD media, VOB files rely
+on the antiquated MPEG-2 codec, which lacks modern data-reduction
+algorithms. In contrast, HEVC (H.265) uses advanced mathematical
+modeling, larger variable block sizes, and sophisticated prediction
+algorithms, allowing it to preserve the same or superior visual fidelity
+at a fraction of the bitrate and file size.</p>
+<h3 id="the-compression-gap-mpeg-2-vs-h265">The Compression Gap: MPEG-2
+vs. H.265</h3>
+<p>The fundamental driver of file size is bitrate—the amount of data
+processed per second of video. VOB files encapsulate MPEG-2 video
+streams, an architecture finalized in 1995. MPEG-2 requires a high
+bitrate (typically 4,000 to 9,000 kilobits per second) to deliver
+standard-definition (480p or 576p) video without severe artifacting.</p>
+<p>HEVC, released in 2013, was specifically engineered to reduce
+bandwidth and storage requirements by roughly 50% compared to its
+immediate predecessor (H.264), and by more than 75% compared to MPEG-2.
+To produce a standard-definition image comparable to a DVD, HEVC needs
+only 500 to 1,000 kilobits per second, translating directly to massive
+storage savings.</p>
+<h3 id="rigid-macroblocks-vs-flexible-coding-tree-units">Rigid
+Macroblocks vs. Flexible Coding Tree Units</h3>
+<p>MPEG-2 processes frames using rigid "macroblocks" fixed at 16x16
+pixels. Whether analyzing an intricate texture or a flat, solid blue
+sky, the MPEG-2 encoder divides the entire image into these same small
+blocks. This creates substantial computational inefficiency because
+uniform areas still consume significant data.</p>
+<p>HEVC replaces rigid macroblocks with Coding Tree Units (CTUs), which
+can dynamically scale from 4x4 up to 64x64 pixels. For expansive,
+uniform areas like walls or backgrounds, HEVC allocates massive 64x64
+blocks with minimal metadata. It only subdivides down to smaller blocks
+in areas with complex detail, drastically reducing the data
+footprint.</p>
+<h3 id="primitive-vs-advanced-prediction-algorithms">Primitive vs.
+Advanced Prediction Algorithms</h3>
+<p>Video compression achieves high efficiency by predicting redundant
+information instead of storing every pixel in every frame.</p>
+<ul>
+<li><strong>Intra-frame Prediction (Spatial):</strong> MPEG-2 has
+virtually no spatial intra-prediction within a single frame; it
+essentially treats individual keyframes like raw JPEG images. HEVC
+features 35 directional intra-prediction modes, allowing the encoder to
+mathematically reconstruct lines, angles, and gradients within a frame
+using neighboring pixel data.</li>
+<li><strong>Inter-frame Prediction (Temporal):</strong> When tracking
+movement across consecutive frames, MPEG-2 relies on basic motion
+vectors with low precision (half-pixel accuracy). HEVC utilizes
+quarter-pixel motion vector precision, bidirectional optical flow, and
+advanced merge modes. This allows HEVC to accurately describe motion
+between frames with significantly fewer bits.</li>
+</ul>
+<h3 id="entropy-coding-efficiency">Entropy Coding Efficiency</h3>
+<p>After video data is mathematically transformed and quantized, it
+undergoes entropy encoding—the final lossless packaging step. MPEG-2
+uses basic Variable Length Coding (VLC), which relies on fixed Huffman
+lookup tables.</p>
+<p>HEVC employs Context-Adaptive Binary Arithmetic Coding (CABAC). CABAC
+dynamically adapts to the probability of changing symbols in the video
+stream, packing the final data representation far more densely than the
+static tables of MPEG-2.</p>
+<h3 id="summary">Summary</h3>
+<p>A minute of VOB video uses substantial storage because MPEG-2 cannot
+intelligently detect patterns, compress large uniform surfaces, or track
+complex motion. HEVC leverages decades of algorithmic advancements to
+discard visually redundant data, resulting in files that are up to 80%
+to 90% smaller than legacy VOB files at the same resolution.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/why-legacy-vob-files-use-more-space-than-hevc';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

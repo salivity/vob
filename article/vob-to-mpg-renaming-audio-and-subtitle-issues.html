@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VOB to MPG Renaming: Audio and Subtitle Issues - vob</title>
+    <meta name="description" content="Renaming a DVD VOB (Video Object) file to the .mpg extension is a common shortcut to make the file recognizable to modern media players, but it introduces significant playback limitations. Although VOB is inherently based on the MPEG-2 Program Stream form">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/vob-to-mpg-renaming-audio-and-subtitle-issues">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="VOB to MPG Renaming: Audio and Subtitle Issues - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/vob-to-mpg-renaming-audio-and-subtitle-issues" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Renaming a DVD VOB (Video Object) file to the .mpg extension is a common shortcut to make the file recognizable to modern media players, but it introduces significant playback limitations. Although VOB is inherently based on the MPEG-2 Program Stream form" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="vob-to-mpg-renaming-audio-and-subtitle-issues">VOB to MPG
+Renaming: Audio and Subtitle Issues</h1>
+<p>Renaming a DVD VOB (Video Object) file to the .mpg extension is a
+common shortcut to make the file recognizable to modern media players,
+but it introduces significant playback limitations. Although VOB is
+inherently based on the MPEG-2 Program Stream format, DVD specifications
+use custom extensions and headers to handle multiple audio formats and
+bitmap subtitles. Simply changing the file extension does not alter the
+underlying container structure, often causing standard MPEG demuxers to
+misinterpret, desync, or completely ignore secondary audio tracks and
+subtitle streams.</p>
+<h3 id="audio-stream-playback-limitations">Audio Stream Playback
+Limitations</h3>
+<p>When a media player opens a native <code>.mpg</code> file, its
+demuxer expects standard MPEG-compliant audio streams, such as MPEG-1
+Audio Layer II (MP2) or standard PCM. DVD VOB files, however, utilize
+private stream headers to package modern, multi-channel codecs. Renaming
+the file produces several distinct audio issues:</p>
+<ul>
+<li><strong>Unsupported Codec Mapping (AC-3 and DTS):</strong> Most
+commercial DVDs store audio in Dolby Digital (AC-3) or DTS formats.
+Within a VOB container, these are assigned to DVD-specific "Private
+Stream 1" identifiers. When treated as a standard <code>.mpg</code>
+file, players lacking dedicated VOB parsing will fail to recognize these
+identifiers, resulting in complete audio silence.</li>
+<li><strong>Loss of Stream Selection:</strong> VOB files often contain
+multiple audio tracks for different languages, commentary, or audio
+formats (e.g., stereo vs. 5.1 surround). Renaming the file strips the
+player's ability to read DVD navigation data (usually held in
+<code>.ifo</code> files). Consequently, players may default to the first
+detectable stream or fail to switch between alternate language tracks
+entirely.</li>
+<li><strong>Missing Language Metadata:</strong> The metadata identifying
+which track corresponds to which language is not stored in the VOB file
+itself, but in the accompanying <code>.ifo</code> file. Renaming the
+file to <code>.mpg</code> causes media software to label all audio
+tracks as "Unknown," forcing users to guess which track they want to
+hear.</li>
+</ul>
+<h3 id="subtitle-stream-playback-limitations">Subtitle Stream Playback
+Limitations</h3>
+<p>Subtitles suffer the most severe limitations when converting a VOB to
+an MPG file via simple extension renaming:</p>
+<ul>
+<li><strong>Complete Failure to Render (Sub-Pictures):</strong> DVD
+subtitles are not text-based formats like SRT or WebVTT; they are
+run-length encoded bitmap graphics known as "sub-pictures." Standard
+MPEG-2 playback engines do not expect graphical overlays inside a
+<code>.mpg</code> container and will simply ignore the sub-picture
+stream, causing the subtitles to disappear entirely.</li>
+<li><strong>Incompatible Demuxing:</strong> Similar to AC-3 audio,
+sub-picture streams reside in custom private data streams within the
+VOB. A standard MPEG parser assumes any text in an <code>.mpg</code>
+file is broadcast-standard Closed Captions (EIA-608/708). Because the
+sub-picture data does not match this format, the media player drops the
+stream during demuxing.</li>
+<li><strong>Missing Color Palette and Timing Data:</strong> Even if a
+player detects the sub-picture stream, the color palette and opacity
+settings are stored exclusively in the DVD's <code>.ifo</code> file.
+Without this color lookup table, subtitles that do manage to render may
+appear fully transparent, pitch black, or with heavily distorted,
+unreadable colors.</li>
+</ul>
+<h3 id="recommended-workaround">Recommended Workaround</h3>
+<p>To preserve all audio and subtitle tracks without quality loss, do
+not rename the file extension. Instead, remux the VOB into a modern
+container like MKV using tools such as MakeMKV or FFmpeg. Remuxing
+properly re-indexes the AC-3/DTS audio streams and extracts the VobSub
+bitmap tracks into a standardized format that modern media players can
+fully parse and display.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/vob-to-mpg-renaming-audio-and-subtitle-issues';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

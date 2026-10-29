@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How PGCDemux Extracts Streams Using DVD PGCs - vob</title>
+    <meta name="description" content="This article explains how PGCDemux separates video, audio, and subtitle streams from DVDs by utilizing Program Chains (PGCs) instead of raw VOB files. While raw VOB files simply serve as physical containers split into arbitrary 1 GB chunks, PGCDemux reads">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/how-pgc-demux-extracts-streams-using-dvd-pg-cs">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How PGCDemux Extracts Streams Using DVD PGCs - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/how-pgc-demux-extracts-streams-using-dvd-pg-cs" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains how PGCDemux separates video, audio, and subtitle streams from DVDs by utilizing Program Chains (PGCs) instead of raw VOB files. While raw VOB files simply serve as physical containers split into arbitrary 1 GB chunks, PGCDemux reads" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-pgcdemux-extracts-streams-using-dvd-pgcs">How PGCDemux
+Extracts Streams Using DVD PGCs</h1>
+<p>This article explains how PGCDemux separates video, audio, and
+subtitle streams from DVDs by utilizing Program Chains (PGCs) instead of
+raw VOB files. While raw VOB files simply serve as physical containers
+split into arbitrary 1 GB chunks, PGCDemux reads DVD navigation
+structures to identify the true logical playback flow. By the end of
+this guide, you will understand how PGCDemux parses IFO metadata,
+traverses cell playback tables, and extracts continuous, synchronized
+elementary streams without the errors inherent in raw file copying.</p>
+<h3 id="the-problem-with-raw-vob-files">The Problem with Raw VOB
+Files</h3>
+<p>DVD-Video data is physically stored in Video Object (VOB) files,
+capped at 1 GB due to legacy file system limitations (UDF/ISO 9660).
+These VOBs are container files holding multiplexed MPEG-2 Program
+Streams.</p>
+<p>Extracting directly from raw VOBs presents significant problems:</p>
+<ul>
+<li><strong>Interleaving:</strong> A single set of VOB files frequently
+contains multiple camera angles, different cuts of a film (seamless
+branching), or extra features interleaved together.</li>
+<li><strong>Non-Linear Playback:</strong> The physical order of video
+blocks inside a VOB rarely matches the chronological sequence of a
+specific presentation.</li>
+<li><strong>Layer/Boundary Breaks:</strong> Physical file breaks can
+introduce timestamp resets, audio-video sync drift, and orphaned
+frames.</li>
+</ul>
+<h3 id="the-role-of-program-chains-pgcs">The Role of Program Chains
+(PGCs)</h3>
+<p>A Program Chain (PGC) is the DVD specification’s logical unit of
+playback. Instead of referencing physical file offsets, a DVD player
+executes instructions mapped to a PGC. A single PGC outlines an
+uninterrupted viewing experience—such as the main feature, an alternate
+ending, or an individual episode of a television series—by chaining
+together smaller playback segments called "Cells."</p>
+<h3 id="how-pgcdemux-accesses-pgc-data-via-ifo-files">How PGCDemux
+Accesses PGC Data via IFO Files</h3>
+<p>PGCDemux relies fundamentally on the DVD's Information files
+(<code>.IFO</code>), specifically <code>VTS_XX_0.IFO</code> (Video Title
+Set information). The IFO file functions as a roadmap for the
+corresponding VOB set.</p>
+<ol type="1">
+<li><strong>Header Parsing:</strong> PGCDemux reads the IFO to locate
+the Program Chain Information Table (<code>VTS_PGCI</code>).</li>
+<li><strong>PGC Selection:</strong> The user selects a specific PGC
+index within a Title Set.</li>
+<li><strong>Cell Position Mapping:</strong> PGCDemux reads the PGC’s
+playback control table, which lists every Cell assigned to that chain in
+chronological order. Each entry defines:
+<ul>
+<li><strong>VOB ID:</strong> The specific object identifier assigned to
+the content.</li>
+<li><strong>Cell ID:</strong> The individual segment within that VOB
+ID.</li>
+<li><strong>Sector Addresses:</strong> The exact starting and ending
+Logical Block Addresses (LBAs) on the disc where the cell physically
+resides.</li>
+</ul></li>
+</ol>
+<h3 id="extracting-streams-at-the-packet-level">Extracting Streams at
+the Packet Level</h3>
+<p>Once the cell list is compiled, PGCDemux systematically processes the
+VOB files according to the sector addresses mapped in the IFO, ignoring
+data that does not belong to the selected PGC:</p>
+<ol type="1">
+<li><strong>Filtering by Sector:</strong> PGCDemux reads sectors
+(2,048-byte DVD packs) directly from the VOBs based on the PGC's LBA
+map. Unreferenced sectors—such as alternate angles or unused scenes—are
+entirely skipped.</li>
+<li><strong>Reading Navigation Packs (NV_PCK):</strong> DVD sectors
+begin with navigation packs containing Presentation Time Stamps (PTS)
+and System Clock Reference (SCR) values. PGCDemux uses these to monitor
+playback timing across cell boundaries.</li>
+<li><strong>Demultiplexing Elementary Streams:</strong> Within the
+targeted cells, PGCDemux analyzes the Packetized Elementary Stream (PES)
+headers and separates the data based on stream IDs:
+<ul>
+<li><strong>Video:</strong> Extracted from stream ID <code>0xE0</code>
+into raw <code>.m2v</code> files.</li>
+<li><strong>Audio:</strong> Extracted from private stream IDs (e.g.,
+<code>0xBD</code> for AC-3 or DTS; <code>0xC0</code>–<code>0xDF</code>
+for MPEG audio) into <code>.ac3</code>, <code>.dts</code>, or
+<code>.mpa</code> files.</li>
+<li><strong>Subtitles:</strong> Extracted from private stream substream
+IDs (<code>0x20</code>–<code>0x3F</code>) into raw subtitle files
+(<code>.sup</code>) along with timing indices.</li>
+</ul></li>
+<li><strong>Handling Audio Delay:</strong> PGCDemux evaluates the
+difference between the initial audio PTS and video PTS at the beginning
+of the PGC, writing the delay value (in milliseconds) directly into the
+generated audio filename to preserve synchronization during subsequent
+authoring or encoding.</li>
+</ol>
+<p>By traversing the logical PGC path rather than parsing raw container
+boundaries, PGCDemux ensures that the extracted elementary streams
+contain only the desired cut of the media, maintain perfect
+audio-to-video synchronization, and completely exclude extraneous
+multiplexed data.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/how-pgc-demux-extracts-streams-using-dvd-pg-cs';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

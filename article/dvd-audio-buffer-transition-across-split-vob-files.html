@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DVD Audio Buffer Transition Across Split VOB Files - vob</title>
+    <meta name="description" content="When a DVD player transitions across split VOB files on a physical disc, the audio buffer relies on read-ahead caching and continuous presentation timestamps to ensure seamless, uninterrupted playback. Because VOB files are arbitrarily split at the 1 GB b">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/dvd-audio-buffer-transition-across-split-vob-files">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="DVD Audio Buffer Transition Across Split VOB Files - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/dvd-audio-buffer-transition-across-split-vob-files" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="When a DVD player transitions across split VOB files on a physical disc, the audio buffer relies on read-ahead caching and continuous presentation timestamps to ensure seamless, uninterrupted playback. Because VOB files are arbitrarily split at the 1 GB b" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="dvd-audio-buffer-transition-across-split-vob-files">DVD Audio
+Buffer Transition Across Split VOB Files</h1>
+<p>When a DVD player transitions across split VOB files on a physical
+disc, the audio buffer relies on read-ahead caching and continuous
+presentation timestamps to ensure seamless, uninterrupted playback.
+Because VOB files are arbitrarily split at the 1 GB boundary to comply
+with file system limitations, the underlying MPEG-2 Program Stream
+remains logically continuous. Optical disc players use an upstream track
+buffer to absorb the physical seek delay between files, allowing the
+dedicated audio decoder buffer to steadily drain and decode audio frames
+without underflowing or desynchronizing from video.</p>
+<h3 id="the-1-gb-split-and-stream-continuity">The 1 GB Split and Stream
+Continuity</h3>
+<p>The DVD-Video specification mandates that no individual VOB (Video
+Object) file exceeds 1 GB (1,048,576 KB). This constraint accommodates
+legacy file systems such as ISO 9660 and UDF 1.02.</p>
+<p>Despite this file division (e.g., transitioning from
+<code>VTS_01_1.VOB</code> to <code>VTS_01_2.VOB</code>), the video,
+audio, and sub-picture streams are multiplexed as a single,
+uninterrupted MPEG-2 Program Stream. The boundary between split files
+usually occurs mid-stream and rarely aligns with audio packet
+boundaries, Program Clock Reference (PCR) markers, or video Group of
+Pictures (GOP) structures. Consequently, the audio stream is treated as
+continuous data rather than a new playback initialization.</p>
+<h3 id="the-role-of-the-track-buffer">The Role of the Track Buffer</h3>
+<p>Physical DVD reading is decoupled from audio/video decoding via a
+memory staging area known as the Track Buffer (or system buffer).</p>
+<ol type="1">
+<li><strong>Over-reading:</strong> DVD drives typically read data off
+the physical medium at speeds higher than the playback bitrate (e.g., a
+standard drive reading at 2x to 5x while standard DVD maximum multiplex
+rate is roughly 10.08 Mbps). This fills the Track Buffer with advance
+data.</li>
+<li><strong>Physical Laser Seek:</strong> When the optical pickup
+reaches the final sector of an initial VOB and must jump to the starting
+sector of the sequential VOB, the physical movement of the optical sled
+causes a momentary pause in data acquisition from the disc surface.</li>
+<li><strong>Sustained Feed:</strong> During this physical jump, the
+optical drive mechanism reads nothing, but the Track Buffer continues to
+supply the system demultiplexer at the standard playback rate.</li>
+</ol>
+<h3 id="behavior-of-the-audio-decoder-buffer">Behavior of the Audio
+Decoder Buffer</h3>
+<p>Once data leaves the Track Buffer, the demultiplexer splits audio
+packets into the Audio Elementary Stream Buffer (a dedicated FIFO buffer
+feeding the AC-3, DTS, or LPCM decoder).</p>
+<ul>
+<li><strong>Continuous Draining:</strong> While the laser repositions to
+access the next file, the audio buffer continues to drain at its steady
+decoding rate. Because audio bitrates are significantly lower than video
+bitrates (typically 192–448 kbps for Dolby Digital versus several Mbps
+for video), audio buffers require very little physical memory to
+maintain hundreds of milliseconds of uninterrupted sound.</li>
+<li><strong>No Flush Command:</strong> The demultiplexer does not issue
+a buffer flush or reset command at a standard VOB split. Flushing only
+occurs during explicit non-seamless cell transitions or title
+changes.</li>
+<li><strong>Refill Phase:</strong> Once the optical head lands on the
+starting sector of the subsequent VOB file, raw sectors immediately
+populate the Track Buffer again, which in turn replenishes the audio
+decoder buffer well before it approaches an underflow state.</li>
+</ul>
+<h3 id="timestamp-synchronization-and-gap-prevention">Timestamp
+Synchronization and Gap Prevention</h3>
+<p>Seamless continuation across VOB files depends on two continuous
+timing markers: the System Clock Reference (SCR) and the Presentation
+Time Stamp (PTS).</p>
+<p>Across a standard file split within the same Cell or Program Chain
+(PGC), the SCR and PTS values do not reset. The audio decoder compares
+the PTS embedded in the incoming audio packet headers to the System Time
+Clock (STC). Because the stream treats the file change as a transparent
+sector boundary, the timing markers remain linear. The audio decoder
+continues executing samples strictly against the established clock
+reference, preventing pops, clicks, or dropouts during playback.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/dvd-audio-buffer-transition-across-split-vob-files';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

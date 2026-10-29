@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How Parental Controls Use Branched VOB Segments - vob</title>
+    <meta name="description" content="Parental control systems on DVD-Video media rely on a technical mechanism known as seamless branching to alter movie content dynamically. By organizing media into alternative Video Object (VOB) segments, the playback device evaluates the viewer&#39;s configur">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/how-parental-controls-use-branched-vob-segments">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How Parental Controls Use Branched VOB Segments - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/how-parental-controls-use-branched-vob-segments" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Parental control systems on DVD-Video media rely on a technical mechanism known as seamless branching to alter movie content dynamically. By organizing media into alternative Video Object (VOB) segments, the playback device evaluates the viewer&#39;s configur" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-parental-controls-use-branched-vob-segments">How Parental
+Controls Use Branched VOB Segments</h1>
+<p>Parental control systems on DVD-Video media rely on a technical
+mechanism known as seamless branching to alter movie content
+dynamically. By organizing media into alternative Video Object (VOB)
+segments, the playback device evaluates the viewer's configured
+authorization level and navigates through pre-designated video branches.
+This article explains the underlying structure of VOB files, the
+function of interleaved units, and how DVD navigation systems
+selectively read or bypass specific video cells to enforce content
+ratings without playback interruption.</p>
+<h3 id="dvd-file-architecture-vobs-cells-and-pgcs">DVD File
+Architecture: VOBs, Cells, and PGCs</h3>
+<p>DVD-Video content is stored in Video Object (VOB) files inside the
+<code>VIDEO_TS</code> directory. A VOB file is a container format that
+multiplexes MPEG-2 video, multiple audio tracks, and sub-picture
+subtitle data into a single continuous stream.</p>
+<p>At a granular level, video within a VOB is subdivided into smaller
+segments called Cells. One or more Cells form a Program, and an ordered
+sequence of Programs constitutes a Program Chain (PGC). The PGC acts as
+the playback roadmap, dictating the precise order in which Cells are
+rendered on screen. Navigation and control information are not stored
+directly within the video data; instead, they are held in companion IFO
+(Information) files that direct the player's optical pickup head.</p>
+<h3 id="the-mechanism-of-seamless-branching">The Mechanism of Seamless
+Branching</h3>
+<p>Seamless branching allows a single disc to contain multiple versions
+of a movie—such as a PG-rated cut and an R-rated cut—without duplicating
+the entire feature length. Because optical drives have physical latency
+when repositioning the read head, standard branching can introduce
+noticeable pauses or audio dropouts.</p>
+<p>To maintain continuous playback, alternative scenes are broken down
+into Interleaved Video Units (ILVUs). In this structure:</p>
+<ul>
+<li>The adult or unrated version of a scene is placed in Cell A.</li>
+<li>The family-friendly or alternative version of the scene is placed in
+Cell B.</li>
+<li>Instead of storing these cells in separate physical locations on the
+disc, the data blocks for Cell A and Cell B are physically interleaved
+on the track: <code>[A1] [B1] [A2] [B2] [A3] [B3]</code>.</li>
+</ul>
+<p>DVD players utilize an onboard memory buffer (a read-ahead track
+buffer) to read the required blocks while ignoring the unneeded blocks.
+While the buffer empties its stored video to the screen, the optical
+pickup can physically jump over the unwanted interleaved blocks and
+capture the next required block, resulting in a completely seamless
+transition.</p>
+<h3 id="parental-control-integration-via-ifo-navigation">Parental
+Control Integration via IFO Navigation</h3>
+<p>The DVD-Video standard includes a Parental Management feature that
+standardizes age ratings on a scale from 1 (most restrictive/all ages)
+to 8 (least restrictive/adults only). These settings are
+password-protected in the player’s firmware menu.</p>
+<p>When a disc begins playback:</p>
+<ol type="1">
+<li><strong>Rating Verification:</strong> The DVD player queries its
+internal memory to determine the user's assigned parental level.</li>
+<li><strong>PML Mapping:</strong> The player reads the disc's Video
+Title Set Information file (<code>VTS_01_0.IFO</code>), which contains
+the Parental Management Information Table (PML). This table correlates
+player rating levels with specific PGCs or Cells.</li>
+<li><strong>Selective Branch Traversal:</strong> When the playback
+reaches a branched scene, the player checks the Cell's parental ID. If
+the parental control level prohibits the primary scene (e.g., explicit
+content flagged with a high parental level), the player's navigation
+engine instructs the demultiplexer to follow the alternate branch
+pointer.</li>
+<li><strong>VOB Execution:</strong> The player extracts and decodes only
+the authorized interleaved VOB blocks, seamlessly skipping the
+restricted segments.</li>
+</ol>
+<p>Through the combination of IFO-level logic tables and physical
+interleaved VOB layouts, parental controls allow dynamic, real-time
+censoring or scene substitution while saving valuable optical disc
+storage space.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/how-parental-controls-use-branched-vob-segments';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

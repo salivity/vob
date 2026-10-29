@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Can DaVinci Resolve Edit VOB Files Natively? - vob</title>
+    <meta name="description" content="DaVinci Resolve cannot natively decode or reliably edit video streams inside a standard VOB (Video Object) container, nor does it consistently support raw elementary streams extracted directly from one. Because VOB is an older DVD-specific format bundling">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/can-da-vinci-resolve-edit-vob-files-natively">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Can DaVinci Resolve Edit VOB Files Natively? - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/can-da-vinci-resolve-edit-vob-files-natively" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="DaVinci Resolve cannot natively decode or reliably edit video streams inside a standard VOB (Video Object) container, nor does it consistently support raw elementary streams extracted directly from one. Because VOB is an older DVD-specific format bundling" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="can-davinci-resolve-edit-vob-files-natively">Can DaVinci Resolve
+Edit VOB Files Natively?</h1>
+<p>DaVinci Resolve cannot natively decode or reliably edit video streams
+inside a standard VOB (Video Object) container, nor does it consistently
+support raw elementary streams extracted directly from one. Because VOB
+is an older DVD-specific format bundling MPEG-2 video with multiplexed
+audio like AC3 or PCM, Resolve typically rejects the files entirely,
+imports them without audio, or flags them as "Media Offline." To work
+with this footage, editors must transcode or re-wrap the extracted
+streams into modern, Resolve-friendly formats.</p>
+<h3 id="understanding-vob-and-extracted-streams">Understanding VOB and
+Extracted Streams</h3>
+<p>VOB is a container format based on the MPEG-2 Program Stream
+specification, designed specifically for DVD-Video discs. Inside a VOB,
+you typically find:</p>
+<ul>
+<li><strong>Video:</strong> MPEG-1 or MPEG-2 (often interlaced, standard
+definition).</li>
+<li><strong>Audio:</strong> AC3 (Dolby Digital), DTS, or uncompressed
+linear PCM.</li>
+<li><strong>Subtitles and Navigation:</strong> DVD menu data and
+sub-pictures.</li>
+</ul>
+<p>When users extract the video stream directly (often resulting in an
+elementary <code>.m2v</code> file) or attempt to drag a
+<code>.vob</code> file directly into the DaVinci Resolve media pool,
+playback issues immediately arise.</p>
+<h3 id="why-davinci-resolve-struggles-with-vob-media">Why DaVinci
+Resolve Struggles with VOB Media</h3>
+<ol type="1">
+<li><strong>Lack of Container Support:</strong> DaVinci Resolve is built
+for professional post-production and digital cinema workflows.
+Blackmagic Design has never added native support for legacy DVD
+containers like <code>.vob</code>. Simply renaming a <code>.vob</code>
+file to <code>.mpg</code> or <code>.mp4</code> rarely works and usually
+results in decoding errors, erratic frame pacing, or timeline
+crashes.</li>
+<li><strong>Elementary Stream Incompatibility:</strong> If you demux a
+VOB file into its raw video component (such as an <code>.m2v</code>
+elementary stream), Resolve will usually fail to recognize or read the
+stream properly. Resolve expects video to be packaged inside modern
+containers like QuickTime (<code>.mov</code>) or ISO Base Media
+(<code>.mp4</code>).</li>
+<li><strong>Codec and Licensing Limitations:</strong> While DaVinci
+Resolve Studio supports MPEG-2 decoding, the free version of DaVinci
+Resolve relies heavily on OS-level hardware decoders (especially on
+Windows), which often lack MPEG-2 or AC3 audio decoders out of the box.
+Even in Studio, DVD-era MPEG-2 streams with non-standard GOP (Group of
+Pictures) structures cause severe performance degradation and dropped
+frames.</li>
+</ol>
+<h3 id="the-standard-workaround-transcoding">The Standard Workaround:
+Transcoding</h3>
+<p>Because direct extraction does not produce an edit-ready file for
+Resolve, transcoding is required. You cannot simply extract the raw
+stream; you must convert or re-wrap it using a third-party utility like
+HandBrake, Shutter Encoder, or FFmpeg.</p>
+<ul>
+<li><strong>For the Highest Editing Performance:</strong> Convert the
+VOB files into an intermediate editing codec, such as Apple ProRes 422
+or Avid DNxHR/DNxHD, inside a <code>.mov</code> container. Uncompressed
+or PCM audio should be used.</li>
+<li><strong>For Space Efficiency:</strong> Transcode the footage to
+H.264 or H.265 in an <code>.mp4</code> container with standard AAC
+audio, keeping the original frame rate and deinterlacing the footage if
+the original DVD video is interlaced.</li>
+</ul>
+<p>Once transcoded into ProRes, DNx, or standard H.264, DaVinci Resolve
+can import, decode, and color grade the footage smoothly without offline
+media errors.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/can-da-vinci-resolve-edit-vob-files-natively';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

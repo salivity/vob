@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VOB Multiplexing Rates: Action Scenes vs Menus - vob</title>
+    <meta name="description" content="A DVD Video Object (VOB) file relies on the MPEG-2 Program Stream specification, which constantly adjusts its multiplexing rate to accommodate dramatic swings in data complexity between high-action scenes and static menus. The multiplexer manages these tr">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/vob-multiplexing-rates-action-scenes-vs-menus">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="VOB Multiplexing Rates: Action Scenes vs Menus - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/vob-multiplexing-rates-action-scenes-vs-menus" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="A DVD Video Object (VOB) file relies on the MPEG-2 Program Stream specification, which constantly adjusts its multiplexing rate to accommodate dramatic swings in data complexity between high-action scenes and static menus. The multiplexer manages these tr" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="vob-multiplexing-rates-action-scenes-vs-menus">VOB Multiplexing
+Rates: Action Scenes vs Menus</h1>
+<p>A DVD Video Object (VOB) file relies on the MPEG-2 Program Stream
+specification, which constantly adjusts its multiplexing rate to
+accommodate dramatic swings in data complexity between high-action
+scenes and static menus. The multiplexer manages these transitions by
+dynamically altering the distribution of fixed 2048-byte packs,
+balancing audio, video, sub-picture, and padding streams within the
+strict maximum bitrate limit of 10.08 Mbps. This mechanism guarantees
+that the hardware decoder's buffer neither starves during visually
+demanding footage nor overflows during idle interactive displays.</p>
+<h3 id="the-mechanism-of-dynamic-multiplexing">The Mechanism of Dynamic
+Multiplexing</h3>
+<p>At its core, a VOB file is composed of sequentially interleaved
+2048-byte packs. Each pack belongs to a specific stream type, identified
+by a stream ID (such as Video, Audio, or Private Stream). The
+multiplexer determines how frequently each type of pack appears on the
+physical disc relative to time, guided by System Clock Reference (SCR)
+timestamps embedded in each pack header.</p>
+<p>When content switches between high-action motion and static menu
+displays, the multiplexer shifts its operational strategy to maintain
+valid timing and buffer safety without exceeding hardware limits.</p>
+<h3 id="handling-high-action-scenes">Handling High-Action Scenes</h3>
+<p>High-action sequences demand significant data to encode motion
+vectors and high-frequency spatial details. During these scenes:</p>
+<ul>
+<li><strong>Video Pack Saturation:</strong> The multiplexer assigns the
+vast majority of the available transport bandwidth to video packs. A
+high-action scene will push video bitrates close to the standard's
+maximum ceiling of 9.8 Mbps.</li>
+<li><strong>Elimination of Padding:</strong> To maximize available
+payload bandwidth, the multiplexer virtually eliminates stuffing or
+padding packs. Almost every pack contains usable elementary stream
+data.</li>
+<li><strong>Buffer Management (VBV):</strong> The Video Buffer Verifier
+(VBV) monitors decoder buffer fill levels. The multiplexer must deliver
+video data just in time to prevent an underflow, where the decoder runs
+out of frames to decode, causing stutters.</li>
+</ul>
+<h3 id="handling-static-menus">Handling Static Menus</h3>
+<p>Static menus represent the opposite extreme, requiring virtually no
+ongoing video data once the initial frame is loaded:</p>
+<ul>
+<li><strong>Still Picture Encoding:</strong> Menus are typically encoded
+as a single MPEG-2 intra-coded frame (I-frame) or an extremely
+low-frame-rate stream. Once delivered, the display holds this picture
+while awaiting user interaction.</li>
+<li><strong>Reduction of Video Packs:</strong> Because the video
+elementary stream produces negligible continuous data, the frequency of
+video packs plummets. Audio (such as menu background music) and
+sub-picture (highlight buttons) streams maintain their regular
+intervals, taking up a proportionally larger share of the delivered
+packs.</li>
+<li><strong>Insertion of Padding Packs:</strong> To prevent decoder
+buffer overflow and adhere to the constant read speeds of optical
+drives, the multiplexer inserts padding packs (<code>0x000001BE</code>).
+These dummy packets contain no usable data but preserve the required
+stream pacing and physical disc alignment.</li>
+</ul>
+<h3 id="timestamp-coordination-across-modes">Timestamp Coordination
+Across Modes</h3>
+<p>Transitions between these states depend on precise timestamp
+mapping:</p>
+<ul>
+<li><strong>System Clock Reference (SCR):</strong> Defines the exact
+moment a pack must enter the system decoder. The multiplexer modulates
+the distance between SCR values to reflect actual data throughput.</li>
+<li><strong>Presentation and Decoding Timestamps (PTS/DTS):</strong>
+Tell the decoder when to display and decode frames. In high-action
+video, PTS increments linearly at the standard display rate (e.g., 29.97
+or 25 fps). In static menus, PTS values may repeat or pause until a cell
+change occurs, signaling the hardware to loop or hold the current frame
+indefinitely.</li>
+</ul>
+<p>Through this balanced manipulation of pack allocation, padding, and
+clock references, the VOB container smoothly shifts between peak video
+demand and minimal menu states without interrupting playback.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/vob-multiplexing-rates-action-scenes-vs-menus';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

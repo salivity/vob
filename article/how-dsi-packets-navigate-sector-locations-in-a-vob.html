@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How DSI Packets Navigate Sector Locations in a VOB - vob</title>
+    <meta name="description" content="Data Search Information (DSI) packets act as the internal navigation map of a DVD Video Object (VOB), allowing the disc drive&#39;s optical pickup to anticipate and jump to future sector locations without decoding the entire continuous stream. By embedding pr">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/how-dsi-packets-navigate-sector-locations-in-a-vob">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How DSI Packets Navigate Sector Locations in a VOB - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/how-dsi-packets-navigate-sector-locations-in-a-vob" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Data Search Information (DSI) packets act as the internal navigation map of a DVD Video Object (VOB), allowing the disc drive&#39;s optical pickup to anticipate and jump to future sector locations without decoding the entire continuous stream. By embedding pr" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-dsi-packets-navigate-sector-locations-in-a-vob">How DSI
+Packets Navigate Sector Locations in a VOB</h1>
+<p>Data Search Information (DSI) packets act as the internal navigation
+map of a DVD Video Object (VOB), allowing the disc drive's optical
+pickup to anticipate and jump to future sector locations without
+decoding the entire continuous stream. By embedding precise relative
+sector offsets inside every Video Object Unit (VOBU), DSI packets
+provide the drive's firmware and optical servo with exact target
+addresses. This mechanism enables smooth fast-forwarding, rewind
+operations, angle switching, and seamless branching directly at the
+hardware layer.</p>
+<h3 id="the-role-of-dsi-inside-the-navigation-pack">The Role of DSI
+Inside the Navigation Pack</h3>
+<p>Every VOB stream is subdivided into Video Object Units (VOBUs), which
+typically hold 0.4 to 1.0 seconds of multiplexed audio, video, and
+sub-picture data. The very first sector of every VOBU is a Navigation
+Pack (NV_PCK), composed of two distinct control packets: Presentation
+Control Information (PCI) and Data Search Information (DSI).</p>
+<p>While the PCI handles real-time presentation aspects such as
+highlight buttons and user-prohibited actions, the DSI is dedicated to
+navigation and search indexing. Because the DSI packet resides in
+physical sector zero of each VOBU, the optical pickup reads these
+navigation parameters before parsing any of the audio or video payloads
+that follow.</p>
+<h3 id="address-mapping-via-forward-search-information-fwdi">Address
+Mapping via Forward Search Information (FWDI)</h3>
+<p>To execute trick-play modes such as 2x, 4x, or 32x fast-forward, the
+drive cannot read the disc sequentially; it must skip large chunks of
+data and read only keyframes (I-frames). The DSI achieves this through
+the Forward Search Information (FWDI) table.</p>
+<ul>
+<li><strong>Relative Addressing:</strong> The FWDI contains a predefined
+table of relative sector pointers indicating where future VOBUs reside
+relative to the current VOBU’s start sector.</li>
+<li><strong>Temporal Offsets:</strong> These pointers correspond to time
+intervals spanning forward into the stream (e.g., +0.5 seconds, +1.0
+second, +2.0 seconds, up to +120 or +240 seconds ahead).</li>
+<li><strong>Direct Jump Execution:</strong> Each entry stores the signed
+distance in sectors (Logical Block Addresses or LBAs). When a
+fast-forward command is initiated, the drive controller evaluates the
+FWDI entry matching the desired playback speed multiplier, calculates
+the destination LBA, and instructs the sled motor and tracking actuator
+to physically jump the optical pickup directly to that sector.</li>
+</ul>
+<h3
+id="seamless-playback-and-interleaved-stream-navigation-sml_pbi">Seamless
+Playback and Interleaved Stream Navigation (SML_PBI)</h3>
+<p>For multi-angle scenes, parental control branching, or seamless
+branching, VOB data is physically interleaved across the disc. In these
+cases, consecutive playback requires the optical pickup to jump across
+foreign tracks without disrupting the presentation buffer.</p>
+<p>The DSI supplies the Seamless Playback Information (SML_PBI) and
+Seamless Angle Information (SML_AGLI) to coordinate these jumps:</p>
+<ol type="1">
+<li><strong>VOBU_EA (VOBU End Address):</strong> Informs the drive of
+the exact relative sector where the current unit terminates.</li>
+<li><strong>Next VOBU Start Address:</strong> Declares the physical
+offset of the next playable sector in the selected track or angle.</li>
+<li><strong>Buffering Thresholds:</strong> Informs the player's memory
+buffer how many sectors can be read sequentially before the optical
+pickup must be unlatched to perform a mechanical track jump to the
+target sector.</li>
+</ol>
+<h3 id="mechanical-action-of-the-optical-pickup">Mechanical Action of
+the Optical Pickup</h3>
+<p>The drive's optical pickup does not search blind. When navigating a
+VOB, the process follows a strict read-calculate-seek loop:</p>
+<ol type="1">
+<li><strong>Reading the DSI Sector:</strong> The laser diode and
+photodetector read the DSI packet at the beginning of the VOBU.</li>
+<li><strong>Firmware Offset Calculation:</strong> The drive's controller
+parses the relative target address (stored as a 32-bit integer
+representing the number of sectors) and adds it to the current LBA to
+establish the target physical sector.</li>
+<li><strong>Radial Actuation:</strong> The drive controller switches off
+the fine-tracking servo loop, activates the coarse-tracking sled motor
+to move the pickup assembly radially across the disc surface, and
+re-engages the fine-tracking coils once near the target track.</li>
+<li><strong>Sector Verification:</strong> The optical pickup reads the
+disc subcode and sector header at the destination. If an
+off-by-a-few-tracks error occurs due to mechanical drift, the pickup
+performs a micro-jump using the radial actuator to lock precisely onto
+the designated sector.</li>
+</ol></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/how-dsi-packets-navigate-sector-locations-in-a-vob';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

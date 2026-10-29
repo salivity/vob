@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Film vs Interlaced Video Metadata in VOB Files - vob</title>
+    <meta name="description" content="VOB (Video Object) files store multimedia streams using the MPEG-2 Program Stream container standard, typical of DVD-Video media. Determining whether the source material inside a VOB originated from native 24fps film or interlaced videotape requires inspe">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/film-vs-interlaced-video-metadata-in-vob-files">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Film vs Interlaced Video Metadata in VOB Files - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/film-vs-interlaced-video-metadata-in-vob-files" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="VOB (Video Object) files store multimedia streams using the MPEG-2 Program Stream container standard, typical of DVD-Video media. Determining whether the source material inside a VOB originated from native 24fps film or interlaced videotape requires inspe" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="film-vs-interlaced-video-metadata-in-vob-files">Film vs
+Interlaced Video Metadata in VOB Files</h1>
+<p>VOB (Video Object) files store multimedia streams using the MPEG-2
+Program Stream container standard, typical of DVD-Video media.
+Determining whether the source material inside a VOB originated from
+native 24fps film or interlaced videotape requires inspecting the
+structural metadata flags embedded within the MPEG-2 video elementary
+stream headers. Specifically, the decoder relies on the
+<code>picture_coding_extension</code> and
+<code>sequence_extension</code> metadata to identify progressive film
+frames converted via telecine versus true field-based interlaced
+video.</p>
+<h3 id="the-picture-coding-extension-flags">The Picture Coding Extension
+Flags</h3>
+<p>The primary metadata indicating film versus video is located in the
+MPEG-2 <strong>Picture Coding Extension</strong> header
+(<code>picture_coding_extension()</code>), which precedes each video
+frame. Within this header, three primary flags reveal the source
+type:</p>
+<ol type="1">
+<li><strong><code>progressive_frame</code></strong>:
+<ul>
+<li>When set to <code>1</code>, the underlying coded frame represents a
+progressive image captured at a single instant in time, typical of
+film.</li>
+<li>When set to <code>0</code>, the frame represents two interlaced
+fields sampled at different temporal points, typical of native video
+cameras.</li>
+</ul></li>
+<li><strong><code>repeat_first_field</code> (RFF)</strong> and
+<strong><code>top_field_first</code> (TFF)</strong>:
+<ul>
+<li>These flags control soft telecine (3:2 pulldown). In film-sourced
+NTSC transfers, 23.976 fps film is encoded as progressive frames
+(<code>progressive_frame = 1</code>), but must be output as 29.97 fps
+interlaced video.</li>
+<li>To achieve this, the metadata alternates
+<code>repeat_first_field</code> between <code>1</code> and
+<code>0</code> across consecutive frames, dictating that a field be
+repeated upon display. A continuous pattern of toggling RFF flags
+alongside <code>progressive_frame = 1</code> is the definitive indicator
+of film-originated material.</li>
+<li>On pure interlaced videotape sources,
+<code>repeat_first_field</code> is consistently <code>0</code>.</li>
+</ul></li>
+</ol>
+<h3 id="picture_structure-metadata"><code>picture_structure</code>
+Metadata</h3>
+<p>Also found in the Picture Coding Extension, the
+<code>picture_structure</code> field designates how the frame is
+packaged:</p>
+<ul>
+<li><strong>Frame Picture (<code>11</code>)</strong>: Used for both
+progressive film and frame-encoded interlaced video.</li>
+<li><strong>Field Picture (<code>01</code> for Top Field,
+<code>10</code> for Bottom Field)</strong>: Exclusively used for
+interlaced video sources where each field is compressed as an
+independent entity. If a VOB contains field pictures, the content
+originated from interlaced video, not progressive film.</li>
+</ul>
+<h3 id="sequence-extension-progressive_sequence">Sequence Extension:
+<code>progressive_sequence</code></h3>
+<p>At the sequence level, the <strong>Sequence Extension</strong>
+contains the <code>progressive_sequence</code> flag:</p>
+<ul>
+<li>A value of <code>1</code> indicates that the entire video stream is
+purely progressive.</li>
+<li>While standard DVD-Video specifications generally require
+<code>progressive_sequence</code> to be set to <code>0</code> for broad
+compatibility with television outputs (even for film sources utilizing
+3:2 pulldown), non-standard or computer-authored VOBs containing native
+24p or 25p film will set this flag to <code>1</code>.</li>
+</ul>
+<h3 id="soft-telecine-vs-hard-telecine-limitations">Soft Telecine vs.
+Hard Telecine Limitations</h3>
+<p>These metadata flags definitively identify film only when the content
+utilizes <strong>soft telecine</strong>, where the underlying stored
+frames are progressive and the flags instruct the player to generate
+interlaced fields.</p>
+<p>If film content was subjected to <strong>hard telecine</strong> prior
+to encoding, the 3:2 pulldown was baked into the video signal before
+MPEG-2 compression. In such cases, the encoder treats the incoming
+signal as standard television broadcast: <code>progressive_frame</code>
+will be marked <code>0</code>, <code>repeat_first_field</code> will be
+<code>0</code>, and the metadata will register the file as interlaced
+videotape. Identifying hard telecined film requires visual comb-pattern
+analysis rather than relying solely on container or stream metadata.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/film-vs-interlaced-video-metadata-in-vob-files';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

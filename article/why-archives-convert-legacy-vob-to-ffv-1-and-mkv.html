@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why Archives Convert Legacy VOB to FFV1 and MKV - vob</title>
+    <meta name="description" content="Modern cultural heritage and archival institutions are systematically migrating legacy Video Object (VOB) assets from optical DVD media into open, preservation-grade formats such as FFV1 in Matroska (MKV) containers or uncompressed video streams. This mig">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/why-archives-convert-legacy-vob-to-ffv-1-and-mkv">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why Archives Convert Legacy VOB to FFV1 and MKV - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/why-archives-convert-legacy-vob-to-ffv-1-and-mkv" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Modern cultural heritage and archival institutions are systematically migrating legacy Video Object (VOB) assets from optical DVD media into open, preservation-grade formats such as FFV1 in Matroska (MKV) containers or uncompressed video streams. This mig" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-archives-convert-legacy-vob-to-ffv1-and-mkv">Why Archives
+Convert Legacy VOB to FFV1 and MKV</h1>
+<p>Modern cultural heritage and archival institutions are systematically
+migrating legacy Video Object (VOB) assets from optical DVD media into
+open, preservation-grade formats such as FFV1 in Matroska (MKV)
+containers or uncompressed video streams. This migration is driven by
+the physical decay of optical media, the structural limitations and
+proprietary quirks of the DVD-Video standard, and the need for
+mathematically lossless, open-source formats that support proactive
+digital preservation workflows. By transitioning away from VOB,
+institutions protect historical video content from obsolescence, ensure
+file integrity, and simplify long-term repository management.</p>
+<h3 id="the-inherent-flaws-of-the-vob-format">The Inherent Flaws of the
+VOB Format</h3>
+<p>VOB files were designed specifically for consumer DVD-Video playback,
+not for long-term digital preservation. Because VOB is based on the
+MPEG-2 Program Stream specification, it introduces several technical
+liabilities for archivists:</p>
+<ul>
+<li><strong>Fragmented Structures:</strong> DVD content is often split
+arbitrarily into 1 GB chunks, slicing continuous video streams across
+multiple files and complicating playback and metadata management.</li>
+<li><strong>Complex Multiplexing:</strong> VOB files bundle video,
+multiple audio streams, sub-picture subtitles, and navigation menus into
+a single stream. Many software tools struggle to demux and decode these
+streams cleanly without introducing timing drift or audio-video
+desynchronization.</li>
+<li><strong>Lossy Compression:</strong> The underlying video in a VOB
+file is compressed with lossy MPEG-2. Re-encoding it to another lossy
+format would cause generational loss, making a lossless target format
+mandatory during preservation workflows.</li>
+</ul>
+<h3 id="physical-degradation-of-optical-media">Physical Degradation of
+Optical Media</h3>
+<p>A primary catalyst for this conversion effort is the rapid physical
+decay of optical discs. Recordable DVDs (DVD-R and DVD+R) suffer from
+dye degradation, optical oxidation, and disc rot. Because physical media
+life spans are unpredictable, institutions must rip and ingest optical
+assets onto robust, checksum-verified digital storage arrays before data
+becomes unreadable.</p>
+<h3 id="why-ffv1-and-mkv-are-the-archival-standard">Why FFV1 and MKV Are
+the Archival Standard</h3>
+<p>Rather than retaining raw VOB files after extraction, preservation
+specialists convert the data into FFV1 inside an MKV wrapper. This
+combination has become an international standard endorsed by
+organizations like the Library of Congress and standardized by the
+Internet Engineering Task Force (IETF).</p>
+<ul>
+<li><strong>Mathematically Lossless Encoding:</strong> FFV1 preserves
+the exact image data present in the original MPEG-2 stream without
+discarding a single bit of visual information.</li>
+<li><strong>Integrated Checksums and Fixity:</strong> FFV1 embeds Cyclic
+Redundancy Checks (CRC) within the video frames themselves. This allows
+repository systems to detect internal bitrot without needing to
+cross-reference external manifest files.</li>
+<li><strong>Storage Efficiency:</strong> Pure uncompressed video
+requires massive amounts of storage. FFV1 delivers lossless compression
+that typically reduces file sizes by roughly 50% compared to
+uncompressed raw video, drastically reducing institutional storage
+costs.</li>
+<li><strong>The Flexibility of Matroska (MKV):</strong> The MKV
+container format is entirely open-source and natively supports variable
+framerates, diverse audio codecs, complex metadata tracks, and
+error-recovery capabilities that far exceed the capabilities of the
+legacy VOB structure.</li>
+</ul>
+<h3 id="the-role-of-uncompressed-video">The Role of Uncompressed
+Video</h3>
+<p>In specific workflows where maximum simplicity is required,
+institutions convert VOB assets to uncompressed formats (such as v210 or
+raw YUV inside an AVI or QuickTime container). Uncompressed formats
+require no complex decoding algorithms, ensuring the data can be read
+decades in the future even if specific software libraries cease to
+exist. However, due to the high storage costs associated with
+uncompressed streams, FFV1/MKV remains the preferred standard for
+large-scale migration.</p>
+<h3 id="future-proofing-digital-collections">Future-Proofing Digital
+Collections</h3>
+<p>Converting legacy VOB files to open standards eliminates dependence
+on outdated consumer media frameworks. By migrating collections to FFV1
+and MKV or uncompressed streams, archives secure their holdings with
+standardized formats maintained by active, open-source communities,
+ensuring that historical video collections remain accessible and
+authentic for future generations.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/why-archives-convert-legacy-vob-to-ffv-1-and-mkv';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

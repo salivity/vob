@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Macrovision and Analog Copy Protection in VOB Streams - vob</title>
+    <meta name="description" content="This article provides an overview of Macrovision analog copy protection and explains how DVD-Video streams communicate these protection triggers to playback hardware. You will learn the mechanical basis of the Macrovision scrambling process, the structure">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/macrovision-and-analog-copy-protection-in-vob-streams">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Macrovision and Analog Copy Protection in VOB Streams - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/macrovision-and-analog-copy-protection-in-vob-streams" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article provides an overview of Macrovision analog copy protection and explains how DVD-Video streams communicate these protection triggers to playback hardware. You will learn the mechanical basis of the Macrovision scrambling process, the structure" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1
+id="macrovision-and-analog-copy-protection-in-vob-streams">Macrovision
+and Analog Copy Protection in VOB Streams</h1>
+<p>This article provides an overview of Macrovision analog copy
+protection and explains how DVD-Video streams communicate these
+protection triggers to playback hardware. You will learn the mechanical
+basis of the Macrovision scrambling process, the structure of MPEG-2
+Video Object (VOB) files, and the specific data flags within navigation
+packets that instruct DVD players to activate analog protection on
+composite, S-Video, and component video outputs.</p>
+<h3 id="what-is-macrovision">What is Macrovision?</h3>
+<p>Macrovision—now officially known as the Analog Protection System
+(APS)—is an analog copy protection technology developed to prevent
+consumers from copying commercial video media, such as VHS tapes and
+DVDs, onto consumer-grade videocassette recorders (VCRs).</p>
+<p>Macrovision operates by exploiting the vulnerabilities of a VCR’s
+automatic gain control (AGC) circuitry. When an analog video signal is
+generated, Macrovision inserts deliberate voltage anomalies into the
+Vertical Blanking Interval (VBI)—the non-visible lines of video
+transmitted between display frames. These anomalies primarily
+include:</p>
+<ol type="1">
+<li><strong>AGC Pulses (Pseudo-sync pulses):</strong> Excessive positive
+and negative voltage spikes inserted into the vertical sync interval.
+Televisions ignore these lines, but a recording VCR interprets the
+high-voltage spikes as an excessively bright picture and lowers its
+recording gain. This results in recorded tapes with fluctuating
+brightness, severe picture darkening, or complete loss of video
+sync.</li>
+<li><strong>Colorstripe:</strong> Rapid phase shifts applied to the
+colorburst reference signal on specific scanlines. This interferes with
+the VCR's color-processing circuitry, causing recorded video to display
+vertical color bands, loss of color, or rolling artifacts.</li>
+</ol>
+<p>Because a DVD stores digital data, Macrovision is not recorded as an
+altered analog waveform on the disc. Instead, digital flags within the
+video container tell the playback hardware to generate the distorted
+analog waveform in real time via its digital-to-analog converter
+(DAC).</p>
+<h3 id="how-analog-copy-protection-is-signaled-in-vob-streams">How
+Analog Copy Protection is Signaled in VOB Streams</h3>
+<p>A DVD’s video content is stored in VOB (Video Object) files, which
+are based on the MPEG-2 Program Stream format. Inside a VOB stream, the
+video data is divided into sequential chunks called Video Object Units
+(VOBUs). Each VOBU represents between 0.4 and 1.0 seconds of playback
+and begins with a specialized packet called the Navigation Packet
+(<code>NV_PCK</code>).</p>
+<p>The signaling for analog copy protection occurs inside this
+<code>NV_PCK</code> rather than the elementary MPEG-2 video stream
+itself.</p>
+<h4 id="the-nv_pck-structure-and-presentation-control-information">The
+NV_PCK Structure and Presentation Control Information</h4>
+<p>The <code>NV_PCK</code> contains two primary sub-structures:</p>
+<ul>
+<li><strong>PCI (Presentation Control Information):</strong> Handles
+real-time playback control, user operations, and display
+characteristics.</li>
+<li><strong>DSI (Data Search Information):</strong> Handles
+fast-forward, rewind, and seamless angle switching.</li>
+</ul>
+<p>Analog copy protection directives reside inside the <strong>PCI
+packet</strong> within the <strong>PCI General Information
+(PCI_GI)</strong> table.</p>
+<h4 id="aps-bits-in-the-stream">APS Bits in the Stream</h4>
+<p>Within <code>PCI_GI</code>, specific bits are allocated for the
+<strong>Copy Generation Management System (CGMS)</strong> and the
+<strong>Analog Protection System (APS)</strong>. The APS data is encoded
+using a 2-bit field:</p>
+<ul>
+<li><strong><code>00b</code> (APS Type 0 / Off):</strong> No Macrovision
+protection applied.</li>
+<li><strong><code>01b</code> (APS Type 1):</strong> Activates AGC
+pseudo-sync pulses only.</li>
+<li><strong><code>10b</code> (APS Type 2):</strong> Activates AGC pulses
+plus 2-line Colorstripe protection.</li>
+<li><strong><code>11b</code> (APS Type 3):</strong> Activates AGC pulses
+plus 4-line Colorstripe protection.</li>
+</ul>
+<p>These flags are defined dynamically at the VOBU level. This allows
+content authors to toggle Macrovision on or off between different
+sections of the disc (for example, keeping Macrovision active during the
+main feature while disabling it during interactive menus or bonus
+material).</p>
+<h4 id="hardware-execution">Hardware Execution</h4>
+<p>When a DVD player reads the VOB stream:</p>
+<ol type="1">
+<li>The demultiplexer isolates the <code>NV_PCK</code> from the incoming
+VOBU.</li>
+<li>The player’s system parser reads the APS bits inside the
+<code>PCI_GI</code> structure.</li>
+<li>The player passes these trigger bits to the internal video
+encoder/DAC chip.</li>
+<li>If an APS mode (<code>01b</code>, <code>10b</code>, or
+<code>11b</code>) is present, the DAC chip’s embedded Macrovision
+circuit actively modulates the VBI of the outgoing NTSC or PAL baseband
+analog signal.</li>
+<li>If the video is routed through a digital output (such as HDMI), the
+APS bits are ignored in favor of digital content protection schemes like
+HDCP, though the player may mirror the restriction across concurrent
+analog outputs.</li>
+</ol></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/macrovision-and-analog-copy-protection-in-vob-streams';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

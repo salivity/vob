@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How DGIndex Creates D2V Index Files from VOBs - vob</title>
+    <meta name="description" content="DGIndex processes MPEG-2 video streams across contiguous VOB files to produce a lightweight, plain-text index file with the .d2v extension. Rather than demuxing or re-encoding the entire video track, DGIndex scans the underlying MPEG structure, catalogs k">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/how-dg-index-creates-d-2-v-index-files-from-vo-bs">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How DGIndex Creates D2V Index Files from VOBs - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/how-dg-index-creates-d-2-v-index-files-from-vo-bs" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="DGIndex processes MPEG-2 video streams across contiguous VOB files to produce a lightweight, plain-text index file with the .d2v extension. Rather than demuxing or re-encoding the entire video track, DGIndex scans the underlying MPEG structure, catalogs k" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-dgindex-creates-d2v-index-files-from-vobs">How DGIndex
+Creates D2V Index Files from VOBs</h1>
+<p>DGIndex processes MPEG-2 video streams across contiguous VOB files to
+produce a lightweight, plain-text index file with the <code>.d2v</code>
+extension. Rather than demuxing or re-encoding the entire video track,
+DGIndex scans the underlying MPEG structure, catalogs keyframe
+locations, and records critical frame-level metadata. This resulting
+index allows frameservers like AviSynth to access any frame with
+frame-accurate precision during editing workflows without creating
+massive intermediate files.</p>
+<h3 id="1-parsing-the-mpeg-2-program-stream">1. Parsing the MPEG-2
+Program Stream</h3>
+<p>When a sequence of VOB files is loaded, DGIndex treats them as a
+single continuous byte stream. It parses the MPEG-2 Program Stream,
+filtering out audio tracks, sub-pictures, and private streams to focus
+on the video elementary stream (PES packets). It searches specifically
+for standard MPEG-2 start codes, including:</p>
+<ul>
+<li><strong>Sequence Header (<code>00 00 01 B3</code>):</strong> Defines
+the resolution, aspect ratio, frame rate, and bit rate.</li>
+<li><strong>Group of Pictures (GOP) Header
+(<code>00 00 01 B8</code>):</strong> Indicates the start of an
+independently decodable sequence of frames.</li>
+<li><strong>Picture Start Code (<code>00 00 01 00</code>):</strong>
+Marks individual picture payloads (I, P, and B frames).</li>
+</ul>
+<h3 id="2-recording-byte-offsets">2. Recording Byte Offsets</h3>
+<p>Direct random access in MPEG-2 video is difficult because P-frames
+and B-frames rely on reference frames for decoding. DGIndex solves this
+by cataloging the exact byte offsets of every I-frame (keyframe) across
+the VOB files.</p>
+<p>For every GOP encountered, DGIndex logs the file number in the
+sequence and the hexadecimal byte position where the GOP begins. If an
+editor requests a frame in the middle of a VOB sequence, the decoding
+filter uses these offsets to jump immediately to the nearest preceding
+I-frame, decode forward, and serve the requested frame instantly.</p>
+<h3 id="3-cataloging-picture-flags-and-telecine-information">3.
+Cataloging Picture Flags and Telecine Information</h3>
+<p>A critical role of DGIndex is logging temporal and display flags
+embedded in the MPEG-2 Picture Coding Extension headers. For every
+frame, DGIndex extracts:</p>
+<ul>
+<li><strong>Picture Coding Type:</strong> Whether the frame is an
+I-frame, P-frame, or B-frame.</li>
+<li><strong>Top Field First (TFF):</strong> Indicates field dominance
+for interlaced content.</li>
+<li><strong>Repeat First Field (RFF):</strong> Indicates whether a field
+is repeated to convert 24 fps film to 29.97 fps video (3:2
+pulldown).</li>
+</ul>
+<p>DGIndex encodes these attributes as hexadecimal matrix entries within
+the <code>.d2v</code> file. This data informs video editors whether the
+source is truly interlaced, progressive, or telecined, allowing for
+automated inverse telecine (IVTC) without frame-matching errors.</p>
+<h3 id="4-writing-the-d2v-output">4. Writing the .D2V Output</h3>
+<p>Once the scan is complete, DGIndex writes the collected metadata into
+the <code>.d2v</code> text file. The file is structured into several
+distinct parts:</p>
+<ul>
+<li><strong>Header and Configuration:</strong> DGIndex version, stream
+type, and processing settings (e.g., field operation modes like "Honor
+Field Flags" or "Forced Film").</li>
+<li><strong>File List:</strong> Absolute or relative file paths to all
+sequential VOB files referenced in the project.</li>
+<li><strong>Stream Matrix:</strong> Formatted blocks of hexadecimal
+numbers representing each GOP, containing byte offsets followed by the
+per-frame flags.</li>
+</ul>
+<h3 id="5-utilization-in-the-editing-pipeline">5. Utilization in the
+Editing Pipeline</h3>
+<p>The finished <code>.d2v</code> file does not contain actual video
+data; it serves entirely as an external address book. When an AviSynth
+script calls <code>MPEG2Source("video.d2v")</code>, the decoder plugin
+reads the <code>.d2v</code> file, references the original VOBs on disk,
+reconstructs frames accurately via the logged byte offsets and flags,
+and serves uncompressed video frames directly to editing software.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/how-dg-index-creates-d-2-v-index-files-from-vo-bs';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

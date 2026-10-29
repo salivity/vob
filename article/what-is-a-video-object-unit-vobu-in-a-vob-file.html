@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What Is a Video Object Unit (VOBU) in a VOB File? - vob</title>
+    <meta name="description" content="A Video Object Unit (VOBU) is the foundational building block of DVD-Video streams, serving as the smallest independently accessible container within a Video Object (VOB) file. This article explains what a VOBU is, breaks down its internal components, and">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/what-is-a-video-object-unit-vobu-in-a-vob-file">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="What Is a Video Object Unit (VOBU) in a VOB File? - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/what-is-a-video-object-unit-vobu-in-a-vob-file" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="A Video Object Unit (VOBU) is the foundational building block of DVD-Video streams, serving as the smallest independently accessible container within a Video Object (VOB) file. This article explains what a VOBU is, breaks down its internal components, and" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="what-is-a-video-object-unit-vobu-in-a-vob-file">What Is a Video
+Object Unit (VOBU) in a VOB File?</h1>
+<p>A Video Object Unit (VOBU) is the foundational building block of
+DVD-Video streams, serving as the smallest independently accessible
+container within a Video Object (VOB) file. This article explains what a
+VOBU is, breaks down its internal components, and demonstrates how it
+dictates the chronological and structural layout of VOB files to enable
+synchronized multimedia playback, interactive menus, and seamless
+trick-play functions such as fast-forwarding and rewinding.</p>
+<h3 id="the-role-and-definition-of-a-vobu">The Role and Definition of a
+VOBU</h3>
+<p>In the DVD-Video specification, video content is organized into VOB
+(Video Object) files. A VOB file is not merely a raw video container; it
+is an interleaved MPEG-2 Program Stream divided into modular segments
+called Video Object Units (VOBUs).</p>
+<p>A VOBU represents a discrete segment of presentation time, typically
+lasting between 0.4 and 1.0 seconds (rarely up to 1.2 seconds). Each
+VOBU aligns with one or more MPEG video Groups of Pictures (GOPs) and
+must always begin with an I-frame (Intra-coded frame). Because an
+I-frame contains a complete standalone image, every VOBU can be decoded
+independently without relying on data from preceding or succeeding
+units.</p>
+<h3 id="internal-components-of-a-vobu">Internal Components of a
+VOBU</h3>
+<p>A VOBU is composed of a sequence of fixed-size 2048-byte data sectors
+known as packs. These packs interleave video, audio, sub-pictures, and
+control data in the following structure:</p>
+<ul>
+<li><strong>Navigation Pack (NV_PCK):</strong> The mandatory first pack
+of every VOBU. It contains two critical data structures:
+<ul>
+<li><em>Presentation Control Information (PCI):</em> Governs real-time
+display elements, such as menu button highlights, angle changes, and
+non-seamless branch jumps.</li>
+<li><em>Data Search Information (DSI):</em> Contains timing offsets and
+physical sector addresses, allowing the playback engine to jump forward
+or backward during scrubbing, fast-forwarding, or rewinding.</li>
+</ul></li>
+<li><strong>Video Packs (V_PCK):</strong> Contain the payload of the
+compressed MPEG-1 or MPEG-2 video stream.</li>
+<li><strong>Audio Packs (A_PCK):</strong> Contain synchronized audio
+data in formats such as LPCM, Dolby Digital (AC-3), DTS, or MPEG
+audio.</li>
+<li><strong>Sub-Picture Packs (SP_PCK):</strong> Carry run-length
+encoded bitmap graphics used for subtitles, closed captions, and DVD
+menu interface overlays.</li>
+</ul>
+<h3 id="how-vobus-define-the-vob-file-hierarchy">How VOBUs Define the
+VOB File Hierarchy</h3>
+<p>A VOB file is physically an uninterrupted sequence of VOBUs. To
+understand how VOBUs define the file's overall architecture, it helps to
+view the DVD data hierarchy from top to bottom:</p>
+<ol type="1">
+<li><strong>Title / Chapter:</strong> The high-level presentation
+presented to the viewer.</li>
+<li><strong>Cell:</strong> A continuous playback segment often mapped to
+a chapter or menu segment.</li>
+<li><strong>VOB (Video Object):</strong> A collection of one or more
+Cells.</li>
+<li><strong>VOBU:</strong> The subdivision of a Cell containing between
+0.4 and 1.0 seconds of content.</li>
+<li><strong>Pack / Packet:</strong> The 2 KB sector level where raw
+elementary streams reside.</li>
+</ol>
+<p>By standardizing every segment of a VOB file into self-contained
+VOBUs preceded by Navigation Packs, the format decouples physical file
+reading from playback. The playback device uses the addresses embedded
+within each VOBU's NV_PCK to navigate smoothly across cells, skip
+chapters, alter audio or subtitle streams on the fly, and maintain
+strict synchronization between disparate audio, video, and sub-picture
+streams.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/what-is-a-video-object-unit-vobu-in-a-vob-file';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

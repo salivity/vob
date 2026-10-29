@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why VOB Files Do Not Display Subtitles Properly - vob</title>
+    <meta name="description" content="Playing an isolated VOB (Video Object) file often results in missing, desynchronized, or invisible subtitles because these files are not designed to function as standalone media containers. VOB files are modular components of a larger DVD-Video structure,">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/why-vob-files-do-not-display-subtitles-properly">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why VOB Files Do Not Display Subtitles Properly - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/why-vob-files-do-not-display-subtitles-properly" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Playing an isolated VOB (Video Object) file often results in missing, desynchronized, or invisible subtitles because these files are not designed to function as standalone media containers. VOB files are modular components of a larger DVD-Video structure," />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-vob-files-do-not-display-subtitles-properly">Why VOB Files
+Do Not Display Subtitles Properly</h1>
+<p>Playing an isolated VOB (Video Object) file often results in missing,
+desynchronized, or invisible subtitles because these files are not
+designed to function as standalone media containers. VOB files are
+modular components of a larger DVD-Video structure, meaning they rely on
+external control files to properly decode and render subtitle streams.
+Without the accompanying data—specifically the navigation information,
+color palettes, and global timecodes contained in IFO files—most media
+players cannot process the embedded subtitle track accurately.</p>
+<h3 id="missing-ifo-files-and-color-palettes">Missing IFO Files and
+Color Palettes</h3>
+<p>DVD subtitles are not stored as text; they are stored as graphical
+image overlays called subpictures. These subpicture streams do not
+contain their own color information. Instead, they reference a 16-color
+palette stored entirely within the corresponding <code>.IFO</code>
+(Information) file, typically <code>VTS_xx_0.IFO</code>.</p>
+<p>When you extract and play an isolated VOB file without its IFO
+counterpart, your media player has to guess the color palette. This
+frequently leads to rendering failures where the subtitles become fully
+transparent, render as solid black on a dark background, or display as
+illegible, scrambled blocks.</p>
+<h3 id="timecode-discontinuities-across-split-files">Timecode
+Discontinuities Across Split Files</h3>
+<p>DVD specifications limit individual VOB files to a maximum size of 1
+GB. Long-form video is split across multiple sequential files (such as
+<code>VTS_01_1.VOB</code>, <code>VTS_01_2.VOB</code>, and so on).</p>
+<p>Because of this segmented architecture:</p>
+<ul>
+<li>Secondary files (<code>VTS_01_2.VOB</code> onward) often carry
+relative or discontinuous timecodes.</li>
+<li>Subtitle display relies on presentation timestamps (PTS) calibrated
+from the beginning of the entire title set.</li>
+<li>Playing a secondary VOB file individually causes media players to
+misinterpret when a subtitle should appear, resulting in subtitles
+showing up minutes late, disappearing instantly, or failing to trigger
+at all.</li>
+</ul>
+<h3 id="lack-of-language-metadata">Lack of Language Metadata</h3>
+<p>In a full DVD structure, the IFO file maps subtitle stream IDs (such
+as Subpicture Stream 0, 1, or 2) to actual languages (such as English,
+Spanish, or French). An isolated VOB only contains the raw, unnamed
+stream IDs. Many media players default to disabling unmapped subpicture
+streams automatically, requiring users to manually cycle through
+anonymous subtitle tracks that may fail to initialize.</p>
+<h3 id="media-player-playback-modes">Media Player Playback Modes</h3>
+<p>Most modern media players operate in generic file-playback mode when
+opening a single <code>.VOB</code> file, treating it as a standard
+MPEG-2 Program Stream. In this mode, the player bypasses its internal
+DVD-navigator engine. Without the DVD-navigator active, the software
+lacks the processing logic required to parse DVD subpicture packs
+(<code>0xBD</code> private stream 1 markers) alongside the main video
+and audio tracks.</p>
+<h3 id="how-to-resolve-the-issue">How to Resolve the Issue</h3>
+<p>To resolve subtitle display issues with VOB files, use one of the
+following methods:</p>
+<ul>
+<li><strong>Play the Entire Directory:</strong> Open the parent
+<code>VIDEO_TS</code> folder or the main <code>.IFO</code> file in your
+media player rather than the individual <code>.VOB</code> file. This
+initializes the DVD navigation engine and loads all color palettes.</li>
+<li><strong>Create an ISO Image:</strong> Repackage the
+<code>VIDEO_TS</code> directory into an uncompressed ISO file so players
+can read the complete disc structure natively.</li>
+<li><strong>Remux into MKV:</strong> Use tools like MakeMKV to extract
+the MPEG-2 video, audio, and VobSub tracks directly from the DVD
+structure into a single Matroska (MKV) container. Remuxing resolves
+timing issues and embeds the required color palette directly into the
+file header without re-encoding the video.</li>
+</ul></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/why-vob-files-do-not-display-subtitles-properly';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DVD PCI Packet Button Activation Information - vob</title>
+    <meta name="description" content="Within a DVD-Video VOB (Video Object) stream, menu button behavior and user interactivity are governed by Presentation Control Information (PCI) packets embedded inside Navigation Packs (NVPCK). This article provides a focused breakdown of the specific da">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/dvd-pci-packet-button-activation-information">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="DVD PCI Packet Button Activation Information - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/dvd-pci-packet-button-activation-information" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Within a DVD-Video VOB (Video Object) stream, menu button behavior and user interactivity are governed by Presentation Control Information (PCI) packets embedded inside Navigation Packs (NVPCK). This article provides a focused breakdown of the specific da" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="dvd-pci-packet-button-activation-information">DVD PCI Packet
+Button Activation Information</h1>
+<p>Within a DVD-Video VOB (Video Object) stream, menu button behavior
+and user interactivity are governed by Presentation Control Information
+(PCI) packets embedded inside Navigation Packs (NV_PCK). This article
+provides a focused breakdown of the specific data structures inside the
+PCI packet responsible for menu button activation, including the
+Highlight Information (HLI) table, button coordinate mapping, color
+state transitions, and executable button commands.</p>
+<h3 id="the-role-of-the-pci-packet">The Role of the PCI Packet</h3>
+<p>A VOB stream interleaves audio, video, sub-pictures, and navigation
+data. At the start of every Video Object Unit (VOBU), a Navigation Pack
+(<code>NV_PCK</code>) appears, containing two primary sub-packets: Data
+Search Information (DSI) and Presentation Control Information (PCI).
+While the DSI handles playback positioning and search routines, the PCI
+controls the real-time presentation and user interaction, primarily
+through its Highlight Information (<code>HLI</code>) structure.</p>
+<h3 id="highlight-information-hli">Highlight Information (HLI)</h3>
+<p>The <code>HLI</code> is the specific section within the PCI packet
+that defines interactive menus. It tells the DVD player where buttons
+are, how they respond to user input, and what occurs when a button is
+activated (pressed). The <code>HLI</code> contains three core
+sub-elements governing button operations:</p>
+<ol type="1">
+<li><strong>Highlight General Information
+(<code>HLI_GI</code>)</strong></li>
+<li><strong>Button Color Information Table
+(<code>BTN_COLIT</code>)</strong></li>
+<li><strong>Button Information Table (<code>BTNIT</code>)</strong></li>
+</ol>
+<h3 id="highlight-general-information-hli_gi">Highlight General
+Information (<code>HLI_GI</code>)</h3>
+<p>The <code>HLI_GI</code> provides global parameters for the menu's
+interactive state during the presentation of the current VOBU:</p>
+<ul>
+<li><strong>Presentation Timestamps (<code>HLI_S_PTM</code> and
+<code>HLI_E_PTM</code>):</strong> Defines the exact start and end
+presentation times during which the menu buttons are active and
+interactive on screen.</li>
+<li><strong>Button Numbers:</strong> Specifies the total number of
+buttons defined (<code>BTN_Ns</code>), the number of buttons currently
+active, and the default selected button number.</li>
+<li><strong>Forced Button Activation:</strong> Contains parameters such
+as the Forcedly Selected Button Number (<code>FOSL_BTNN</code>). If
+auto-action flags are enabled, this allows a button to automatically
+trigger its activation command after a predetermined duration without
+requiring manual user confirmation.</li>
+</ul>
+<h3 id="button-information-table-btnit-and-button-data-btni">Button
+Information Table (<code>BTNIT</code>) and Button Data
+(<code>BTNI</code>)</h3>
+<p>The <code>BTNIT</code> consists of individual Button Information
+blocks (<code>BTNI</code>) for each button defined on the menu screen
+(supporting up to 36 rectangular buttons for 4:3 displays, or 18 per
+aspect mode in widescreen displays). For each button, the following
+activation-specific parameters are stored:</p>
+<ul>
+<li><strong>Button Coordinates:</strong> Defines the interactive
+bounding box on screen using standard pixel coordinates (<span
+class="math inline">\(X\text{-start}\)</span>, <span
+class="math inline">\(Y\text{-start}\)</span>, <span
+class="math inline">\(X\text{-end}\)</span>, and <span
+class="math inline">\(Y\text{-end}\)</span>). These coordinates link the
+user's cursor or remote navigation directly to the corresponding
+sub-picture graphic overlay.</li>
+<li><strong>Directional Routing:</strong> Directs focus when a user
+presses directional keys (Up, Down, Left, Right), determining which
+button gains focus before activation occurs.</li>
+<li><strong>Auto-Action Flag:</strong> A single-bit parameter indicating
+whether the button should automatically execute its associated command
+immediately upon selection, bypassing the requirement for a secondary
+"Enter" or "OK" confirmation from the user.</li>
+</ul>
+<h3 id="button-commands-btn_cmd">Button Commands
+(<code>BTN_CMD</code>)</h3>
+<p>The most critical data for button activation is the Button Command
+(<code>BTN_CMD</code>) embedded within each button’s profile:</p>
+<ul>
+<li><strong>Virtual Machine Instructions:</strong> Each button contains
+a pre-allocated space (typically an 8-byte instruction) for standard DVD
+Virtual Machine (VM) commands.</li>
+<li><strong>Instruction Execution:</strong> When the player registers an
+activation event (either via the remote's "Enter" key, a mouse/pointer
+click inside the active area coordinates, or an automatic trigger), the
+DVD player suspends current playback and executes this command.</li>
+<li><strong>Target Actions:</strong> Commands typically consist of
+branching operations, such as <code>JumpTT</code> (jump to title),
+<code>LinkPGCN</code> (link to a specific Program Chain),
+<code>LinkPrevPGC</code>, or instructions that alter General Parameter
+Registers (GPRMs) to store user selections before moving to another menu
+state.</li>
+</ul>
+<h3 id="color-and-state-transitions-btn_colit">Color and State
+Transitions (<code>BTN_COLIT</code>)</h3>
+<p>The PCI packet dictates the visual feedback displayed when a button
+transitions from a normal state to an activated state:</p>
+<ul>
+<li><strong>Color and Contrast Mapping:</strong> The
+<code>BTN_COLIT</code> establishes 2-bit color and transparency (alpha)
+mapping for both the "selected" state and the "action" (activated)
+state.</li>
+<li><strong>Activation Highlight:</strong> When a user activates a
+button, the player references the activation color scheme defined in
+this table to momentarily change the sub-picture highlight overlay,
+providing visual confirmation that the button command has been engaged
+before the player executes the navigation branch.</li>
+</ul></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/dvd-pci-packet-button-activation-information';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

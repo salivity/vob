@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How Audio Pack Headers Sync with VOB SCR - vob</title>
+    <meta name="description" content="In a DVD Video Object (VOB) file, audio synchronization relies on aligning the decoder&#39;s internal clock with the System Clock Reference (SCR) found in the pack header, combined with Presentation Time Stamps (PTS) in the packet header. The pack header deli">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/how-audio-pack-headers-sync-with-vob-scr">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How Audio Pack Headers Sync with VOB SCR - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/how-audio-pack-headers-sync-with-vob-scr" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="In a DVD Video Object (VOB) file, audio synchronization relies on aligning the decoder&#39;s internal clock with the System Clock Reference (SCR) found in the pack header, combined with Presentation Time Stamps (PTS) in the packet header. The pack header deli" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-audio-pack-headers-sync-with-vob-scr">How Audio Pack Headers
+Sync with VOB SCR</h1>
+<p>In a DVD Video Object (VOB) file, audio synchronization relies on
+aligning the decoder's internal clock with the System Clock Reference
+(SCR) found in the pack header, combined with Presentation Time Stamps
+(PTS) in the packet header. The pack header delivers the timing
+reference that drives the decoder’s master clock, ensuring that audio
+and video data arrive at the buffers on schedule. By matching the
+Presentation Time Stamps of the audio samples against this synchronized
+master clock, the playback system presents audio frames in exact
+alignment with the video track without drift or buffer underflow.</p>
+<p>A VOB file is based on the MPEG-2 Program Stream format, structured
+into fixed-size units of 2048 bytes called packs. Each pack begins with
+a pack header that contains an SCR field. The SCR is a 42-bit value
+composed of a 33-bit base clocked at 90 kHz and a 9-bit extension
+clocked at 27 MHz. When a pack arrives at the decoder, the SCR provides
+the exact intended time of arrival for that data chunk, calibrating the
+decoder's local System Time Clock (STC) via a phase-locked loop (PLL)
+circuit.</p>
+<p>Contained inside the pack is the Packetized Elementary Stream (PES),
+which encapsulates the actual audio payload (such as AC-3, LPCM, or
+DTS). While the pack header contains the SCR to manage delivery timing,
+the PES header contains the Presentation Time Stamp (PTS). The PTS
+specifies the precise time at which a decoded audio frame must be played
+out through the speakers.</p>
+<p>The synchronization process operates through a two-step
+mechanism:</p>
+<ol type="1">
+<li><strong>Clock Recovery:</strong> The incoming SCR values
+continuously update and correct the playback system's STC. This ensures
+the playback hardware runs at the exact speed intended by the authoring
+multiplexer, counteracting local crystal oscillator drift.</li>
+<li><strong>Timed Presentation:</strong> The audio decoder decompresses
+the audio payload and holds the resulting PCM samples in an output
+buffer. The system continually compares the audio frame's PTS to the
+current running STC. The moment the STC reaches or matches the PTS
+value, the audio frame is rendered.</li>
+</ol>
+<p>Because both audio and video packs share the same timeline
+established by the periodic SCR values, their respective PTS values act
+as absolute markers on a shared clock. When video displays a frame
+assigned to a specific timestamp, the audio track simultaneously renders
+the sample assigned to that identical timestamp, achieving lip-sync
+accuracy across the entire VOB stream.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/how-audio-pack-headers-sync-with-vob-scr';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

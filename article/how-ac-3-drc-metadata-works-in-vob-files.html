@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How AC-3 DRC Metadata Works in VOB Files - vob</title>
+    <meta name="description" content="This article explains how Dynamic Range Compression (DRC) metadata functions within Dolby Digital (AC-3) audio tracks encapsulated inside DVD Video Object (VOB) files. It details how DRC parameters are encoded into AC-3 audio frames, how the VOB container">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/how-ac-3-drc-metadata-works-in-vob-files">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How AC-3 DRC Metadata Works in VOB Files - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/how-ac-3-drc-metadata-works-in-vob-files" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains how Dynamic Range Compression (DRC) metadata functions within Dolby Digital (AC-3) audio tracks encapsulated inside DVD Video Object (VOB) files. It details how DRC parameters are encoded into AC-3 audio frames, how the VOB container" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-ac-3-drc-metadata-works-in-vob-files">How AC-3 DRC Metadata
+Works in VOB Files</h1>
+<p>This article explains how Dynamic Range Compression (DRC) metadata
+functions within Dolby Digital (AC-3) audio tracks encapsulated inside
+DVD Video Object (VOB) files. It details how DRC parameters are encoded
+into AC-3 audio frames, how the VOB container transports this data, and
+the mechanism decoders use to apply non-destructive, real-time volume
+management during playback.</p>
+<h3 id="the-role-of-the-vob-container">The Role of the VOB
+Container</h3>
+<p>A VOB file is based on the MPEG-2 Program Stream format, designed to
+interleave video, audio, and sub-picture streams into a single
+synchronized file. Inside a VOB container, AC-3 audio streams are
+assigned to Private Stream 1 with specific sub-stream IDs (typically
+ranging from <code>0x80</code> to <code>0x87</code>).</p>
+<p>The VOB container treats the AC-3 elementary stream as payload data
+within Packetized Elementary Stream (PES) packets. It does not parse,
+modify, or process the internal AC-3 audio data. Instead, the container
+merely delivers the AC-3 frames to the audio decoder alongside
+Presentation Time Stamps (PTS) to maintain audio-video
+synchronization.</p>
+<h3 id="ac-3-frame-architecture-and-drc-metadata">AC-3 Frame
+Architecture and DRC Metadata</h3>
+<p>An AC-3 stream consists of individual frames, each representing 1,536
+audio samples divided across six discrete audio blocks (AB0 through
+AB5). Each frame contains three primary sections:</p>
+<ol type="1">
+<li><strong>Synchronization Information (syncinfo):</strong> Establishes
+frame boundaries and sample rate.</li>
+<li><strong>Bit Stream Information (BSI):</strong> Contains stream
+configuration data and global metadata, such as dialog normalization
+(<code>dialnorm</code>).</li>
+<li><strong>Audio Blocks (AB0–AB5):</strong> Contain the transform
+coefficients and block-specific metadata, which include dynamic range
+compression values.</li>
+</ol>
+<p>DRC operates via two specific metadata parameters embedded in the
+AC-3 bitstream: <code>dynrng</code> (Dynamic Range) and
+<code>compr</code> (Heavy Compression).</p>
+<ul>
+<li><strong><code>dynrng</code> (Dynamic Range):</strong> An 8-bit value
+found within individual audio blocks. Because it can be defined per
+block, it allows gain adjustments up to six times per frame (roughly
+every 5 milliseconds at 48 kHz). It represents a gain curve applied to
+optimize standard listening environments, providing smooth cuts for loud
+sounds and boosts for soft passages.</li>
+<li><strong><code>compr</code> (Compression):</strong> An 8-bit value
+located in the BSI segment or conditionally within audio blocks. It
+specifies aggressive compression settings intended for high-noise
+listening environments or devices with limited output headroom, such as
+built-in television speakers or RF modulators.</li>
+</ul>
+<h3 id="non-destructive-operation">Non-Destructive Operation</h3>
+<p>The defining characteristic of DRC metadata in AC-3 is that it is
+entirely non-destructive. During the authoring process, the audio
+encoder analyzes the original dynamic range of the master mix and
+calculates the necessary attenuation (cuts) and amplification (boosts)
+relative to the dialog level defined by <code>dialnorm</code>.</p>
+<p>Instead of altering the actual audio samples, the encoder writes
+these calculated gain adjustments into the <code>dynrng</code> and
+<code>compr</code> bit fields. The underlying audio waveform remains at
+full dynamic range inside the stream.</p>
+<h3 id="decoding-and-playback-processing">Decoding and Playback
+Processing</h3>
+<p>When a playback system (such as a DVD player or software media
+player) reads a VOB file, the demultiplexer extracts the AC-3 packets
+and routes them to the AC-3 decoder. The decoder executes the DRC
+instructions using the following operational flow:</p>
+<ol type="1">
+<li><strong>Extraction:</strong> The decoder unpackages the frame, reads
+<code>dialnorm</code>, and parses the <code>dynrng</code> or
+<code>compr</code> bytes.</li>
+<li><strong>Profile Selection:</strong> Depending on user settings and
+output connections, the decoder selects either <strong>Line
+Mode</strong> (which utilizes <code>dynrng</code> and provides moderate
+compression suitable for high-end consumer gear) or <strong>RF
+Mode</strong> (which utilizes <code>compr</code> to eliminate clipping
+on low-headroom outputs).</li>
+<li><strong>User Scaling:</strong> Most decoders offer user-facing DRC
+controls (such as "Night Mode" or a dynamic range percentage slider).
+The decoder scales the metadata values linearly between 0% (full dynamic
+range, metadata ignored) and 100% (full compression applied).</li>
+<li><strong>Gain Application:</strong> The decoded frequency-domain
+coefficients are converted back to time-domain PCM samples. The decoder
+applies the calculated gain factors to these samples prior to
+digital-to-analog conversion or multi-channel PCM output. Loud transient
+peaks are attenuated, and quiet sounds are boosted, keeping dialogue
+clear without requiring constant manual volume adjustments.</li>
+</ol></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/how-ac-3-drc-metadata-works-in-vob-files';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>
