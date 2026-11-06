@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CPPM vs CSS: Differences in DVD Data Encryption - vob</title>
+    <meta name="description" content="Both the Content Scramble System (CSS) and Content Protection for Prerecorded Media (CPPM) were engineered to protect MPEG-2 Program Stream containers on optical media, but they differ fundamentally in their cryptographic strength, key exchange architectu">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/cppm-vs-css-differences-in-dvd-data-encryption">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="CPPM vs CSS: Differences in DVD Data Encryption - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/cppm-vs-css-differences-in-dvd-data-encryption" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Both the Content Scramble System (CSS) and Content Protection for Prerecorded Media (CPPM) were engineered to protect MPEG-2 Program Stream containers on optical media, but they differ fundamentally in their cryptographic strength, key exchange architectu" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="cppm-vs-css-differences-in-dvd-data-encryption">CPPM vs CSS:
+Differences in DVD Data Encryption</h1>
+<p>Both the Content Scramble System (CSS) and Content Protection for
+Prerecorded Media (CPPM) were engineered to protect MPEG-2 Program
+Stream containers on optical media, but they differ fundamentally in
+their cryptographic strength, key exchange architectures, and device
+revocation capabilities. While CSS was deployed to safeguard standard
+DVD-Video files (VOBs), CPPM was developed as a far more resilient
+successor to secure high-resolution DVD-Audio files (AOBs, which share
+the structural characteristics of VOBs).</p>
+<h3 id="underlying-containers-vob-vs-aob">Underlying Containers: VOB vs.
+AOB</h3>
+<p>Standard DVD-Video stores multiplexed audio, video, and navigation
+data in Video Object (<code>.VOB</code>) files located in the
+<code>VIDEO_TS</code> directory. DVD-Audio uses Audio Object
+(<code>.AOB</code>) files stored in the <code>AUDIO_TS</code> directory.
+Structurally, both VOB and AOB files are based on the standard MPEG-2
+Program Stream format, broken down into 2,048-byte sectors.</p>
+<p>In both systems, packet headers remain unencrypted so players can
+demultiplex streams, read timestamps, and navigate the media. However,
+the encryption applied to the payload within these sectors relies on
+completely different cryptographic frameworks.</p>
+<h3 id="cryptographic-algorithms-and-key-strength">Cryptographic
+Algorithms and Key Strength</h3>
+<p>The most significant technical departure between the two standards
+lies in their cipher designs:</p>
+<ul>
+<li><strong>CSS Algorithm:</strong> CSS relies on a proprietary,
+lightweight stream cipher utilizing two Linear Feedback Shift Registers
+(LFSRs) with an effective key length of only 40 bits. Because of weak
+mathematical design and the short key length, CSS was reverse-engineered
+and compromised in 1999 (most notably via DeCSS), allowing keys to be
+brute-forced in fractions of a second.</li>
+<li><strong>CPPM Algorithm:</strong> Developed by the 4C Entity (IBM,
+Intel, Panasonic, and Toshiba), CPPM abandoned the weak CSS stream
+cipher in favor of the Cryptomeria Cipher (C2). C2 is a 56-bit
+Feistel-network-based symmetric block cipher that operates on 64-bit
+blocks over 10 rounds. It provides substantially higher resistance to
+cryptanalysis compared to CSS.</li>
+</ul>
+<h3 id="key-management-and-the-media-key-block-mkb">Key Management and
+the Media Key Block (MKB)</h3>
+<p>The authentication and key delivery pipelines for VOB and AOB data
+represent fundamentally different security models.</p>
+<p>CSS uses a static system:</p>
+<ol type="1">
+<li>Discs contain an encrypted Disc Key and an encrypted Title Key for
+each VOB file.</li>
+<li>Licensed players possess secret Player Keys stored in their hardware
+or firmware.</li>
+<li>The player uses its Player Key to decrypt the Disc Key, which in
+turn decrypts the Title Key used to unscramble the payload data.</li>
+<li>CSS lacked an efficient, forward-looking revocation mechanism; once
+a player key was compromised, revoking it across future media was
+technically difficult and largely ineffective.</li>
+</ol>
+<p>CPPM implements a dynamic broadcast encryption model:</p>
+<ol type="1">
+<li>Instead of static player keys, CPPM media contains a Media Key Block
+(MKB) along with a unique Album Identifier.</li>
+<li>Compliant devices have a set of Device Keys. During playback, the
+device processes the MKB using its Device Keys to calculate the Media
+Key.</li>
+<li>If a specific device or software player key is leaked, newer discs
+simply update the MKB data to exclude that compromised key set from
+successfully calculating the Media Key.</li>
+<li>The Media Key is combined with the Album Identifier to generate the
+final Album Key, which decrypts the C2-encrypted payloads inside the AOB
+data stream.</li>
+</ol>
+<h3 id="application-to-payload-data">Application to Payload Data</h3>
+<p>When applied to the sectors of VOB-like streams:</p>
+<ul>
+<li><strong>CSS</strong> scrambles the video and audio pack payloads
+based on Title Keys negotiated at the start of a title or chapter. Its
+low computational overhead allowed playback on low-power, late-1990s
+hardware, but left the stream vulnerable to offline extraction.</li>
+<li><strong>CPPM</strong> binds the decryption process to the physical
+disc via the Lead-In area's Media Identifier. Even if the encrypted AOB
+content is bit-for-bit cloned to unauthorized media, the derived C2 keys
+will not match because the target physical disc lacks the corresponding,
+pre-recorded Media Identifier from the physical disc mastering
+process.</li>
+</ul></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/cppm-vs-css-differences-in-dvd-data-encryption';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

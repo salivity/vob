@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Role of NV_PCK When Jumping VOB Title Segments - vob</title>
+    <meta name="description" content="This article explains the critical role of the Navigation Pack (NVPCK) when a DVD player jumps to a new title segment inside a Video Object (VOB) file. It details how the NVPCK functions as the foundational control header for Video Object Units (VOBUs), h">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/role-of-nv-pck-when-jumping-vob-title-segments">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Role of NV_PCK When Jumping VOB Title Segments - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/role-of-nv-pck-when-jumping-vob-title-segments" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains the critical role of the Navigation Pack (NVPCK) when a DVD player jumps to a new title segment inside a Video Object (VOB) file. It details how the NVPCK functions as the foundational control header for Video Object Units (VOBUs), h" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="role-of-nv_pck-when-jumping-vob-title-segments">Role of NV_PCK
+When Jumping VOB Title Segments</h1>
+<p>This article explains the critical role of the Navigation Pack
+(NV_PCK) when a DVD player jumps to a new title segment inside a Video
+Object (VOB) file. It details how the NV_PCK functions as the
+foundational control header for Video Object Units (VOBUs), how its
+internal data structures—Presentation Control Information (PCI) and Data
+Search Information (DSI)—guide the decoder, and how it ensures precise
+timing, buffer management, and stream synchronization during playback
+transitions.</p>
+<h3 id="the-foundation-of-the-nv_pck">The Foundation of the NV_PCK</h3>
+<p>In the DVD-Video specification, a VOB stream consists of sequential
+multiplexed packs of 2,048 bytes each. The fundamental operational unit
+is the Video Object Unit (VOBU), which typically holds 0.4 to 1.0
+seconds of presentation material beginning with a closed or open Group
+of Pictures (GOP).</p>
+<p>Every VOBU must begin with an NV_PCK (Navigation Pack). When a
+playback system jumps to a new title, chapter, or cell segment, it
+targets the start sector of the corresponding VOBU. The NV_PCK at this
+boundary acts as the master control block that informs the hardware or
+software decoder how to parse, time, and present the incoming data.</p>
+<h3 id="presentation-control-information-pci">Presentation Control
+Information (PCI)</h3>
+<p>The NV_PCK contains a specialized data packet known as the
+Presentation Control Information (PCI) buffer (sub-stream ID
+<code>0x00</code>). During a title segment jump, the PCI performs
+several immediate configurations:</p>
+<ul>
+<li><strong>Presentation Timing Synchronization:</strong> The PCI
+defines the Presentation Time Stamp (PTS) reference for the first video
+frame in the VOBU. When jumping between distinct titles, the system time
+clock (STC) often discontinues; the PCI provides the exact baseline to
+resynchronize audio, sub-picture, and video streams.</li>
+<li><strong>Stream Attribute Validation:</strong> It verifies active
+audio streams, sub-picture tracks, and display modes (such as 16:9
+anamorphic versus 4:3 letterbox) intended for the target segment.</li>
+<li><strong>Angle and Interleaving Management:</strong> If the title
+segment jump involves a multi-angle scene, the PCI specifies the angle
+block properties and flags non-seamless or seamless angle switches.</li>
+<li><strong>Interactive Highlights (HLI):</strong> If the new segment
+includes menu controls or interactive buttons, the PCI contains the
+Highlight Information (HLI), defining button coordinates, colors, and
+activation states instantly upon arrival.</li>
+</ul>
+<h3 id="data-search-information-dsi">Data Search Information (DSI)</h3>
+<p>Alongside the PCI, the NV_PCK houses the Data Search Information
+(DSI) packet (sub-stream ID <code>0x01</code>). The DSI is dedicated to
+playback control, navigation offsets, and buffer flow:</p>
+<ul>
+<li><strong>Navigational Pointers (VOBU_SRI):</strong> The DSI contains
+the Search Information table (<code>VOBU_SRI</code>), which lists
+relative sector offsets to previous and forward VOBUs. Upon landing on
+the new segment, the player instantly obtains the forward and backward
+navigation maps required for trick-play modes (fast-forward, rewind, and
+smooth scanning).</li>
+<li><strong>Seamless Playback Information (SML_PBI):</strong> When
+jumping to a title segment designated for seamless branching, the DSI
+contains end addresses for interleaved units and defines the exact
+sector where audio and video streams terminate, preventing buffer
+underruns.</li>
+<li><strong>VOB Unit Addressing:</strong> It confirms the current VOBU's
+start address (<code>NV_PCK_SCR</code>) and termination address,
+allowing the demultiplexer to calculate transfer rates and verify that
+the seek operation landed on the correct sector boundary.</li>
+</ul>
+<h3 id="decoder-buffer-management-during-a-jump">Decoder Buffer
+Management During a Jump</h3>
+<p>When jumping to an arbitrary title segment within a VOB, the decoder
+cannot assume stream continuity. The incoming NV_PCK commands the
+decoder hardware to execute specific state changes:</p>
+<ol type="1">
+<li><strong>Buffer Flushing:</strong> Unless marked as a seamless
+branch, the presence of the new NV_PCK signals the track buffer, video
+buffer (VBV), and audio buffer to clear residual data from the prior
+title segment.</li>
+<li><strong>System Clock Reference (SCR) Alignment:</strong> The pack
+header of the NV_PCK carries a new SCR value. The decoder reloads its
+internal master clock to match this SCR, ensuring that subsequent
+elementary audio and video packs decode at the designated presentation
+times without stutter or pitch distortion.</li>
+<li><strong>Decoupling Dependency:</strong> By reading the NV_PCK
+immediately preceding an I-frame, the decoder establishes an independent
+decode point, discarding dependencies on previous reference frames from
+the preceding title.</li>
+</ol></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/role-of-nv-pck-when-jumping-vob-title-segments';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

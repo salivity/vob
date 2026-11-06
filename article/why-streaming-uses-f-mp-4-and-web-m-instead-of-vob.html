@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why Streaming Uses fMP4 and WebM Instead of VOB - vob</title>
+    <meta name="description" content="Modern streaming platforms have abandoned legacy containers like DVD Video Objects (VOB) and MPEG Program Streams (MPEG-PS) in favor of fragmented MP4 (fMP4) and WebM. This transition is driven by the requirements of modern web delivery: adaptive bitrate">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/why-streaming-uses-f-mp-4-and-web-m-instead-of-vob">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why Streaming Uses fMP4 and WebM Instead of VOB - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/why-streaming-uses-f-mp-4-and-web-m-instead-of-vob" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Modern streaming platforms have abandoned legacy containers like DVD Video Objects (VOB) and MPEG Program Streams (MPEG-PS) in favor of fragmented MP4 (fMP4) and WebM. This transition is driven by the requirements of modern web delivery: adaptive bitrate" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-streaming-uses-fmp4-and-webm-instead-of-vob">Why Streaming
+Uses fMP4 and WebM Instead of VOB</h1>
+<p>Modern streaming platforms have abandoned legacy containers like DVD
+Video Objects (VOB) and MPEG Program Streams (MPEG-PS) in favor of
+fragmented MP4 (fMP4) and WebM. This transition is driven by the
+requirements of modern web delivery: adaptive bitrate streaming, low
+latency, native browser playback via HTML5, and efficient bandwidth
+management. While VOB and Program Streams were built for linear playback
+from physical media, fMP4 and WebM are engineered specifically to
+transmit media in lightweight, isolated chunks over HTTP networks.</p>
+<h3 id="the-architectural-limitation-of-vob-and-program-streams">The
+Architectural Limitation of VOB and Program Streams</h3>
+<p>VOB files and standard MPEG Program Streams were designed in the
+1990s primarily for physical media, such as DVDs. Their architecture
+relies heavily on MPEG-2 compression and a continuous, interleaved data
+stream:</p>
+<ul>
+<li><strong>Monolithic Structure:</strong> Program Streams assume a
+continuous, stateful connection to the storage medium. They lack
+standard metadata segmentation for random access over the internet,
+requiring players to read linear byte ranges rather than discrete,
+time-indexed media segments.</li>
+<li><strong>Lack of Adaptive Bitrate (ABR) Support:</strong> Streaming
+services require the ability to dynamically scale video resolution up or
+down based on the user's current network throughput. VOB files cannot
+seamlessly switch bitrates on the fly without causing playback stalls or
+buffer collapses.</li>
+<li><strong>Obsolete Codec Integration:</strong> VOB is fundamentally
+coupled with MPEG-2 video and AC-3 or PCM audio. These legacy codecs
+require dramatically higher bitrates to achieve acceptable visual
+fidelity compared to modern compression formats like H.264 (AVC), H.265
+(HEVC), VP9, and AV1.</li>
+<li><strong>Absence of Web Support:</strong> Modern web browsers do not
+contain native demuxers or decoders for MPEG-PS or VOB files, rendering
+them unplayable without third-party plugins.</li>
+</ul>
+<h3 id="why-fragmented-mp4-fmp4-dominates-streaming">Why Fragmented MP4
+(fMP4) Dominates Streaming</h3>
+<p>Standard MP4 files utilize a single unified index table—the "moov"
+atom—which outlines the timing, frame offsets, and metadata for the
+entire media file. If the <code>moov</code> atom is placed at the end of
+a file or becomes too large, playback cannot begin until it is
+downloaded.</p>
+<p>Fragmented MP4 solves this by breaking the file into a sequence of
+self-contained segments using two repeating structures:</p>
+<ul>
+<li><strong>Movie Fragment (<code>moof</code>):</strong> Contains the
+playback timing, duration, and sample offsets for a short segment of
+video (typically 2 to 6 seconds).</li>
+<li><strong>Media Data (<code>mdat</code>):</strong> Contains the actual
+raw encoded video/audio payloads associated with that specific
+fragment.</li>
+</ul>
+<p>This segmentation allows streaming servers to deliver small chunks
+over standard HTTP (via protocols like HLS and MPEG-DASH). When a
+viewer's bandwidth fluctuates, the player requests the next two-second
+fragment at a higher or lower bitrate. Media Source Extensions (MSE) in
+web browsers read these fragments directly into the playback buffer
+without reloading the video pipeline.</p>
+<h3 id="the-role-of-webm-in-web-delivery">The Role of WebM in Web
+Delivery</h3>
+<p>WebM, an open-source format derived from the Matroska (MKV)
+container, serves a role similar to fMP4 but focuses on royalty-free web
+distribution:</p>
+<ul>
+<li><strong>Modern Codec Optimization:</strong> WebM is natively
+designed to carry VP8, VP9, and AV1 video streams paired with Opus
+audio. These codecs deliver equal or superior quality to proprietary
+alternatives at much lower bandwidths.</li>
+<li><strong>Native Browser Integration:</strong> WebM was built
+explicitly for the web ecosystem. Major browsers feature built-in WebM
+demuxers, enabling direct playback without runtime container
+conversion.</li>
+<li><strong>Lightweight Chunking:</strong> Like fMP4, WebM streams can
+be segmented into discrete clusters for adaptive delivery, making it a
+staple for platforms like YouTube to deliver high-resolution content
+without paying patent licensing fees on container formats.</li>
+</ul>
+<h3 id="key-advantages-of-fmp4-and-webm-over-legacy-streams">Key
+Advantages of fMP4 and WebM Over Legacy Streams</h3>
+<ol type="1">
+<li><strong>Efficiency Over HTTP:</strong> Media is transmitted as
+standard static files (<code>.m4s</code>, <code>.mp4</code>, or
+<code>.webm</code>) that can be cached by standard Content Delivery
+Networks (CDNs) globally.</li>
+<li><strong>Instant Seeking:</strong> Viewers can skip to any point in a
+video timeline by requesting only the exact segment corresponding to
+that timestamp, rather than downloading continuous stream data.</li>
+<li><strong>Live Streaming Compatibility:</strong> Broadcasters can
+append newly generated <code>moof</code>/<code>mdat</code> fragments in
+real-time, enabling low-latency live streaming without knowing the total
+duration of the file in advance.</li>
+</ol></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/why-streaming-uses-f-mp-4-and-web-m-instead-of-vob';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

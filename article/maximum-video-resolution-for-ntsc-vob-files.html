@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maximum Video Resolution for NTSC VOB Files - vob</title>
+    <meta name="description" content="The maximum permissible video resolution for an NTSC VOB file is standard definition 720 × 480 pixels. This article explains the technical specifications governing VOB files within the DVD-Video standard, the role of pixel aspect ratios, and the strict en">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/maximum-video-resolution-for-ntsc-vob-files">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Maximum Video Resolution for NTSC VOB Files - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/maximum-video-resolution-for-ntsc-vob-files" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The maximum permissible video resolution for an NTSC VOB file is standard definition 720 × 480 pixels. This article explains the technical specifications governing VOB files within the DVD-Video standard, the role of pixel aspect ratios, and the strict en" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="maximum-video-resolution-for-ntsc-vob-files">Maximum Video
+Resolution for NTSC VOB Files</h1>
+<p>The maximum permissible video resolution for an NTSC VOB file is
+standard definition 720 × 480 pixels. This article explains the
+technical specifications governing VOB files within the DVD-Video
+standard, the role of pixel aspect ratios, and the strict encoding
+constraints that define NTSC playback.</p>
+<h3 id="the-720--480-standard">The 720 × 480 Standard</h3>
+<p>VOB (Video Object) files are container formats based on the MPEG-2
+Program Stream specification, explicitly designed for DVD-Video media.
+Under the official DVD Forum specifications for the NTSC television
+system, the highest supported video resolution—commonly known as "Full
+D1"—is <strong>720 × 480 pixels</strong>.</p>
+<p>Any file authored to compliant DVD-Video specifications cannot exceed
+this dimension. Attempting to encode a VOB file at high-definition
+resolutions (such as 1280 × 720 or 1920 × 1080) violates standard DVD
+authoring rules and will cause playback failure on standard DVD
+players.</p>
+<h3 id="aspect-ratios-and-non-square-pixels">Aspect Ratios and
+Non-Square Pixels</h3>
+<p>Although the maximum raw pixel dimensions are locked at 720 × 480,
+NTSC VOB files support two distinct display aspect ratios:</p>
+<ul>
+<li><strong>4:3 Standard:</strong> Displays full-screen video using a
+non-square pixel aspect ratio of roughly 10:11 (0.91).</li>
+<li><strong>16:9 Widescreen (Anamorphic):</strong> Horizontally
+compresses a widescreen picture into the same 720 × 480 grid using a
+pixel aspect ratio of approximately 40:33 (1.21). When played back on a
+compatible display, the player stretches the picture horizontally to
+match modern widescreen televisions without altering the underlying 720
+× 480 frame.</li>
+</ul>
+<h3 id="frame-rate-and-scanning">Frame Rate and Scanning</h3>
+<p>An NTSC VOB file operating at 720 × 480 must adhere to a frame rate
+of 29.97 frames per second (fps), delivered as 59.94 interlaced fields
+per second. Content originally produced at 24 fps (such as theatrical
+film) is converted to the required 29.97 fps rate within the MPEG-2
+stream using a process called 2:3 pulldown.</p>
+<h3 id="permissible-lower-ntsc-resolutions">Permissible Lower NTSC
+Resolutions</h3>
+<p>While 720 × 480 represents the maximum limit, the DVD-Video standard
+also permits lower resolutions within NTSC VOB files for specific
+compression efficiency requirements:</p>
+<ul>
+<li><strong>704 × 480:</strong> Commonly used in television broadcast
+transfers (4:3 or 16:9).</li>
+<li><strong>352 × 480 (Half D1):</strong> Halves the horizontal
+resolution to conserve bit rate (4:3 only).</li>
+<li><strong>352 × 240 (SIF):</strong> Uses MPEG-1 or MPEG-2 encoding
+matching standard VCD resolution (4:3 only).</li>
+</ul></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/maximum-video-resolution-for-ntsc-vob-files';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

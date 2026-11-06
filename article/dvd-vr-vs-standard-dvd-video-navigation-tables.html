@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DVD-VR vs Standard DVD-Video Navigation Tables - vob</title>
+    <meta name="description" content="DVD-Video and DVD-VR (DVD Video Recording) handle disc navigation differently because they were designed for different use cases: standard DVD-Video was built for commercial, read-only playback with complex interactive menus, whereas DVD-VR was engineered">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/dvd-vr-vs-standard-dvd-video-navigation-tables">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="DVD-VR vs Standard DVD-Video Navigation Tables - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/dvd-vr-vs-standard-dvd-video-navigation-tables" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="DVD-Video and DVD-VR (DVD Video Recording) handle disc navigation differently because they were designed for different use cases: standard DVD-Video was built for commercial, read-only playback with complex interactive menus, whereas DVD-VR was engineered" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="dvd-vr-vs-standard-dvd-video-navigation-tables">DVD-VR vs
+Standard DVD-Video Navigation Tables</h1>
+<p>DVD-Video and DVD-VR (DVD Video Recording) handle disc navigation
+differently because they were designed for different use cases: standard
+DVD-Video was built for commercial, read-only playback with complex
+interactive menus, whereas DVD-VR was engineered for real-time
+recording, rewritability, and on-disc editing. The primary difference
+lies in how navigation tables are structured and referenced: standard
+DVD-Video relies on a rigid hierarchy of Video Title Sets (VTS) with
+navigation data embedded directly into the video stream via Navigation
+Packs (NV_PCK), while DVD-VR centralizes navigation in a single
+management file using Original and User-Defined Program Chains (PGCs)
+paired with simplified Real-Time Data Information (RDI) packs.</p>
+<h3 id="file-organization-and-hierarchy">File Organization and
+Hierarchy</h3>
+<p>Standard DVD-Video discs store data inside the <code>VIDEO_TS</code>
+directory, dividing control information across multiple files:</p>
+<ul>
+<li><strong>VMG (Video Manager):</strong> Located in
+<code>VIDEO_TS.IFO</code>, this table handles disc-wide navigation,
+parental controls, and global menus.</li>
+<li><strong>VTS (Video Title Sets):</strong> Each video title set has
+its own <code>VTS_xx_0.IFO</code> file containing dedicated Program
+Chain Information Tables (<code>VTS_PGCIT</code>), which map the
+chapters, playback order, and cell boundaries for that specific
+title.</li>
+</ul>
+<p>DVD-VR eliminates this multi-file hierarchy, storing everything in a
+<code>DVD_RTAV</code> directory using just two operational files:
+<code>VR_MANGR.IFO</code> (management data) and
+<code>VR_MOVIE.VRO</code> (the combined audio/video stream). All
+navigation tables exist entirely within <code>VR_MANGR.IFO</code>, doing
+away with individual title-set files.</p>
+<h3 id="in-stream-navigation-packs-nv_pck-vs-rdi_pck">In-Stream
+Navigation Packs: NV_PCK vs. RDI_PCK</h3>
+<p>In standard DVD-Video, navigation is deeply intertwined with the
+MPEG-2 stream:</p>
+<ul>
+<li>Every Video Object Unit (VOBU)—roughly 0.5 seconds of video—begins
+with a <strong>Navigation Pack (NV_PCK)</strong>.</li>
+<li>The NV_PCK contains two specific sub-tables: the
+<strong>Presentation Control Information (PCI)</strong> and the
+<strong>Data Search Information (DSI)</strong>.</li>
+<li><strong>PCI</strong> manages real-time menu button actions,
+sub-picture switching, and angles.</li>
+<li><strong>DSI</strong> provides forward and backward sector pointers
+to other VOBUs, enabling fast-forward, rewind, and seamless
+branching.</li>
+</ul>
+<p>DVD-VR discards PCI and DSI tables to allow real-time encoding
+without the computational overhead of calculating complex cross-sector
+jump pointers:</p>
+<ul>
+<li>Each VOBU begins with a <strong>Real-Time Data Information (RDI)
+Pack</strong>.</li>
+<li>The RDI pack stores basic presentation timestamps, copy generation
+management system (CGMS) flags, and aspect ratio flags, but lacks
+interactive button tables or complex jump pointers.</li>
+</ul>
+<h3 id="program-chain-structures-fixed-playback-vs-playlists">Program
+Chain Structures: Fixed Playback vs. Playlists</h3>
+<p>The Program Chain (PGC) tables define playback sequencing, but they
+behave differently across both formats:</p>
+<ul>
+<li><strong>DVD-Video:</strong> Navigation uses fixed Program Chain
+Information (PGCI) tables. Titles consist of sequential Cells grouped
+into Programs. Because navigation is authored beforehand, modifying the
+order of playback or trimming scenes requires rebuilding the
+<code>VTS_PGCIT</code> and re-multiplexing the VOB files to update
+sector pointers.</li>
+<li><strong>DVD-VR:</strong> Navigation is split into two primary PGC
+tables:
+<ol type="1">
+<li><strong>Original PGC (ORG_PGCI):</strong> Represents the raw,
+chronological recordings as they exist on the disc. It automatically
+updates when new video is recorded or deleted.</li>
+<li><strong>User-Defined PGC (UD_PGCI):</strong> Serves as a virtual
+playlist table. Users can create, delete, reorder, and trim scenes
+without touching the recorded stream in <code>VR_MOVIE.VRO</code>. The
+UD_PGCI simply references start and end timecodes within the existing
+stream.</li>
+</ol></li>
+</ul>
+<h3 id="time-mapping-and-random-access">Time Mapping and Random
+Access</h3>
+<ul>
+<li><strong>DVD-Video:</strong> Uses the <strong>Time Map Table
+(VTS_TMAP)</strong> inside each title's IFO file. It maps playback
+intervals (typically every few seconds) directly to logical sector
+numbers (LSNs) in the corresponding <code>.VOB</code> files to allow
+jump-to-time functionality.</li>
+<li><strong>DVD-VR:</strong> Utilizes a <strong>Time Map (TMAP)</strong>
+located inside the Video Object Information (VOBI) structure within
+<code>VR_MANGR.IFO</code>. Because DVD-VR discs (such as DVD-RAM or
+DVD-RW) frequently undergo file fragmentation from repeated recording
+and deleting, the DVD-VR time map translates playback time directly to
+discontinuous data extents within the single <code>.VRO</code>
+file.</li>
+</ul></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/dvd-vr-vs-standard-dvd-video-navigation-tables';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

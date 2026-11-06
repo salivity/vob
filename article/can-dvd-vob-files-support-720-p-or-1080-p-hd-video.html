@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Can DVD VOB Files Support 720p or 1080p HD Video? - vob</title>
+    <meta name="description" content="Standard DVD VOB (Video Object) files cannot store high-definition video such as 720p or 1080p under the official DVD-Video specification. A standard DVD strictly restricts video playback to standard definition (SD) formats, specifically 480i/p for NTSC a">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/can-dvd-vob-files-support-720-p-or-1080-p-hd-video">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Can DVD VOB Files Support 720p or 1080p HD Video? - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/can-dvd-vob-files-support-720-p-or-1080-p-hd-video" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Standard DVD VOB (Video Object) files cannot store high-definition video such as 720p or 1080p under the official DVD-Video specification. A standard DVD strictly restricts video playback to standard definition (SD) formats, specifically 480i/p for NTSC a" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="can-dvd-vob-files-support-720p-or-1080p-hd-video">Can DVD VOB
+Files Support 720p or 1080p HD Video?</h1>
+<p>Standard DVD VOB (Video Object) files cannot store high-definition
+video such as 720p or 1080p under the official DVD-Video specification.
+A standard DVD strictly restricts video playback to standard definition
+(SD) formats, specifically 480i/p for NTSC and 576i/p for PAL. While
+modern software can technically mux high-definition streams into an
+MPEG-2 Program Stream container, doing so breaks compatibility with
+standard DVD authoring rules and standalone DVD players. This article
+explains the technical constraints of VOB files, the consequences of
+forcing HD content into them, and the correct formats to use for
+high-definition disc media.</p>
+<h2 id="the-dvd-video-resolution-specifications">The DVD-Video
+Resolution Specifications</h2>
+<p>The DVD-Video standard, governed by the DVD Forum, was established in
+the mid-1990s when standard-definition cathode-ray tube (CRT)
+televisions were the industry norm. Under this official specification,
+video multiplexed into a VOB container must adhere to precise resolution
+boundaries:</p>
+<ul>
+<li><strong>NTSC:</strong> Maximum resolution of 720×480 pixels at 29.97
+frames per second (or 23.976 fps with pulldown).</li>
+<li><strong>PAL:</strong> Maximum resolution of 720×576 pixels at 25
+frames per second.</li>
+</ul>
+<p>High-definition resolutions like 720p (1280×720) and 1080p
+(1920×1080) exceed these limits. Commercial DVD players and standard
+authoring software enforce these boundaries strictly. If an authoring
+tool encounters a video stream higher than 720×480 or 720×576, it will
+automatically reject the file or downscale the footage to standard
+definition before building the VOB structure.</p>
+<h2 id="technical-architecture-of-a-vob-file">Technical Architecture of
+a VOB File</h2>
+<p>A VOB file is a specialized container format based on the MPEG-2
+Program Stream (MPEG-PS). In an authentic DVD-Video environment, a VOB
+file packages:</p>
+<ol type="1">
+<li><strong>MPEG-2 Video</strong> (or, rarely, MPEG-1) limited to SD
+parameters.</li>
+<li><strong>Audio Streams</strong> in formats such as AC-3 (Dolby
+Digital), DTS, or uncompressed Linear PCM.</li>
+<li><strong>Subpictures and Menus</strong> for navigation and subtitle
+overlays.</li>
+<li><strong>Navigation Packets (NV_PCK)</strong> that tell the DVD
+player hardware how to read the stream in real time.</li>
+</ol>
+<p>Because MPEG-2 compression is theoretically capable of encoding at
+1080p, it is technically possible on a computer to encode a 1080p MPEG-2
+video stream, package it into an MPEG-PS container, and name the
+extension <code>.vob</code>. However, this file is not a compliant
+DVD-Video file.</p>
+<h2 id="what-happens-when-hd-video-is-placed-in-a-vob-container">What
+Happens When HD Video Is Placed in a VOB Container?</h2>
+<p>If you create an out-of-spec VOB file containing 720p or 1080p
+video:</p>
+<ul>
+<li><strong>Standalone DVD Players:</strong> The player will return a
+playback error, freeze, or display a "Format Not Supported" message. The
+hardware decoders in DVD players lack the processing power and memory
+buffers required to decode HD bitstreams.</li>
+<li><strong>Computer Media Players:</strong> Modern software players
+such as VLC or MPC-HC might successfully decode the file. They recognize
+the underlying MPEG-PS container and decode the video regardless of the
+resolution, but this operates purely as a video file on a hard drive,
+not a functional DVD.</li>
+</ul>
+<h2 id="alternatives-for-storing-hd-video-on-discs">Alternatives for
+Storing HD Video on Discs</h2>
+<p>If you need to store true 720p or 1080p video on physical optical
+media, you must bypass the standard DVD-Video/VOB format and use one of
+the following methods:</p>
+<h3 id="1-blu-ray-disc-bdmv--m2ts">1. Blu-ray Disc (BDMV / M2TS)</h3>
+<p>The standard successor to DVD is Blu-ray. Blu-ray natively supports
+720p, 1080i, and 1080p video using modern codecs like H.264 (AVC), H.265
+(HEVC for 4K), and high-profile MPEG-2. Instead of VOB files, Blu-ray
+uses the BDAV MPEG-2 Transport Stream container format
+(<code>.m2ts</code>).</p>
+<h3 id="2-avchd-on-dvd-media">2. AVCHD on DVD Media</h3>
+<p>If you want to use inexpensive, standard DVD-R media to store HD
+video, the AVCHD (Advanced Video Coding High Definition) format is the
+proper solution. AVCHD structures HD video (up to 1080p encoded in
+H.264) onto a standard red-laser DVD disc. While standard DVD players
+cannot read AVCHD discs, most standalone Blu-ray players can read and
+play them seamlessly.</p>
+<h3 id="3-data-discs-mp4-or-mkv">3. Data Discs (MP4 or MKV)</h3>
+<p>For playback on modern smart TVs, computers, and game consoles,
+high-definition files (720p/1080p) should be encoded using MP4 or MKV
+containers with H.264 or H.265 codecs and burned as a simple data disc,
+rather than structured into a traditional DVD-Video file system.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/can-dvd-vob-files-support-720-p-or-1080-p-hd-video';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

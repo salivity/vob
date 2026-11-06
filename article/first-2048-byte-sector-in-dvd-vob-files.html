@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>First 2048-Byte Sector in DVD VOB Files - vob</title>
+    <meta name="description" content="This article examines the structural architecture and technical role of the first 2048-byte sector in a DVD-compliant Video Object (VOB) file. In the DVD-Video specification, every VOB file is organized into fixed-size 2048-byte logical sectors matching t">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/first-2048-byte-sector-in-dvd-vob-files">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="First 2048-Byte Sector in DVD VOB Files - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/first-2048-byte-sector-in-dvd-vob-files" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article examines the structural architecture and technical role of the first 2048-byte sector in a DVD-compliant Video Object (VOB) file. In the DVD-Video specification, every VOB file is organized into fixed-size 2048-byte logical sectors matching t" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="first-2048-byte-sector-in-dvd-vob-files">First 2048-Byte Sector
+in DVD VOB Files</h1>
+<p>This article examines the structural architecture and technical role
+of the first 2048-byte sector in a DVD-compliant Video Object (VOB)
+file. In the DVD-Video specification, every VOB file is organized into
+fixed-size 2048-byte logical sectors matching the physical sectors of a
+DVD disc. The very first sector serves a specialized operational role as
+the Navigation Pack (NV_PCK), which contains critical timing, search,
+and presentation control metadata rather than raw audio or video
+data.</p>
+<h2 id="the-navigation-pack-nv_pck">The Navigation Pack (NV_PCK)</h2>
+<p>In a DVD-compliant VOB, elementary video, audio, and sub-picture
+streams are grouped into Video Object Units (VOBUs). The DVD-Video
+specification dictates that every VOBU must begin with exactly one
+Navigation Pack. Consequently, the first 2048-byte sector of any
+compliant VOB file is the NV_PCK of the first VOBU, acting as the master
+synchronization and navigation header for the content that follows.</p>
+<p>The 2048 bytes of this sector are strictly partitioned into standard
+headers and two dedicated sub-packets:</p>
+<ol type="1">
+<li><strong>Pack Header (14 bytes):</strong> Conforms to the MPEG-2
+Program Stream specification. It contains the standard pack start code
+(<code>0x000001BA</code>) and the System Clock Reference (SCR),
+establishing the fundamental base timeline for decoding
+synchronization.</li>
+<li><strong>System Header (24 bytes):</strong> Outlines stream
+parameters, maximum data rate bounds, and buffer management limits for
+the player's decoders.</li>
+<li><strong>Presentation Control Information (PCI) Packet (980
+bytes):</strong> Encapsulated as an MPEG Private Stream 2 packet
+(<code>0x000001BF</code>).</li>
+<li><strong>Data Search Information (DSI) Packet (1018 bytes):</strong>
+Also encapsulated as an MPEG Private Stream 2 packet
+(<code>0x000001BF</code>).</li>
+</ol>
+<h2 id="presentation-control-information-pci">Presentation Control
+Information (PCI)</h2>
+<p>The PCI buffer within the first sector governs real-time display and
+user interaction for the initial presentation window (typically spanning
+0.4 to 1.0 seconds of video). Key components include:</p>
+<ul>
+<li><strong>PCI General Information (PCI_GI):</strong> Records the VOBU
+start and end presentation timestamps (PTS), the sector address of the
+VOBU, and user operation (UOP) restrictions that dictate whether
+functions like fast-forwarding, chapter skipping, or menu calls are
+temporarily locked.</li>
+<li><strong>Non-Seamless Angle Information (NSMLS_ANGL):</strong>
+Manages jump targets and stream switching points when multi-angle
+viewing is active.</li>
+<li><strong>Highlight Information (HLI):</strong> Contains button
+coordinates, color palettes, and menu execution commands if the VOB
+represents an interactive menu or interactive video sequence.</li>
+</ul>
+<h2 id="data-search-information-dsi">Data Search Information (DSI)</h2>
+<p>The remaining payload of the first 2048-byte sector contains the DSI,
+which enables trick modes, navigation jumps, and seamless playback
+buffers. Crucial structures inside the DSI include:</p>
+<ul>
+<li><strong>DSI General Information (DSI_GI):</strong> Contains
+reference end addresses for the video frame sequence (I-frame end
+sector, reference frame markers) to facilitate rapid keyframe
+decoding.</li>
+<li><strong>Seamless Playback Information (SML_PBI):</strong> Provides
+interleaving data and transfer sizes necessary to guarantee continuous,
+buffer-underrun-free track traversal across disc layers or branched
+storylines.</li>
+<li><strong>VOBU Search Information (VOBU_SRI):</strong> A table
+containing forward and backward sector offsets to other VOBUs located
+relative to the current position (e.g., offsets to VOBUs at intervals
+like 0.5s, 1s, 2s, up to 120s forward and backward). This table allows
+players to perform smooth fast-forward and rewind functions without
+reading non-reference sectors.</li>
+<li><strong>Synchronous Information (SYNCI):</strong> Addresses the
+starting points of corresponding audio and sub-picture packets that
+correlate with the visual presentation of the current VOBU.</li>
+</ul>
+<h2 id="conclusion-of-structural-impact">Conclusion of Structural
+Impact</h2>
+<p>Without this specific 2048-byte structure at offset zero, a demuxer
+or hardware DVD player cannot initialize the playback buffers, align the
+audio/video clocks, identify chapter divisions, or build
+forward/backward search tables. The initial 2048-byte sector acts as the
+foundational map that transforms a standard MPEG-2 Program Stream into a
+fully navigatable, DVD-compliant asset.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/first-2048-byte-sector-in-dvd-vob-files';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

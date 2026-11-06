@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How DVD Bonus Features Map to Secondary VOB Files - vob</title>
+    <meta name="description" content="On a DVD-Video disc, bonus features and deleted scenes are mapped to secondary Video Object (VOB) files through a structured layout of Video Title Sets (VTS) orchestrated by Information (IFO) files. Rather than being loose media files, extras are multiple">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/how-dvd-bonus-features-map-to-secondary-vob-files">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How DVD Bonus Features Map to Secondary VOB Files - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/how-dvd-bonus-features-map-to-secondary-vob-files" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="On a DVD-Video disc, bonus features and deleted scenes are mapped to secondary Video Object (VOB) files through a structured layout of Video Title Sets (VTS) orchestrated by Information (IFO) files. Rather than being loose media files, extras are multiple" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-dvd-bonus-features-map-to-secondary-vob-files">How DVD Bonus
+Features Map to Secondary VOB Files</h1>
+<p>On a DVD-Video disc, bonus features and deleted scenes are mapped to
+secondary Video Object (VOB) files through a structured layout of Video
+Title Sets (VTS) orchestrated by Information (IFO) files. Rather than
+being loose media files, extras are multiplexed MPEG-2 streams assigned
+to dedicated titles and program chains (PGCs). This article explains how
+the DVD file architecture designates specific VTS numbers, menus, and
+sectors to deliver supplemental content separately from the main
+feature.</p>
+<h3 id="the-role-of-video-title-sets-vts">The Role of Video Title Sets
+(VTS)</h3>
+<p>A standard DVD stores all its data within the <code>VIDEO_TS</code>
+directory using three file types: VOB (audio/video streams), IFO
+(navigation data), and BUP (backups of the IFO files). Content on a disc
+is compartmentalized into Video Title Sets.</p>
+<p>The primary film typically occupies the first title set:</p>
+<ul>
+<li><code>VTS_01_0.IFO</code>: Navigation instructions for the main
+feature.</li>
+<li><code>VTS_01_0.VOB</code>: Menu assets for the main feature.</li>
+<li><code>VTS_01_1.VOB</code> through <code>VTS_01_X.VOB</code>: The
+continuous stream of the main movie, split into 1 GB segments due to
+file system limits.</li>
+</ul>
+<p>Supplemental materials like deleted scenes, audio commentaries, and
+making-of featurettes are segregated into secondary title sets, such as
+<code>VTS_02_X.VOB</code>, <code>VTS_03_X.VOB</code>, and higher.
+Authoring software separates these assets because bonus features often
+use different technical specifications than the main movie, such as a
+4:3 aspect ratio instead of 16:9 widescreen, stereo audio instead of 5.1
+surround sound, or different subtitle configurations. Because all
+content within a single VTS must share the same video attributes,
+distinct extras require their own distinct VTS allocations.</p>
+<h3 id="how-menus-link-to-secondary-vobs">How Menus Link to Secondary
+VOBs</h3>
+<p>VOB files do not contain playback logic; they only contain the
+interleaved audio, video, and subpicture packets. Navigation is
+controlled entirely by the IFO files.</p>
+<p>When a user accesses a "Bonus Features" menu:</p>
+<ol type="1">
+<li><strong>Menu Call</strong>: The main menu (<code>VIDEO_TS.VOB</code>
+or <code>VTS_01_0.VOB</code>) registers a user button press linked to a
+command (e.g., <code>JumpTT Title_2</code>).</li>
+<li><strong>IFO Pointer Translation</strong>: The disc player reads the
+master table (<code>VIDEO_TS.IFO</code>) or local table
+(<code>VTS_02_0.IFO</code>) to locate the requested title number.</li>
+<li><strong>Sector Addressing</strong>: The IFO file points directly to
+the Logical Block Address (LBA) on the physical disc where the secondary
+VOB (e.g., <code>VTS_02_1.VOB</code>) begins.</li>
+<li><strong>Playback via Program Chains (PGCs)</strong>: The IFO
+designates which Program Chain within that VOB to execute, allowing
+individual deleted scenes to be played one by one or continuously via a
+"Play All" instruction.</li>
+</ol>
+<h3 id="alternate-mapping-titles-within-the-same-vts">Alternate Mapping:
+Titles Within the Same VTS</h3>
+<p>While dedicated title sets are standard, DVD authors occasionally map
+deleted scenes inside the <em>same</em> VTS as the main movie (e.g.,
+<code>VTS_01_X.VOB</code>), placed in sectors after the main feature
+concludes. In this configuration, the main movie is defined as Title 1,
+and each deleted scene is registered as Title 2, Title 3, and so on,
+inside <code>VTS_01_0.IFO</code>. This method is used when the extra
+features share the exact same video resolution, aspect ratio, and audio
+encoding profile as the main film.</p>
+<h3 id="standalone-extras-vs-seamless-branching">Standalone Extras vs.
+Seamless Branching</h3>
+<p>Deleted scenes generally follow one of two authoring techniques:</p>
+<ul>
+<li><strong>Discrete Secondary VOBs</strong>: The deleted scenes exist
+exclusively as separate titles in distinct VOB files. Selecting a
+deleted scene simply routes the player to that file and returns to the
+menu upon completion.</li>
+<li><strong>Seamless Branching (Shared VOBs)</strong>: When deleted
+scenes can be watched integrated into an "Extended Edition" of the
+movie, the scenes are interleaved directly inside the primary movie VOBs
+(<code>VTS_01_X.VOB</code>). The IFO controls which video blocks
+(Interleaved Video Units, or ILVUs) the player reads. In standard
+playback, the laser skips the deleted scene blocks; in extended
+playback, the player reads them seamlessly without physical disc
+jumping.</li>
+</ul></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/how-dvd-bonus-features-map-to-secondary-vob-files';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Burn Split VOB Files to DVD-R Data Disc - vob</title>
+    <meta name="description" content="Burning split VOB files to a DVD-R as a data disc requires careful attention to file integrity, file system formatting, and playback compatibility. This guide outlines the essential precautions you must take—including selecting the proper UDF file system,">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/how-to-burn-split-vob-files-to-dvd-r-data-disc">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Burn Split VOB Files to DVD-R Data Disc - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/how-to-burn-split-vob-files-to-dvd-r-data-disc" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Burning split VOB files to a DVD-R as a data disc requires careful attention to file integrity, file system formatting, and playback compatibility. This guide outlines the essential precautions you must take—including selecting the proper UDF file system," />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-burn-split-vob-files-to-dvd-r-data-disc">How to Burn
+Split VOB Files to DVD-R Data Disc</h1>
+<p>Burning split VOB files to a DVD-R as a data disc requires careful
+attention to file integrity, file system formatting, and playback
+compatibility. This guide outlines the essential precautions you must
+take—including selecting the proper UDF file system, preserving
+sequential naming conventions, managing file size limits, burning at
+safe write speeds, and understanding the playback limitations of a data
+disc compared to a standard DVD-Video format.</p>
+<h3 id="distinguish-between-data-discs-and-dvd-video">Distinguish
+Between Data Discs and DVD-Video</h3>
+<p>Before burning, understand that burning VOB files onto a DVD-R as a
+"Data Disc" does not create a standard DVD-Video. Standard set-top DVD
+players rely on a specific <code>VIDEO_TS</code> folder structure
+containing <code>.IFO</code> and <code>.BUP</code> files alongside the
+<code>.VOB</code> files to navigate menus and audio tracks. If you burn
+VOBs strictly as data:</p>
+<ul>
+<li>The disc will play on computers and modern media players that
+support direct container playback.</li>
+<li>Older or standard standalone DVD players will likely reject the disc
+or display an "unsupported format" error.</li>
+<li>If you want standard DVD player compatibility, you must use an
+authoring tool to create a DVD-Video disc rather than a standard data
+compilation.</li>
+</ul>
+<h3 id="use-the-proper-file-system-udf">Use the Proper File System
+(UDF)</h3>
+<p>DVDs burned as data should use the Universal Disk Format (UDF) rather
+than older standards like ISO 9660.</p>
+<ul>
+<li>Standard ISO 9660 has a strict 2 GB file size limit and imposes
+restrictive filename rules that can truncate your file names.</li>
+<li>Use <strong>UDF 1.02</strong> if you are attempting broad
+compatibility, or <strong>UDF 2.50</strong> for modern PC
+environments.</li>
+<li>Most burning software offers a hybrid "UDF/ISO" mode, which provides
+fallback options for various operating systems.</li>
+</ul>
+<h3 id="maintain-strict-sequential-file-naming">Maintain Strict
+Sequential File Naming</h3>
+<p>Split VOB files are sequential segments of a single video stream (for
+example, <code>VTS_01_1.VOB</code>, <code>VTS_01_2.VOB</code>,
+<code>VTS_01_3.VOB</code>).</p>
+<ul>
+<li>Do not rename split VOB files arbitrarily. Keep their numerical
+sequence intact so that software players can load and play subsequent
+files without interruption.</li>
+<li>Avoid special characters, spaces, or non-standard symbols in the
+file names, as these can cause read errors on certain operating systems
+or standalone hardware.</li>
+</ul>
+<h3 id="calculate-disc-capacity-accurately">Calculate Disc Capacity
+Accurately</h3>
+<p>A single-layer DVD-R is marketed as 4.7 GB, but its actual usable
+capacity in binary gigabytes (GiB) is approximately <strong>4.37
+GiB</strong> (around 4,700,000,000 bytes).</p>
+<ul>
+<li>Ensure the total combined size of your split VOB files does not
+exceed this 4.37 GiB threshold.</li>
+<li>Leave at least 100 MB to 200 MB of free space as a safety margin to
+avoid burning errors near the outer edge of the disc, where write
+failures are most frequent.</li>
+</ul>
+<h3 id="burn-at-moderate-speeds">Burn at Moderate Speeds</h3>
+<p>Burning at the maximum rated speed of your drive or disc increases
+the likelihood of write errors, buffer underruns, and jitter.</p>
+<ul>
+<li>Manually lower your burning speed to half of the disc's maximum
+rated speed (for example, burn a 16x DVD-R at 8x, or an 8x disc at
+4x).</li>
+<li>Burning at a slower, stable speed ensures deeper, clearer pits on
+the dye layer, resulting in better read reliability and long-term data
+preservation.</li>
+</ul>
+<h3 id="enable-post-burn-verification">Enable Post-Burn
+Verification</h3>
+<p>Always enable the "Verify Written Data" option in your disc burning
+utility (such as ImgBurn or Nero).</p>
+<ul>
+<li>Verification compares the burned data on the DVD-R sector-by-sector
+with the source files on your hard drive.</li>
+<li>Because split VOB files can suffer from audio/video
+desynchronization or sudden playback stops if even a small cluster of
+sectors is unreadable, verification guarantees the burned data is
+bit-perfect.</li>
+</ul>
+<h3 id="finalize-the-disc">Finalize the Disc</h3>
+<p>Ensure your burning software is set to "Finalize Disc" or "Close
+Session." Unfinalized or multi-session DVD-R data discs are often
+unreadable in secondary drives or media players. Closing the disc writes
+the lead-out track, making the table of contents permanent and globally
+readable.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/how-to-burn-split-vob-files-to-dvd-r-data-disc';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How Private Stream IDs Prevent VOB Player Crashes - vob</title>
+    <meta name="description" content="In DVD-Video architecture, Video Object (VOB) files encapsulate multiple audio, video, and subtitle elements into a single MPEG-2 Program Stream. Because MPEG-2 was not originally designed to natively multiplex modern DVD audio codecs or bitmap-based subt">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/how-private-stream-i-ds-prevent-vob-player-crashes">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How Private Stream IDs Prevent VOB Player Crashes - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/how-private-stream-i-ds-prevent-vob-player-crashes" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="In DVD-Video architecture, Video Object (VOB) files encapsulate multiple audio, video, and subtitle elements into a single MPEG-2 Program Stream. Because MPEG-2 was not originally designed to natively multiplex modern DVD audio codecs or bitmap-based subt" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-private-stream-ids-prevent-vob-player-crashes">How Private
+Stream IDs Prevent VOB Player Crashes</h1>
+<p>In DVD-Video architecture, Video Object (VOB) files encapsulate
+multiple audio, video, and subtitle elements into a single MPEG-2
+Program Stream. Because MPEG-2 was not originally designed to natively
+multiplex modern DVD audio codecs or bitmap-based subtitles, it relies
+on "Private Streams" and custom sub-stream identifiers to sort this
+auxiliary data. Without these precise identifiers, media players and
+demuxers would misroute non-standard payloads, directly causing buffer
+overruns, memory corruption, and fatal software crashes.</p>
+<h3 id="the-role-of-private-stream-1-0xbd">The Role of Private Stream 1
+(0xBD)</h3>
+<p>The MPEG-2 Program Stream standard defines specific stream IDs for
+standard media, such as video (<code>0xE0</code>–<code>0xEF</code>) and
+MPEG audio (<code>0xC0</code>–<code>0xDF</code>). However, standard DVD
+features like AC-3 (Dolby Digital), DTS, Linear PCM (LPCM), and DVD
+sub-picture subtitles lack native MPEG-2 stream assignments.</p>
+<p>To solve this, the DVD specification routes these non-standard
+elements through MPEG-2 <strong>Private Stream 1</strong> (assigned the
+stream ID <code>0xBD</code>).</p>
+<p>Because a complex VOB can contain multiple audio tracks (e.g.,
+director commentary, secondary languages, different surround formats)
+and dozens of subtitle tracks simultaneously, cramming all of these
+diverse data formats into a single <code>0xBD</code> stream ID creates a
+significant data collision hazard.</p>
+<h3 id="how-substream-identifiers-function">How Substream Identifiers
+Function</h3>
+<p>To resolve collisions within Private Stream 1, the DVD standard
+introduces a 1-byte <strong>substream identifier</strong> positioned at
+the immediate start of the Packetized Elementary Stream (PES)
+payload.</p>
+<p>This byte explicitly tags the content type and track number before
+the raw data reaches the decoder:</p>
+<ul>
+<li><strong><code>0x20</code> to <code>0x3F</code>:</strong> Subpicture
+(subtitle) streams 0 through 31.</li>
+<li><strong><code>0x80</code> to <code>0x87</code>:</strong> Linear PCM
+audio streams 0 through 7.</li>
+<li><strong><code>0x88</code> to <code>0x8F</code>:</strong> DTS audio
+streams 0 through 7.</li>
+<li><strong><code>0x90</code> to <code>0x97</code>:</strong> SDDS audio
+streams (rarely used).</li>
+<li><strong><code>0xA0</code> to <code>0xBF</code>:</strong> AC-3 audio
+streams 0 through 31.</li>
+</ul>
+<p>When a parser encounters a <code>0xBD</code> packet, it immediately
+reads this leading substream byte to determine which internal buffer and
+decoder pipeline should receive the rest of the payload.</p>
+<h3 id="preventing-buffer-overflow-and-memory-corruption">Preventing
+Buffer Overflow and Memory Corruption</h3>
+<p>The primary cause of media player crashes during VOB parsing is
+feeding incompatible data types into specialized hardware or software
+decoders.</p>
+<p>If a demuxer fails to evaluate the substream identifier, it treats
+the incoming data as an arbitrary byte sequence. If subpicture data
+(run-length encoded bitmap graphics) is mistakenly forwarded to an AC-3
+audio decoder ring buffer:</p>
+<ol type="1">
+<li><strong>Header Desynchronization:</strong> The audio decoder scans
+for the AC-3 synchronization word (<code>0x0B77</code>). Random
+graphical bytes will occasionally trigger false synchronization hits,
+causing the decoder to attempt to decode non-existent frames.</li>
+<li><strong>Pointer Miscalculation:</strong> Audio decoders allocate
+fixed-size frame buffers based on expected sampling rates and bitrates.
+Variable-length subpicture payloads lack standard audio frame headers,
+causing parsing loops to read out-of-bounds memory.</li>
+<li><strong>Buffer Overflows:</strong> Subtitle packets can arrive in
+large, sporadic bursts, whereas audio packets arrive in steady
+intervals. Routing a high-volume burst to an audio FIFO buffer without
+checking the substream ID rapidly overflows the buffer, triggering fatal
+segmentation faults or memory access violations.</li>
+</ol>
+<h3
+id="ensuring-seamless-audio-track-switching-and-dynamic-navigation">Ensuring
+Seamless Audio Track Switching and Dynamic Navigation</h3>
+<p>Complex VOB structures often feature multi-angle scenes, parental
+blocks, and mid-playback audio switching. During these transitions, the
+demuxer must discard old stream buffers and lock onto new ones without
+interrupting the video clock.</p>
+<p>Substream identifiers allow the demuxer to instantly filter out
+unselected audio and subtitle streams at the earliest possible parsing
+phase. By dropping irrelevant packets directly at the demuxing
+layer—before pushing data deeper into system memory—the player preserves
+CPU cycles, avoids Presentation Time Stamp (PTS) confusion, and prevents
+playback thread deadlocks.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/how-private-stream-i-ds-prevent-vob-player-crashes';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

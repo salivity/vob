@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maximum Audio Tracks in a VOB File - vob</title>
+    <meta name="description" content="A standard DVD Video Object (VOB) file can store a maximum of eight discrete audio tracks. These separate audio streams allow a single video presentation to support multiple languages, alternate commentary tracks, or varying audio formats such as stereo a">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/maximum-audio-tracks-in-a-vob-file">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Maximum Audio Tracks in a VOB File - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/maximum-audio-tracks-in-a-vob-file" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="A standard DVD Video Object (VOB) file can store a maximum of eight discrete audio tracks. These separate audio streams allow a single video presentation to support multiple languages, alternate commentary tracks, or varying audio formats such as stereo a" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="maximum-audio-tracks-in-a-vob-file">Maximum Audio Tracks in a
+VOB File</h1>
+<p>A standard DVD Video Object (VOB) file can store a maximum of eight
+discrete audio tracks. These separate audio streams allow a single video
+presentation to support multiple languages, alternate commentary tracks,
+or varying audio formats such as stereo and multichannel surround sound.
+While the format specification strictly limits the stream count to
+eight, overall bitrate ceilings on physical DVD media impose practical
+restrictions on the formats and quality you can combine
+concurrently.</p>
+<h3 id="the-8-track-technical-limit">The 8-Track Technical Limit</h3>
+<p>Under the official DVD-Video specification, a VOB file is built upon
+the MPEG-2 Program Stream multiplex container. Within this container,
+the system layer assigns discrete stream identifiers to audio
+channels:</p>
+<ul>
+<li><strong>MPEG Audio:</strong> Stream IDs <code>0xC0</code> through
+<code>0xC7</code> (allowing 8 distinct tracks).</li>
+<li><strong>Linear PCM, Dolby Digital (AC-3), and DTS:</strong>
+Transported via Private Stream 1 (<code>0xBD</code>) using sub-stream
+identifiers <code>0x80</code> through <code>0x87</code> for AC-3/DTS or
+<code>0xA0</code> through <code>0xA7</code> for LPCM (allowing 8
+distinct tracks).</li>
+</ul>
+<p>Because of these dedicated stream and sub-stream slots, playback
+authoring tools and hardware decoders cannot recognize or parse more
+than eight individual audio streams in a single title.</p>
+<h3 id="supported-audio-formats">Supported Audio Formats</h3>
+<p>The eight audio tracks can use any mix of standard-compliant audio
+encodings permitted by DVD-Video specifications:</p>
+<ul>
+<li><strong>Dolby Digital (AC-3):</strong> Ranging from mono (1.0) to
+5.1 surround sound, commonly encoded at bitrates between 192 kbps and
+448 kbps.</li>
+<li><strong>Linear PCM (LPCM):</strong> Uncompressed audio at 48 kHz or
+96 kHz with 16-bit or 24-bit resolution (stereo only in standard
+practice).</li>
+<li><strong>DTS Digital Surround:</strong> Multichannel audio typically
+encoded at 754 kbps or 1509 kbps.</li>
+<li><strong>MPEG-1 Audio Layer II:</strong> Primarily utilized on
+PAL-region releases.</li>
+</ul>
+<h3 id="multiplexing-and-bitrate-constraints">Multiplexing and Bitrate
+Constraints</h3>
+<p>Although authoring eight discrete tracks is technically valid, total
+multiplexed bandwidth remains a hard constraint. The DVD-Video standard
+caps the total maximum bitrate—combining video, all active audio tracks,
+and sub-pictures—at 10.08 Mbps.</p>
+<p>While players only decode one selected audio stream at a time during
+playback, all eight tracks are multiplexed together into the VOB
+container. The combined data rate of the video and the multiplexed
+overhead must remain within the optical disc's physical reading
+capabilities. Consequently, productions that require all eight audio
+slots typically use compressed audio codecs like Dolby Digital (AC-3)
+rather than high-bitrate uncompressed LPCM to avoid exhausting the
+available bandwidth needed for video quality.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/maximum-audio-tracks-in-a-vob-file';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why CSS Fails Once VOB Files Are Decrypted to MPEG-2 - vob</title>
+    <meta name="description" content="The Content Scramble System (CSS) fails to prevent copying once a VOB file is decrypted because CSS is an access-control cipher rather than a persistent digital rights management (DRM) architecture. Designed primarily to restrict playback to authorized, l">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/why-css-fails-once-vob-files-are-decrypted-to-mpeg-2">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why CSS Fails Once VOB Files Are Decrypted to MPEG-2 - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/why-css-fails-once-vob-files-are-decrypted-to-mpeg-2" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The Content Scramble System (CSS) fails to prevent copying once a VOB file is decrypted because CSS is an access-control cipher rather than a persistent digital rights management (DRM) architecture. Designed primarily to restrict playback to authorized, l" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-css-fails-once-vob-files-are-decrypted-to-mpeg-2">Why CSS
+Fails Once VOB Files Are Decrypted to MPEG-2</h1>
+<p>The Content Scramble System (CSS) fails to prevent copying once a VOB
+file is decrypted because CSS is an access-control cipher rather than a
+persistent digital rights management (DRM) architecture. Designed
+primarily to restrict playback to authorized, licensed DVD hardware and
+software, CSS applies encryption only to the physical media sectors on
+the disc. Once those sectors are authenticated and decrypted into a
+standard MPEG-2 Program Stream, all cryptographic boundaries vanish,
+leaving pure digital data that any computer or media player can
+duplicate without restriction.</p>
+<h3 id="the-limits-of-perimeter-security">The Limits of Perimeter
+Security</h3>
+<p>CSS relies on a 40-bit proprietary stream cipher intended to protect
+content during storage on DVD-Video media and transit through the
+optical drive bus. Its design model is purely perimeter-based:</p>
+<ul>
+<li><strong>Disc-Level Encryption:</strong> The encryption operates on
+the 2048-byte sector payloads of VOB (Video Object) files on the
+DVD.</li>
+<li><strong>The Decryption Boundary:</strong> An authorized DVD player
+uses a licensed manufacturer key to decrypt the title key, which in turn
+decrypts the data sectors. Once decrypted, the CSS layer has completed
+its entire operational lifecycle.</li>
+</ul>
+<p>CSS has no active process or resident agent. It cannot monitor,
+police, or influence data once the decryption routine outputs raw bits
+to system memory or local storage.</p>
+<h3 id="standardized-mpeg-2-has-no-native-drm">Standardized MPEG-2 Has
+No Native DRM</h3>
+<p>The decrypted payload inside a VOB container is a standard MPEG-2
+stream (ISO/IEC 13818). Standardized digital media formats are
+explicitly engineered for universal decode efficiency and
+interoperability, not restriction:</p>
+<ul>
+<li><strong>No Persistent Cryptography:</strong> The MPEG-2 standard
+contains no native cryptographic locks, secondary encryption layers, or
+mandatory hardware-level root-of-trust mechanisms.</li>
+<li><strong>Open Syntax:</strong> Any decoder that adheres to the public
+MPEG-2 specification can parse, process, display, and write the
+elementary video and audio streams.</li>
+<li><strong>Informational Flags Only:</strong> While MPEG-2 and DVD
+structures support basic metadata flags like CGMS (Copy Generation
+Management System), these are purely advisory. General-purpose computing
+systems and generic media decoders do not enforce hardware compliance
+for advisory bits found in plaintext streams.</li>
+</ul>
+<h3 id="the-loss-of-the-controlled-playback-pipeline">The Loss of the
+Controlled Playback Pipeline</h3>
+<p>The original DVD security model assumed that decryption would occur
+strictly inside an end-to-end "trusted pipeline"—either inside the
+silicon of a standalone set-top DVD player or within an encrypted
+hardware-accelerated graphics pipeline on a computer. In a closed
+set-top player, the plaintext MPEG-2 stream was fed directly into an
+integrated decoder chip and immediately converted to analog signals
+(often protected downstream only by Macrovision).</p>
+<p>With general-purpose computers, this closed model collapsed. Once
+algorithms like DeCSS exposed the weak cryptographic implementation of
+CSS in 1999, software utilities could perform the authentication
+handshake, extract the keys, and write the decrypted buffer directly to
+a hard drive instead of routing it to a restricted rendering
+surface.</p>
+<h3 id="exact-digital-replication">Exact Digital Replication</h3>
+<p>Digital data without encryption is inherently copyable. Once a VOB
+file is decrypted into plaintext MPEG-2, it consists entirely of
+ordinary binary values. Operating systems treat it like any other
+generic file:</p>
+<ul>
+<li>It can be read, duplicated, or modified by standard file-system
+operations.</li>
+<li>It can be remuxed from the VOB container into formats like MP4 or
+MKV without re-encoding.</li>
+<li>It can be copied indefinitely across networks or physical drives
+with absolute bit-for-bit fidelity and zero generational loss.</li>
+</ul>
+<p>Because CSS lacks the architectural capacity to enforce
+post-decryption control, the moment the cryptographic lock is opened,
+the protection mechanism is permanently exhausted.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/why-css-fails-once-vob-files-are-decrypted-to-mpeg-2';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

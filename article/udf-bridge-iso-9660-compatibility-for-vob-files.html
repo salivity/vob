@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UDF Bridge: ISO 9660 Compatibility for VOB Files - vob</title>
+    <meta name="description" content="This article examines how the Universal Disk Format (UDF) Bridge filesystem layer maintains backward compatibility with the legacy ISO 9660 standard when accessing DVD-Video assets, specifically VOB (Video Object) files. By utilizing a hybrid dual-filesys">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/udf-bridge-iso-9660-compatibility-for-vob-files">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="UDF Bridge: ISO 9660 Compatibility for VOB Files - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/udf-bridge-iso-9660-compatibility-for-vob-files" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article examines how the Universal Disk Format (UDF) Bridge filesystem layer maintains backward compatibility with the legacy ISO 9660 standard when accessing DVD-Video assets, specifically VOB (Video Object) files. By utilizing a hybrid dual-filesys" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="udf-bridge-iso-9660-compatibility-for-vob-files">UDF Bridge: ISO
+9660 Compatibility for VOB Files</h1>
+<p>This article examines how the Universal Disk Format (UDF) Bridge
+filesystem layer maintains backward compatibility with the legacy ISO
+9660 standard when accessing DVD-Video assets, specifically VOB (Video
+Object) files. By utilizing a hybrid dual-filesystem architecture,
+optical media can seamlessly bridge the gap between modern DVD-Video
+players that require UDF 1.02 and older operating systems that only
+support ISO 9660.</p>
+<h3 id="the-filesystem-layer-udf-bridge">The Filesystem Layer: UDF
+Bridge</h3>
+<p>The filesystem layer responsible for backward compatibility with ISO
+9660 is the <strong>UDF Bridge</strong> format (specifically, the UDF
+1.02 / ISO 9660 Bridge).</p>
+<p>When the DVD-Video standard was developed by the DVD Forum, media
+players required the features of the Universal Disk Format (UDF) to
+handle large files, complex directory trees, and modern disc-reading
+conventions. However, millions of existing personal computers only
+supported the older ISO 9660 file system. To resolve this limitation
+without duplicating data, engineers created the UDF Bridge
+specification.</p>
+<h3 id="how-the-udf-bridge-operates">How the UDF Bridge Operates</h3>
+<p>The UDF Bridge functions as a hybrid filesystem by writing two
+distinct directory structures onto a single disc:</p>
+<ol type="1">
+<li><strong>Parallel Descriptors:</strong> The media contains an ISO
+9660 Primary Volume Descriptor alongside a UDF Volume Recognition
+Sequence.</li>
+<li><strong>Shared File Allocation:</strong> Instead of duplicating
+video data, both the ISO 9660 directory structure and the UDF directory
+structure point to the exact same physical sectors on the optical
+disc.</li>
+<li><strong>Transparent Fallback:</strong> When a disc is inserted into
+a host system, the operating system or optical drive firmware reads the
+filesystem it natively supports. A standard DVD-Video player parses the
+UDF 1.02 descriptors to locate the <code>VIDEO_TS</code> directory and
+stream <code>.VOB</code> files. If an older operating system lacks a
+native UDF driver, it ignores the UDF metadata and falls back to reading
+the disc using its built-in ISO 9660 driver.</li>
+</ol>
+<h3 id="significance-for-vob-files">Significance for VOB Files</h3>
+<p>VOB files store the multiplexed video, audio, subtitles, and
+navigation streams on a DVD. Under standard DVD-Video authoring
+rules:</p>
+<ul>
+<li><strong>File Size Management:</strong> Individual VOB files are
+split into maximum sizes of 1 GiB (1,048,576 KiB) to remain within the
+file size limitations imposed by older file systems, including older
+variations of ISO 9660.</li>
+<li><strong>Sector Alignment:</strong> DVD playback requires continuous
+physical sector reads. The UDF Bridge ensures that the continuous
+physical addressing used by UDF is identical to the sector extents
+mapped in the ISO 9660 directory records.</li>
+</ul>
+<p>Through the UDF Bridge layer, backward compatibility is achieved
+natively at the filesystem level, allowing systems lacking UDF support
+to browse, copy, and read VOB files through standard ISO 9660
+protocols.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/udf-bridge-iso-9660-compatibility-for-vob-files';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

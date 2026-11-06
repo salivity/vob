@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detecting PES Packet Boundaries in VOB Streams - vob</title>
+    <meta name="description" content="This article explains the technical process decoders use to locate and delineate Packetized Elementary Stream (PES) packet boundaries within an arbitrary DVD Video Object (VOB) file. Because a VOB file is fundamentally an implementation of the MPEG-2 Prog">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/detecting-pes-packet-boundaries-in-vob-streams">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Detecting PES Packet Boundaries in VOB Streams - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/detecting-pes-packet-boundaries-in-vob-streams" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains the technical process decoders use to locate and delineate Packetized Elementary Stream (PES) packet boundaries within an arbitrary DVD Video Object (VOB) file. Because a VOB file is fundamentally an implementation of the MPEG-2 Prog" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="detecting-pes-packet-boundaries-in-vob-streams">Detecting PES
+Packet Boundaries in VOB Streams</h1>
+<p>This article explains the technical process decoders use to locate
+and delineate Packetized Elementary Stream (PES) packet boundaries
+within an arbitrary DVD Video Object (VOB) file. Because a VOB file is
+fundamentally an implementation of the MPEG-2 Program Stream (PS)
+standard, decoders rely on unique 32-bit start code prefixes, the 16-bit
+PES packet length field, and DVD-specific 2,048-byte sector alignments
+to reliably isolate packets even when starting playback from an
+arbitrary byte position.</p>
+<h3 id="the-underlying-vob-structure">The Underlying VOB Structure</h3>
+<p>A VOB stream is a specialized MPEG-2 Program Stream structured into
+discrete 2,048-byte (2 KB) packs, matching the physical sector size of
+DVD media. Each pack starts with a Pack Header and contains one or more
+PES packets, which wrap the raw elementary stream data (such as MPEG-2
+video, AC-3, DTS, or LPCM audio) alongside presentation timestamps (PTS)
+and decoding timestamps (DTS).</p>
+<p>To extract audio, video, and sub-picture data, the decoder must
+continuously identify where a PES packet starts and where it
+terminates.</p>
+<h3 id="step-1-scanning-for-the-32-bit-start-code-prefix">Step 1:
+Scanning for the 32-bit Start Code Prefix</h3>
+<p>When reading an arbitrary stream, the decoder maintains a sliding
+4-byte buffer to identify synchronization markers. Every PES packet
+begins with a standard 32-bit start code:</p>
+<ol type="1">
+<li><strong>Prefix (24 bits):</strong> <code>0x00 0x00 0x01</code></li>
+<li><strong>Stream ID (8 bits):</strong> A single byte identifying the
+payload type.</li>
+</ol>
+<p>Valid PES stream IDs generally range from <code>0xBC</code> to
+<code>0xFF</code>. Common stream IDs found in VOB files include:</p>
+<ul>
+<li><code>0xE0</code> to <code>0xEF</code>: MPEG Video streams</li>
+<li><code>0xBD</code>: Private Stream 1 (commonly used for AC-3, DTS,
+and Sub-picture streams)</li>
+<li><code>0xBF</code>: Private Stream 2 (navigation data such as PCI and
+DSI packs)</li>
+<li><code>0xC0</code> to <code>0xDF</code>: MPEG-1/2 Audio streams</li>
+</ul>
+<p>Pack headers (<code>0x00 0x00 0x01 0xBA</code>) and System headers
+(<code>0x00 0x00 0x01 0xBB</code>) share the same 24-bit prefix,
+allowing the decoder's parser to distinguish PES packets from
+higher-level stream structures based solely on the fourth byte.</p>
+<h3 id="step-2-reading-the-pes-packet-length">Step 2: Reading the PES
+Packet Length</h3>
+<p>Immediately following the 1-byte <code>stream_id</code>, the MPEG-2
+specification defines a 16-bit unsigned integer:
+<code>PES_packet_length</code>.</p>
+<pre><code>+-----------------------------+-----------+-------------------+
+| Start Code Prefix (24 bits) | Stream ID | PES Packet Length |
+|         0x00 0x00 0x01      |  (8 bits) |     (16 bits)     |
++-----------------------------+-----------+-------------------+</code></pre>
+<p>The boundary detection mechanism depends directly on this value:</p>
+<ul>
+<li><strong>Non-Zero Length:</strong> The value specifies the exact
+number of bytes remaining in the PES packet, counted immediately after
+the length field. This count includes the optional PES header (flags,
+PTS/DTS timestamps, stuffing bytes) and the elementary stream payload.
+The decoder adds this length value to the byte offset directly following
+the <code>PES_packet_length</code> field to pinpoint the exact
+terminating boundary of the packet.</li>
+<li><strong>Zero Length:</strong> While the MPEG-2 standard allows a
+length of <code>0</code> for video streams within Transport Streams
+(indicating an unconstrained size), the DVD-Video specification mandates
+that all PES packets within a VOB file explicitly declare their length
+via this 16-bit field.</li>
+</ul>
+<h3 id="step-3-utilizing-fixed-2048-byte-pack-alignment">Step 3:
+Utilizing Fixed 2,048-Byte Pack Alignment</h3>
+<p>VOB streams follow strict sector constraints that simplify boundary
+detection compared to generic MPEG-2 Program Streams:</p>
+<ul>
+<li><strong>Fixed Sector Size:</strong> Every pack is aligned to a
+2,048-byte boundary and begins with the Pack Header start code
+(<code>0x00 0x00 0x01 0xBA</code>).</li>
+<li><strong>Self-Contained Sectors:</strong> In DVD VOB authoring, PES
+packets do not span across pack boundaries. A single 2,048-byte pack
+typically contains the Pack Header, an optional System Header, and
+exactly one PES packet padded out to fill the remaining sector
+space.</li>
+<li><strong>Stuffing Bytes:</strong> If the elementary payload does not
+fill the 2,048-byte sector, the authoring pipeline inserts stuffing
+bytes either within the PES header or by appending an explicit Padding
+Stream packet (<code>stream_id = 0xBE</code>).</li>
+</ul>
+<p>Because of this rigid geometry, the end of a PES packet inside a VOB
+invariably coincides with either the end of the 2,048-byte sector or the
+beginning of a stuffing/padding sequence within that same sector.</p>
+<h3
+id="resynchronization-on-corrupt-or-arbitrary-streams">Resynchronization
+on Corrupt or Arbitrary Streams</h3>
+<p>If a decoder begins reading at an arbitrary point within a VOB stream
+(such as during seeking or after packet loss), it executes a
+state-machine resynchronization:</p>
+<ol type="1">
+<li><strong>Byte Scan:</strong> The parser steps forward byte-by-byte
+until it locates <code>0x00 0x00 0x01</code>.</li>
+<li><strong>Start Code Evaluation:</strong> It checks if the succeeding
+byte is a valid VOB stream ID or a Pack Header (<code>0xBA</code>).</li>
+<li><strong>Length Validation:</strong> If a PES start code is
+identified, the decoder reads the 16-bit length. It then validates
+whether the end offset calculated from that length aligns with either
+the next valid start code prefix or the next 2,048-byte pack
+boundary.</li>
+<li><strong>Acceptance:</strong> Once the calculated boundary correlates
+with the start of a new valid header, the decoder locks synchronization
+and begins routing payload data to the elementary decoders.</li>
+</ol></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/detecting-pes-packet-boundaries-in-vob-streams';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DVD VOB 14-Byte Pack Header Structure - vob</title>
+    <meta name="description" content="This article provides a technical reference for the exact 14-byte pack header structure used in DVD Video Object (VOB) files. Because DVD-Video relies on the MPEG-2 Program Stream (ISO/IEC 13818-1) standard, every 2048-byte sector in a VOB file begins wit">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/dvd-vob-14-byte-pack-header-structure">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="DVD VOB 14-Byte Pack Header Structure - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/dvd-vob-14-byte-pack-header-structure" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article provides a technical reference for the exact 14-byte pack header structure used in DVD Video Object (VOB) files. Because DVD-Video relies on the MPEG-2 Program Stream (ISO/IEC 13818-1) standard, every 2048-byte sector in a VOB file begins wit" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="dvd-vob-14-byte-pack-header-structure">DVD VOB 14-Byte Pack
+Header Structure</h1>
+<p>This article provides a technical reference for the exact 14-byte
+pack header structure used in DVD Video Object (VOB) files. Because
+DVD-Video relies on the MPEG-2 Program Stream (ISO/IEC 13818-1)
+standard, every 2048-byte sector in a VOB file begins with this fixed
+14-byte pack header containing synchronization, timing, and multiplexing
+data.</p>
+<hr />
+<h3 id="byte-by-byte-layout-overview">Byte-by-Byte Layout Overview</h3>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;">Byte Offset</th>
+<th style="text-align: left;">Field Description</th>
+<th style="text-align: left;">Size</th>
+<th style="text-align: left;">Expected Values / Mask</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>0 – 3</strong></td>
+<td style="text-align: left;">Pack Start Code</td>
+<td style="text-align: left;">32 bits</td>
+<td style="text-align: left;"><code>0x000001BA</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>4 – 9</strong></td>
+<td style="text-align: left;">System Clock Reference (SCR) &amp; Marker
+Bits</td>
+<td style="text-align: left;">48 bits</td>
+<td style="text-align: left;">MPEG-2 SCR format (<code>01b</code>
+prefix)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>10 – 12</strong></td>
+<td style="text-align: left;">Program Multiplex Rate &amp; Marker
+Bits</td>
+<td style="text-align: left;">24 bits</td>
+<td style="text-align: left;">DVD max rate <code>10.08 Mbps</code>
+(<code>0x0189C1</code>)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>13</strong></td>
+<td style="text-align: left;">Reserved Bits &amp; Pack Stuffing
+Length</td>
+<td style="text-align: left;">8 bits</td>
+<td style="text-align: left;"><code>0xF8</code> (0 stuffing bytes)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="detailed-bit-level-breakdown">Detailed Bit-Level Breakdown</h3>
+<h4 id="bytes-03-pack-start-code">Bytes 0–3: Pack Start Code</h4>
+<ul>
+<li><strong>Length:</strong> 32 bits</li>
+<li><strong>Value:</strong> <code>0x00</code>, <code>0x00</code>,
+<code>0x01</code>, <code>0xBA</code></li>
+<li>Identifies the beginning of an MPEG-2 Program Stream pack.</li>
+</ul>
+<h4 id="bytes-49-system-clock-reference-scr">Bytes 4–9: System Clock
+Reference (SCR)</h4>
+<p>The SCR is a 42-bit value consisting of a 33-bit base clock (at 90
+kHz) and a 9-bit extension (at 27 MHz), interleaved with marker bits to
+prevent start-code emulation.</p>
+<ul>
+<li><strong>Byte 4:</strong>
+<ul>
+<li>Bits 7–6: Identifier <code>01</code> (denotes MPEG-2, unlike MPEG-1
+which uses <code>0010</code>)</li>
+<li>Bits 5–3: <code>SCR_base[32..30]</code></li>
+<li>Bit 2: Marker bit (always <code>1</code>)</li>
+<li>Bits 1–0: <code>SCR_base[29..28]</code></li>
+</ul></li>
+<li><strong>Byte 5:</strong>
+<ul>
+<li>Bits 7–0: <code>SCR_base[27..20]</code></li>
+</ul></li>
+<li><strong>Byte 6:</strong>
+<ul>
+<li>Bits 7–3: <code>SCR_base[19..15]</code></li>
+<li>Bit 2: Marker bit (always <code>1</code>)</li>
+<li>Bits 1–0: <code>SCR_base[14..13]</code></li>
+</ul></li>
+<li><strong>Byte 7:</strong>
+<ul>
+<li>Bits 7–0: <code>SCR_base[12..5]</code></li>
+</ul></li>
+<li><strong>Byte 8:</strong>
+<ul>
+<li>Bits 7–3: <code>SCR_base[4..0]</code></li>
+<li>Bit 2: Marker bit (always <code>1</code>)</li>
+<li>Bits 1–0: <code>SCR_extension[8..7]</code></li>
+</ul></li>
+<li><strong>Byte 9:</strong>
+<ul>
+<li>Bits 7–1: <code>SCR_extension[6..0]</code></li>
+<li>Bit 0: Marker bit (always <code>1</code>)</li>
+</ul></li>
+</ul>
+<h4 id="bytes-1012-program-multiplex-rate">Bytes 10–12: Program
+Multiplex Rate</h4>
+<p>Specifies the maximum rate at which the Program Stream is
+transmitted, measured in units of 50 bytes per second.</p>
+<ul>
+<li><strong>Byte 10:</strong>
+<ul>
+<li>Bits 7–0: <code>program_mux_rate[21..14]</code></li>
+</ul></li>
+<li><strong>Byte 11:</strong>
+<ul>
+<li>Bits 7–0: <code>program_mux_rate[13..6]</code></li>
+</ul></li>
+<li><strong>Byte 12:</strong>
+<ul>
+<li>Bits 7–2: <code>program_mux_rate[5..0]</code></li>
+<li>Bits 1–0: Marker bits (always <code>11</code>)</li>
+</ul></li>
+</ul>
+<p><em>Note: For DVD-Video, this value is fixed at 10.08 Mbps (25,200
+units of 50 bytes/s), yielding the 22-bit integer <code>100800</code>
+(<code>0x0189C0</code>). When combined with the two trailing
+<code>11</code> marker bits, Byte 10 to Byte 12 standardly reads as
+<code>0x01 0x89 0xC1</code>.</em></p>
+<h4 id="byte-13-pack-stuffing-length">Byte 13: Pack Stuffing Length</h4>
+<ul>
+<li><strong>Bits 7–3:</strong> Reserved bits (always
+<code>11111</code>)</li>
+<li><strong>Bits 2–0:</strong> <code>pack_stuffing_length</code> (3
+bits)
+<ul>
+<li>Indicates the number of optional stuffing bytes immediately
+following this byte.</li>
+<li>In standard DVD VOB sectors, stuffing is handled inside the PES
+packets instead of the pack header, setting this value to
+<code>000</code>.</li>
+<li>As a result, Byte 13 evaluates to <code>0xF8</code>
+(<code>11111000</code> in binary), terminating the pack header at
+exactly 14 bytes.</li>
+</ul></li>
+</ul></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/dvd-vob-14-byte-pack-header-structure';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

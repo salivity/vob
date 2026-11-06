@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VOB vs EVO Architecture: DVD and HD-DVD Compared - vob</title>
+    <meta name="description" content="This article provides an architectural comparison between the standard DVD Video Object (VOB) format and the Enhanced Video Object (EVO) container utilized in HD-DVD. While both formats are rooted in the MPEG-2 Program Stream specification, EVO fundamenta">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/vob-vs-evo-architecture-dvd-and-hd-dvd-compared">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="VOB vs EVO Architecture: DVD and HD-DVD Compared - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/vob-vs-evo-architecture-dvd-and-hd-dvd-compared" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article provides an architectural comparison between the standard DVD Video Object (VOB) format and the Enhanced Video Object (EVO) container utilized in HD-DVD. While both formats are rooted in the MPEG-2 Program Stream specification, EVO fundamenta" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="vob-vs-evo-architecture-dvd-and-hd-dvd-compared">VOB vs EVO
+Architecture: DVD and HD-DVD Compared</h1>
+<p>This article provides an architectural comparison between the
+standard DVD Video Object (VOB) format and the Enhanced Video Object
+(EVO) container utilized in HD-DVD. While both formats are rooted in the
+MPEG-2 Program Stream specification, EVO fundamentally modernizes VOB to
+support high-definition video codecs, advanced multi-channel audio,
+secondary video streams for Picture-in-Picture, and higher bitrate
+multiplexing. Below is an architectural breakdown of how EVO evolved
+from and surpasses the legacy VOB structure.</p>
+<h3 id="foundation-and-stream-structure">Foundation and Stream
+Structure</h3>
+<p>Both VOB and EVO are based on the MPEG-2 Program Stream (ISO/IEC
+13818-1) standard, which packs packetized elementary streams (PES) into
+2,048-byte blocks aligned with optical disc sectors.</p>
+<ul>
+<li><strong>VOB:</strong> Uses standard MPEG-2 Program Stream pack
+headers. The architecture is tightly coupled with standard-definition
+DVD constraints, limiting overall system bitrate to 10.08 Mbps.</li>
+<li><strong>EVO:</strong> Extends the MPEG-2 Program Stream architecture
+to allow significantly higher multiplexing bitrates, scaling up to a
+maximum total transfer rate of 30.24 Mbps. While retaining the
+2,048-byte sector alignment for physical compatibility, EVO updates the
+stream headers and timestamps to synchronize multiple high-bitrate
+elementary streams seamlessly.</li>
+</ul>
+<h3 id="codec-support-and-stream-identifiers">Codec Support and Stream
+Identifiers</h3>
+<p>The primary architectural divergence between VOB and EVO lies in the
+elementary stream payloads they can encapsulate:</p>
+<ul>
+<li><strong>Video Codecs:</strong> VOB is strictly limited to MPEG-2
+(H.262) and MPEG-1 video. EVO incorporates stream type identifiers and
+private stream mappings for advanced high-definition compression
+standards, specifically H.264/AVC (MPEG-4 Part 10) and VC-1 (SMPTE
+421M), alongside high-definition MPEG-2.</li>
+<li><strong>Audio Codecs:</strong> VOB natively maps Linear PCM, Dolby
+Digital (AC-3), DTS, and MPEG-1 Audio Layer II across up to eight audio
+streams using specific private stream 1 sub-stream IDs. EVO expands
+these stream definitions to encapsulate next-generation audio formats,
+including Dolby Digital Plus (E-AC-3), Dolby TrueHD (MLP), and DTS-HD
+High Resolution and Master Audio.</li>
+</ul>
+<h3 id="dual-video-and-secondary-stream-architecture">Dual-Video and
+Secondary Stream Architecture</h3>
+<p>Standard VOB was engineered under the assumption that only one
+primary video track would decode at any given time:</p>
+<ul>
+<li><strong>VOB:</strong> Accommodates one video stream, up to eight
+audio streams, and up to 32 run-length encoded, 2-bit subpicture streams
+(used for subtitles and basic menu overlays).</li>
+<li><strong>EVO:</strong> Redesigns the multiplexing layer to support
+simultaneous primary and secondary video streams within the same
+container file. This architectural change enables hardware-decoded
+Picture-in-Picture (PiP) functionality—often used for director
+commentary—multiplexing both video feeds into a single file to eliminate
+the performance bottlenecks of seeking multiple optical tracks
+simultaneously.</li>
+</ul>
+<h3 id="subtitles-and-interactive-content">Subtitles and Interactive
+Content</h3>
+<p>The mechanism for rendering non-video visual data underwent a major
+architectural overhaul:</p>
+<ul>
+<li><strong>VOB Subpictures:</strong> VOB relies on interleaved
+subpicture packs containing fixed-resolution bitmap graphics with a
+16-color palette limitation. These are synchronized using DVD-specific
+Presentation Time Stamps (PTS).</li>
+<li><strong>EVO Advanced Sub-bitstreams:</strong> EVO departs from the
+restrictive legacy subpicture architecture by interfacing directly with
+HD-DVD’s Advanced Navigation engine (HDi). EVO carries timed text,
+advanced graphics, and XML-based assets as synchronized data streams,
+shifting the rendering burden to a software presentation layer capable
+of full-color, scalable graphical overlays.</li>
+</ul></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/vob-vs-evo-architecture-dvd-and-hd-dvd-compared';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

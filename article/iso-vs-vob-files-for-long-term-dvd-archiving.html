@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ISO vs VOB Files for Long-Term DVD Archiving - vob</title>
+    <meta name="description" content="When backing up and preserving DVD video collections for long-term archiving, users must choose between creating a single disc image (ISO) or extracting the raw video object (VOB) files. While both methods preserve the underlying MPEG-2 video stream witho">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/iso-vs-vob-files-for-long-term-dvd-archiving">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="ISO vs VOB Files for Long-Term DVD Archiving - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/iso-vs-vob-files-for-long-term-dvd-archiving" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="When backing up and preserving DVD video collections for long-term archiving, users must choose between creating a single disc image (ISO) or extracting the raw video object (VOB) files. While both methods preserve the underlying MPEG-2 video stream witho" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="iso-vs-vob-files-for-long-term-dvd-archiving">ISO vs VOB Files
+for Long-Term DVD Archiving</h1>
+<p>When backing up and preserving DVD video collections for long-term
+archiving, users must choose between creating a single disc image (ISO)
+or extracting the raw video object (VOB) files. While both methods
+preserve the underlying MPEG-2 video stream without loss of quality,
+keeping an ISO image offers distinct advantages in data integrity,
+structure preservation, ease of playback, and media management compared
+to maintaining fragmented VOB files.</p>
+<h3 id="1-complete-preservation-of-disc-structure-and-menus">1. Complete
+Preservation of Disc Structure and Menus</h3>
+<p>An ISO file is a bit-for-bit sector copy of the entire optical disc.
+Retaining the ISO preserves:</p>
+<ul>
+<li>Interactive DVD menus and bonus features.</li>
+<li>Exact chapter markers and navigation logic.</li>
+<li>Multiple audio streams (director commentaries, surround sound,
+alternate languages).</li>
+<li>Multiple subtitle tracks.</li>
+</ul>
+<p>Loose VOB files only hold multiplexed audio and video. Without the
+accompanying IFO (information) and BUP (backup) files, DVD menus cease
+to function, and navigation data like chapter stops are lost.</p>
+<h3 id="2-simplified-file-management">2. Simplified File Management</h3>
+<p>A standard DVD-Video layout splits content into multiple 1 GB
+<code>.VOB</code> segments inside a <code>VIDEO_TS</code> folder due to
+legacy file system limits (UDF/ISO 9660).</p>
+<ul>
+<li><strong>ISO:</strong> A single continuous file per disc. Storing one
+file makes cataloging, moving, and organizing an archive much
+simpler.</li>
+<li><strong>Loose VOBs:</strong> Results in dozens of identically named
+files (e.g., <code>VTS_01_1.VOB</code>, <code>VTS_01_2.VOB</code>)
+scattered across directories, increasing the risk of accidental
+deletion, file mixing, or path corruption.</li>
+</ul>
+<h3 id="3-streamlined-data-integrity-verification">3. Streamlined Data
+Integrity Verification</h3>
+<p>For long-term cold storage, data verification is essential to catch
+bit rot.</p>
+<ul>
+<li>Generating and checking checksums (such as MD5 or SHA-256) on a
+single ISO file is straightforward and reliable.</li>
+<li>Hashing individual VOB, IFO, and BUP files requires managing
+multi-file manifests, introducing unnecessary overhead and complexity
+during periodic data scrubs.</li>
+</ul>
+<h3 id="4-broad-software-compatibility-and-mounting">4. Broad Software
+Compatibility and Mounting</h3>
+<p>Modern operating systems (Windows, macOS, and Linux) can mount ISO
+images natively with a single click, treating them as virtual physical
+drives.</p>
+<ul>
+<li>Media centers such as Kodi, Plex, and VLC can read ISO files
+directly, displaying the original disc interface just as a physical DVD
+player would.</li>
+<li>Playing standalone VOB files often leads to playback quirks, such as
+audio/video desynchronization, incorrect aspect ratios (4:3 vs. 16:9
+flags are stored in IFO files, not always the VOB header), and
+seamless-playback stutter between 1 GB boundaries.</li>
+</ul>
+<h3 id="5-effortless-physical-reproduction">5. Effortless Physical
+Reproduction</h3>
+<p>If physical media is ever required in the future, burning an ISO
+image to a blank DVD-R produces an exact replica of the original disc
+that will play in any standalone DVD player. Burning loose VOB files
+requires specialized authoring software to correctly arrange the
+<code>VIDEO_TS</code> file system structure to ensure device
+compatibility.</p>
+<h3 id="summary">Summary</h3>
+<p>Extracting loose VOB files offers no storage savings over an ISO, as
+both store uncompressed DVD data. Because loose VOBs introduce
+fragmentation, break menu navigation, and risk losing audio or subtitle
+tracks, the complete ISO image remains the superior choice for archival
+preservation. If direct access to individual video titles without disc
+menus is desired, converting the disc to modern MKV containers using
+tools like MakeMKV is significantly more effective than archiving raw
+VOB files.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/iso-vs-vob-files-for-long-term-dvd-archiving';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

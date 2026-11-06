@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AC-3 Channel Layouts in VOB Explained - vob</title>
+    <meta name="description" content="The DVD-Video specification relies heavily on Dolby Digital (AC-3) as a primary, mandatory audio codec packaged inside VOB (Video Object) container files. AC-3 streams within VOB containers provide versatile audio delivery, scaling from single-channel mon">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/ac-3-channel-layouts-in-vob-explained">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="AC-3 Channel Layouts in VOB Explained - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/ac-3-channel-layouts-in-vob-explained" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The DVD-Video specification relies heavily on Dolby Digital (AC-3) as a primary, mandatory audio codec packaged inside VOB (Video Object) container files. AC-3 streams within VOB containers provide versatile audio delivery, scaling from single-channel mon" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="ac-3-channel-layouts-in-vob-explained">AC-3 Channel Layouts in
+VOB Explained</h1>
+<p>The DVD-Video specification relies heavily on Dolby Digital (AC-3) as
+a primary, mandatory audio codec packaged inside VOB (Video Object)
+container files. AC-3 streams within VOB containers provide versatile
+audio delivery, scaling from single-channel mono up to full 5.1-channel
+surround sound. This article outlines the specific channel layout
+configurations defined by the AC-3 standard and supported by VOB files,
+including the underlying channel coding modes and the low-frequency
+effects (LFE) channel option.</p>
+<h2 id="understanding-ac-3-channel-coding-modes">Understanding AC-3
+Channel Coding Modes</h2>
+<p>In the AC-3 bitstream format (standardized as ATSC A/52), channel
+configurations are defined by a 3-bit field known as <code>acmod</code>
+(Audio Coding Mode), paired with a 1-bit <code>lfeon</code>
+(Low-Frequency Effects on) flag. The <code>acmod</code> parameter
+specifies the number and spatial assignment of the main full-bandwidth
+channels, while the LFE bit indicates the presence of a dedicated
+subwoofer track (.1).</p>
+<p>VOB containers adhere to these standard AC-3 definitions, allowing
+for eight primary channel arrangements, each optionally combinable with
+an LFE channel.</p>
+<h2 id="supported-channel-configurations">Supported Channel
+Configurations</h2>
+<h3 id="1-10-10---mono">1. 1/0 (1.0 - Mono)</h3>
+<ul>
+<li><strong>Channels:</strong> Center (C)</li>
+<li><strong>Description:</strong> A single, full-bandwidth channel. In
+VOB playback, this mono track is typically routed equally to the
+front-left and front-right speakers or directly to the center speaker in
+multi-speaker setups.</li>
+</ul>
+<h3 id="2-20-20---stereo-dolby-surround-or-dual-mono">2. 2/0 (2.0 -
+Stereo, Dolby Surround, or Dual Mono)</h3>
+<ul>
+<li><strong>Channels:</strong> Left, Right (L, R)</li>
+<li><strong>Description:</strong> The most common two-channel
+configuration in VOB files. This mode supports:
+<ul>
+<li><strong>Standard Stereo:</strong> Independent left and right audio
+tracks.</li>
+<li><strong>Dolby Surround (Lt/Rt):</strong> A matrix-encoded stereo
+track containing embedded center and surround information decodable by
+Dolby Pro Logic decoders.</li>
+<li><strong>Dual Mono (1+1):</strong> Two completely separate mono
+programs within the same stream (frequently used for bilingual
+commentary tracks on DVDs).</li>
+</ul></li>
+</ul>
+<h3 id="3-30-30---3-channel-stereo">3. 3/0 (3.0 - 3-Channel Stereo)</h3>
+<ul>
+<li><strong>Channels:</strong> Left, Center, Right (L, C, R)</li>
+<li><strong>Description:</strong> Provides three full-bandwidth front
+channels without surround channels, establishing a wide, stable front
+soundstage with dedicated dialogue anchoring in the center.</li>
+</ul>
+<h3 id="4-21-30---surround">4. 2/1 (3.0 - Surround)</h3>
+<ul>
+<li><strong>Channels:</strong> Left, Right, Surround (L, R, S)</li>
+<li><strong>Description:</strong> Features left and right front channels
+alongside a single, monophonic surround channel.</li>
+</ul>
+<h3 id="5-31-40---surround">5. 3/1 (4.0 - Surround)</h3>
+<ul>
+<li><strong>Channels:</strong> Left, Center, Right, Surround (L, C, R,
+S)</li>
+<li><strong>Description:</strong> Features three discrete front channels
+and one monophonic surround channel. This mirrors the channel
+arrangement produced by original analog matrixed Dolby Stereo cinema
+releases.</li>
+</ul>
+<h3 id="6-22-40---quadraphonic">6. 2/2 (4.0 - Quadraphonic)</h3>
+<ul>
+<li><strong>Channels:</strong> Left, Right, Left Surround, Right
+Surround (L, R, Ls, Rs)</li>
+<li><strong>Description:</strong> A four-channel configuration with
+stereo front channels and discrete stereo surround channels, omitting a
+center channel.</li>
+</ul>
+<h3 id="7-32-50---surround">7. 3/2 (5.0 - Surround)</h3>
+<ul>
+<li><strong>Channels:</strong> Left, Center, Right, Left Surround, Right
+Surround (L, C, R, Ls, Rs)</li>
+<li><strong>Description:</strong> Five full-bandwidth channels featuring
+a fully discrete front and rear soundstage without a dedicated subwoofer
+track.</li>
+</ul>
+<h2 id="the-low-frequency-effects-lfe-option">The Low-Frequency Effects
+(LFE) Option</h2>
+<p>The <code>lfeon</code> flag adds a limited-bandwidth (3 Hz to 120 Hz)
+bass channel to any of the above configurations. While technically
+applicable to several modes, it is most commonly applied to:</p>
+<ul>
+<li><strong>3/2 + LFE (5.1 Surround):</strong> The benchmark
+multi-channel audio format for DVD-Video VOB streams, consisting of
+Left, Center, Right, Left Surround, Right Surround, and an active LFE
+(.1) channel.</li>
+<li><strong>2/0 + LFE (2.1 Stereo):</strong> Occasionally utilized for
+tracks requiring dedicated low-frequency bass output alongside stereo
+audio.</li>
+</ul>
+<h2 id="summary-of-common-practical-implementations">Summary of Common
+Practical Implementations</h2>
+<p>While the AC-3 specification allows all permutations within a VOB
+container, standard DVD-Video authoring overwhelmingly utilizes two
+primary configurations:</p>
+<ol type="1">
+<li><strong>2.0 (2/0):</strong> Standard stereo or matrix-encoded Dolby
+Surround.</li>
+<li><strong>5.1 (3/2 with LFE):</strong> Full discrete six-channel
+surround sound.</li>
+</ol></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/ac-3-channel-layouts-in-vob-explained';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

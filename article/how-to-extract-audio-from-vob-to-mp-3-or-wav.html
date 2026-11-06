@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Extract Audio from VOB to MP3 or WAV - vob</title>
+    <meta name="description" content="VOB (Video Object) files are the standard container format used on DVD-Video media, housing multiplexed video, audio, and subtitle streams. Extracting the audio track into a standalone format like MP3 (for smaller file sizes and wide compatibility) or WAV">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/how-to-extract-audio-from-vob-to-mp-3-or-wav">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Extract Audio from VOB to MP3 or WAV - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/how-to-extract-audio-from-vob-to-mp-3-or-wav" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="VOB (Video Object) files are the standard container format used on DVD-Video media, housing multiplexed video, audio, and subtitle streams. Extracting the audio track into a standalone format like MP3 (for smaller file sizes and wide compatibility) or WAV" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-extract-audio-from-vob-to-mp3-or-wav">How to Extract
+Audio from VOB to MP3 or WAV</h1>
+<p>VOB (Video Object) files are the standard container format used on
+DVD-Video media, housing multiplexed video, audio, and subtitle streams.
+Extracting the audio track into a standalone format like MP3 (for
+smaller file sizes and wide compatibility) or WAV (for uncompressed,
+high-fidelity sound) makes the content playable on standard audio
+devices and easy to edit. This guide covers the most efficient and
+reliable methods to extract audio from VOB files using VLC Media Player,
+FFmpeg, and Audacity.</p>
+<hr />
+<h3 id="method-1-using-vlc-media-player">Method 1: Using VLC Media
+Player</h3>
+<p>VLC Media Player is a versatile, cross-platform tool capable of
+converting media containers directly.</p>
+<ol type="1">
+<li>Open VLC Media Player.</li>
+<li>Click on <strong>Media</strong> in the top menu bar and select
+<strong>Convert / Save</strong> (or press <code>Ctrl + R</code> on
+Windows / <code>Cmd + Shift + S</code> on macOS).</li>
+<li>Under the <strong>File</strong> tab, click <strong>Add...</strong>
+and locate your VOB file.</li>
+<li>Click the <strong>Convert / Save</strong> button at the bottom.</li>
+<li>In the <strong>Profile</strong> drop-down menu, select <strong>Audio
+- MP3</strong>.
+<ul>
+<li><em>To extract as WAV:</em> Click the wrench icon next to the
+profile dropdown, set the encapsulation to <strong>WAV</strong>, go to
+the <strong>Audio codec</strong> tab, choose <strong>WAV</strong> from
+the codec dropdown, and click <strong>Save</strong>.</li>
+</ul></li>
+<li>Click <strong>Browse</strong> next to the <strong>Destination
+file</strong> field, choose a save folder, and enter a name with the
+appropriate extension (<code>.mp3</code> or <code>.wav</code>).</li>
+<li>Click <strong>Start</strong> to begin the extraction.</li>
+</ol>
+<hr />
+<h3 id="method-2-using-ffmpeg-command-line">Method 2: Using FFmpeg
+(Command Line)</h3>
+<p>FFmpeg is a powerful command-line tool that performs conversions
+quickly without quality degradation.</p>
+<h4 id="to-extract-to-mp3">To Extract to MP3:</h4>
+<p>Open your terminal or command prompt and run:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ffmpeg</span> <span class="at">-i</span> input.vob <span class="at">-vn</span> <span class="at">-acodec</span> libmp3lame <span class="at">-q:a</span> 2 output.mp3</span></code></pre></div>
+<ul>
+<li><code>-vn</code>: Disables video recording/extraction.</li>
+<li><code>-acodec libmp3lame</code>: Uses the standard LAME MP3
+encoder.</li>
+<li><code>-q:a 2</code>: Sets a high variable bitrate (VBR) quality
+level.</li>
+</ul>
+<h4 id="to-extract-to-uncompressed-wav">To Extract to Uncompressed
+WAV:</h4>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ffmpeg</span> <span class="at">-i</span> input.vob <span class="at">-vn</span> <span class="at">-acodec</span> pcm_s16le <span class="at">-ar</span> 44100 <span class="at">-ac</span> 2 output.wav</span></code></pre></div>
+<ul>
+<li><code>-acodec pcm_s16le</code>: Encodes to standard 16-bit
+uncompressed PCM audio.</li>
+<li><code>-ar 44100</code>: Sets the audio sampling frequency to
+standard CD quality (44.1 kHz).</li>
+<li><code>-ac 2</code>: Sets the audio channel count to stereo.</li>
+</ul>
+<hr />
+<h3 id="method-3-using-audacity-best-for-audio-editing">Method 3: Using
+Audacity (Best for Audio Editing)</h3>
+<p>Audacity allows you to extract, inspect, trim, and edit the waveform
+directly before saving.</p>
+<ol type="1">
+<li>Open Audacity. Ensure the optional <strong>FFmpeg library</strong>
+is installed (Preferences &gt; Libraries) so Audacity can read VOB
+files.</li>
+<li>Go to <strong>File</strong> &gt; <strong>Open</strong> (or drag and
+drop) and select your VOB file. Audacity will demux and load the audio
+tracks into the timeline.</li>
+<li>Perform any necessary edits, such as trimming unwanted sections or
+normalizing volume levels.</li>
+<li>Go to <strong>File</strong> &gt; <strong>Export
+Audio...</strong></li>
+<li>Select either <strong>MP3 Files</strong> or <strong>WAV
+(Microsoft)</strong> from the format menu.</li>
+<li>Configure your bitrate or bit-depth settings as desired, set a file
+name, and click <strong>Export</strong>.</li>
+</ol></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/how-to-extract-audio-from-vob-to-mp-3-or-wav';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

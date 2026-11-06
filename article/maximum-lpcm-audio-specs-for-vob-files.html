@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maximum LPCM Audio Specs for VOB Files - vob</title>
+    <meta name="description" content="Linear Pulse Code Modulation (LPCM) audio stored within DVD-Video VOB (Video Object) containers supports high-resolution uncompressed sound, reaching a maximum sampling rate of 96 kHz and a maximum bit depth of 24-bit. While the DVD-Video specification ac">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/maximum-lpcm-audio-specs-for-vob-files">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Maximum LPCM Audio Specs for VOB Files - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/maximum-lpcm-audio-specs-for-vob-files" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Linear Pulse Code Modulation (LPCM) audio stored within DVD-Video VOB (Video Object) containers supports high-resolution uncompressed sound, reaching a maximum sampling rate of 96 kHz and a maximum bit depth of 24-bit. While the DVD-Video specification ac" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="maximum-lpcm-audio-specs-for-vob-files">Maximum LPCM Audio Specs
+for VOB Files</h1>
+<p>Linear Pulse Code Modulation (LPCM) audio stored within DVD-Video VOB
+(Video Object) containers supports high-resolution uncompressed sound,
+reaching a maximum sampling rate of 96 kHz and a maximum bit depth of
+24-bit. While the DVD-Video specification accommodates these
+audiophile-grade parameters, their implementation is closely governed by
+total multiplex bitrate ceilings and channel count limitations.</p>
+<h3 id="maximum-sampling-rate-and-bit-depth-limits">Maximum Sampling
+Rate and Bit Depth Limits</h3>
+<p>Under the official DVD-Video specification, LPCM audio tracks inside
+a VOB container permit the following thresholds:</p>
+<ul>
+<li><strong>Maximum Sampling Rate:</strong> 96 kHz (standard options are
+48 kHz and 96 kHz).</li>
+<li><strong>Maximum Bit Depth:</strong> 24-bit (supported depths include
+16-bit, 20-bit, and 24-bit).</li>
+</ul>
+<p>Frequencies such as 44.1 kHz or 88.2 kHz, commonly found on compact
+discs, are not compliant with standard DVD-Video VOB specifications and
+must be resampled to either 48 kHz or 96 kHz.</p>
+<h3 id="bandwidth-and-channel-constraints">Bandwidth and Channel
+Constraints</h3>
+<p>Although LPCM supports up to 8 audio channels in the broader
+specification, utilizing the maximum sampling rate and bit depth imposes
+strict channel constraints due to bandwidth limits:</p>
+<ol type="1">
+<li><strong>Maximum Audio Bitrate:</strong> The DVD-Video standard caps
+an individual LPCM audio stream at 6.144 Mbps.</li>
+<li><strong>Channel Limitations at Maximum Quality:</strong> A 96 kHz,
+24-bit stereo (2-channel) stream requires approximately 4.608 Mbps
+(<span class="math inline">\(96{,}000 \times 24 \times 2\)</span>),
+fitting comfortably within the 6.144 Mbps stream cap. However, adding
+more channels at this quality exceeds the audio ceiling and the overall
+VOB container multiplex limit of 10.08 Mbps. Consequently, 96 kHz/24-bit
+LPCM in a VOB file is practically limited to 2 channels (stereo).</li>
+<li><strong>Multichannel Configurations:</strong> To encode surround
+sound (up to 8 channels) using uncompressed LPCM, the sampling rate and
+bit depth must be lowered (typically to 48 kHz and 16-bit) to remain
+under the maximum bit-rate threshold.</li>
+</ol></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/maximum-lpcm-audio-specs-for-vob-files';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How DVD Menu Button Overlays Work in Menu VOBs - vob</title>
+    <meta name="description" content="Interactive DVD menus achieve functional buttons and highlight effects by multiplexing an MPEG-2 video stream, a 2-bit subpicture stream, and Presentation Control Information (PCI) within a single menu Video Object (VOB). Rather than rendering completely">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/how-dvd-menu-button-overlays-work-in-menu-vo-bs">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How DVD Menu Button Overlays Work in Menu VOBs - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/how-dvd-menu-button-overlays-work-in-menu-vo-bs" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Interactive DVD menus achieve functional buttons and highlight effects by multiplexing an MPEG-2 video stream, a 2-bit subpicture stream, and Presentation Control Information (PCI) within a single menu Video Object (VOB). Rather than rendering completely" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-dvd-menu-button-overlays-work-in-menu-vobs">How DVD Menu
+Button Overlays Work in Menu VOBs</h1>
+<p>Interactive DVD menus achieve functional buttons and highlight
+effects by multiplexing an MPEG-2 video stream, a 2-bit subpicture
+stream, and Presentation Control Information (PCI) within a single menu
+Video Object (VOB). Rather than rendering completely new video frames
+whenever a user navigates between choices, the DVD player blends a
+lightweight graphical subpicture layer over the background video
+according to coordinates and color look-up instructions stored in the
+menu's navigation metadata.</p>
+<h3 id="the-component-streams-in-a-menu-vob">The Component Streams in a
+Menu VOB</h3>
+<p>A standard menu VOB contains three interdependent data elements that
+work together to display interactive interfaces:</p>
+<ol type="1">
+<li><strong>The MPEG-2 Video Stream:</strong> Provides the visual
+background. This can be a static single-frame I-frame (still menu) or a
+continuous motion video loop (motion menu). The background video
+typically contains the rendered text, button frames, and artwork.</li>
+<li><strong>The Subpicture Stream:</strong> A run-length encoded (RLE),
+2-bit bitmap layer that runs parallel to the video. Because each pixel
+is defined by only 2 bits, it can represent only four values (typically
+designated as Background, Pattern, Emphasis 1, and Emphasis 2). This
+layer outlines the visual shapes of the highlights, underlines, or
+bounding boxes.</li>
+<li><strong>The Navigation Pack (PCI):</strong> Embedded within the VOB
+alongside the audio/video packs, the Presentation Control Information
+(PCI) contains a dedicated data structure called the Highlight
+Information (HLI) table. The HLI defines the interactive functionality,
+button coordinates, color mapping, and user action triggers.</li>
+</ol>
+<h3 id="spatial-mapping-via-highlight-information-hli">Spatial Mapping
+via Highlight Information (HLI)</h3>
+<p>The DVD author defines rectangular zones for up to 36 buttons per
+menu (or 18 buttons for 16:9 widescreen formats). In the HLI table, each
+button is assigned an absolute coordinate bounding box defined by <span
+class="math inline">\(X\)</span>-start, <span
+class="math inline">\(Y\)</span>-start, <span
+class="math inline">\(X\)</span>-end, and <span
+class="math inline">\(Y\)</span>-end values relative to the 720×480
+(NTSC) or 720×576 (PAL) pixel grid.</p>
+<p>The player only applies highlight effects within these specific
+rectangular boundaries. Any subpicture pixels outside the currently
+active button's bounding box remain unaffected or adhere to default
+transparency rules.</p>
+<h3 id="button-states-and-color-palette-mapping">Button States and Color
+Palette Mapping</h3>
+<p>The HLI controls the appearance of a button across three distinct
+states:</p>
+<ul>
+<li><strong>Normal:</strong> The default, unselected state. Usually, all
+subpicture pixels in this state are set to 100% transparent so only the
+underlying MPEG-2 video background is visible.</li>
+<li><strong>Selected:</strong> The state when a user navigates to a
+button using direction keys.</li>
+<li><strong>Activated:</strong> The momentary state when a user presses
+the "Enter" or "OK" key.</li>
+</ul>
+<p>For both the "Selected" and "Activated" states, the HLI specifies a
+color and contrast scheme. The DVD format provides a 16-color palette
+(Color Look-Up Table or CLUT) stored in the IFO file. The HLI maps the
+subpicture's four 2-bit pixel values to any color in this 16-color
+palette, along with an alpha channel (contrast) value ranging from 0
+(completely transparent) to 15 (completely opaque).</p>
+<h3 id="real-time-hardware-compositing">Real-Time Hardware
+Compositing</h3>
+<p>When a user interacts with a menu, the DVD player performs real-time
+hardware compositing rather than accessing new video data:</p>
+<ol type="1">
+<li><p><strong>Decoding:</strong> The player continuously decodes the
+MPEG-2 video frame and the corresponding subpicture frame into memory
+buffers.</p></li>
+<li><p><strong>State Evaluation:</strong> The player's navigation engine
+tracks which button index is currently selected.</p></li>
+<li><p><strong>Palette Transformation:</strong> The hardware compositor
+reads the HLI entry for the active button. Within that button's bounding
+coordinates, it converts the 2-bit subpicture pixels into their assigned
+RGB/YUV colors and alpha values.</p></li>
+<li><p><strong>Alpha Blending:</strong> The compositor overlays the
+colored subpicture pixels onto the decoded MPEG-2 video pixels using
+standard alpha blending formulas:</p>
+<p><span class="math display">\[\text{Output Pixel} = (\text{Subpicture
+Pixel} \times \alpha) + (\text{Video Pixel} \times (1 -
+\alpha))\]</span></p></li>
+<li><p><strong>Output:</strong> The composite image is sent to the
+display.</p></li>
+</ol>
+<p>When a directional key is pressed, the player instantly changes the
+active button index, swaps the active bounding box, re-applies
+transparency to the previously selected zone, and renders the highlight
+inside the new coordinates. Because this logic is handled entirely by
+hardware blending via the HLI instructions, navigation remains
+instantaneous and independent of video frame rates.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/how-dvd-menu-button-overlays-work-in-menu-vo-bs';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

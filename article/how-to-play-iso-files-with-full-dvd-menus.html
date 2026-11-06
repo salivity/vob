@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Play ISO Files with Full DVD Menus - vob</title>
+    <meta name="description" content="An ISO disc image can be mounted or played directly to experience VOB files with full, original interactive menu navigation intact. Because a DVD ISO is a sector-by-sector copy of an optical disc, it preserves the navigation data, chapter stops, audio tra">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/how-to-play-iso-files-with-full-dvd-menus">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Play ISO Files with Full DVD Menus - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/how-to-play-iso-files-with-full-dvd-menus" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="An ISO disc image can be mounted or played directly to experience VOB files with full, original interactive menu navigation intact. Because a DVD ISO is a sector-by-sector copy of an optical disc, it preserves the navigation data, chapter stops, audio tra" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-play-iso-files-with-full-dvd-menus">How to Play ISO Files
+with Full DVD Menus</h1>
+<p>An ISO disc image can be mounted or played directly to experience VOB
+files with full, original interactive menu navigation intact. Because a
+DVD ISO is a sector-by-sector copy of an optical disc, it preserves the
+navigation data, chapter stops, audio tracks, and interactive menus
+stored inside the DVD file structure. This guide explains how ISO menu
+playback works, the software required, and the best methods to achieve a
+seamless, physical-disc experience on modern hardware.</p>
+<h3 id="why-dvd-menus-work-from-an-iso">Why DVD Menus Work from an
+ISO</h3>
+<p>A standard DVD-Video layout relies on a specific structure inside a
+<code>VIDEO_TS</code> directory:</p>
+<ul>
+<li><strong>VOB (Video Object) files:</strong> Contain the actual
+multiplexed video, audio, and subtitle streams, including the video
+loops used for menus.</li>
+<li><strong>IFO (Information) files:</strong> Direct the media player on
+how to navigate the disc. They control button coordinates, chapter
+jumps, aspect ratios, and menu behaviors.</li>
+<li><strong>BUP (Backup) files:</strong> Exact duplicates of the IFO
+files in case of corruption.</li>
+</ul>
+<p>Because an ISO image packages this entire file system without
+altering the structure, any media player that supports DVD-Video parsing
+can read the IFO data and present the original interactive menus exactly
+as a standalone DVD player would.</p>
+<h3 id="method-1-direct-playback-no-mounting-required">Method 1: Direct
+Playback (No Mounting Required)</h3>
+<p>Modern media players can parse an ISO file directly without requiring
+you to mount it as a virtual drive first.</p>
+<ol type="1">
+<li><strong>VLC Media Player:</strong>
+<ul>
+<li>Open VLC.</li>
+<li>Drag and drop the ISO file directly into the player window, or go to
+<strong>Media &gt; Open File...</strong> and select your ISO.</li>
+<li>VLC will load the disc navigation sequence. If a menu does not
+appear automatically, go to the top menu and select <strong>Playback
+&gt; Title</strong> or ensure that <strong>Disc &gt; No disc
+menus</strong> is unchecked under the advanced open settings.</li>
+</ul></li>
+<li><strong>Kodi:</strong>
+<ul>
+<li>Add the folder containing your ISO files to your Kodi video
+library.</li>
+<li>Selecting an ISO will automatically trigger its built-in DVD
+navigation engine, loading the root menu with functional remote or mouse
+controls.</li>
+</ul></li>
+<li><strong>MPC-HC (Media Player Classic Home Cinema):</strong>
+<ul>
+<li>Open MPC-HC, select <strong>File &gt; Open Quick...</strong>, and
+choose the ISO.</li>
+<li>MPC-HC utilizes internal filters (LAV Filters) to process DVD
+navigation and allows full mouse-driven menu interaction.</li>
+</ul></li>
+</ol>
+<h3 id="method-2-mounting-the-iso-to-a-virtual-drive">Method 2: Mounting
+the ISO to a Virtual Drive</h3>
+<p>If you prefer using dedicated DVD software (such as CyberLink
+PowerDVD) or older playback tools, mounting the ISO creates a virtual
+disc drive that fools your operating system into treating the file as an
+optical disc inserted into a tray.</p>
+<ol type="1">
+<li><strong>Windows (10 and 11):</strong>
+<ul>
+<li>Right-click the <code>.iso</code> file and select
+<strong>Mount</strong>.</li>
+<li>Windows assigns the image a virtual drive letter (e.g.,
+<code>D:</code> or <code>E:</code>).</li>
+<li>Open your chosen media player, select <strong>Open Disc</strong>,
+and select the virtual drive letter. The disc will launch its
+introductory sequences and root menu.</li>
+<li>When finished, right-click the virtual drive in File Explorer and
+select <strong>Eject</strong>.</li>
+</ul></li>
+<li><strong>macOS:</strong>
+<ul>
+<li>Double-click the <code>.iso</code> file to mount it via the native
+DiskImageMounter utility.</li>
+<li>Open a compatible player such as VLC, choose <strong>File &gt; Open
+Disc</strong>, and select the mounted volume.</li>
+</ul></li>
+</ol>
+<h3 id="troubleshooting-menu-navigation">Troubleshooting Menu
+Navigation</h3>
+<ul>
+<li><strong>Mouse Clicks Not Registering:</strong> Some players fail to
+map mouse clicks to DVD menu buttons correctly. Use the keyboard arrow
+keys and the Enter key to navigate menus if mouse input is
+unresponsive.</li>
+<li><strong>Playback Skips Directly to the Movie:</strong> If your
+player bypasses the menu, check the playback settings. In VLC, for
+example, navigating to <strong>Media &gt; Open Disc</strong>, selecting
+the ISO, and verifying that the disc options do not have "No disc menus"
+enabled will restore normal menu behavior.</li>
+<li><strong>Blu-ray ISOs vs. DVD ISOs:</strong> While standard DVD menus
+(VOB/IFO) have near-universal compatibility, Blu-ray ISOs containing
+complex Java-based menus (BD-J) require players with an active Java
+Runtime Environment (JRE) to render interactive menus properly.</li>
+</ul></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/how-to-play-iso-files-with-full-dvd-menus';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

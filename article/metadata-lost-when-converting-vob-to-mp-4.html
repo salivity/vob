@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metadata Lost When Converting VOB to MP4 - vob</title>
+    <meta name="description" content="Converting DVD video files (VOB) to modern MP4 containers significantly reduces file size and improves device compatibility, but the process strips out substantial legacy metadata. This article details the specific metadata, navigation commands, structura">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/metadata-lost-when-converting-vob-to-mp-4">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Metadata Lost When Converting VOB to MP4 - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/metadata-lost-when-converting-vob-to-mp-4" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Converting DVD video files (VOB) to modern MP4 containers significantly reduces file size and improves device compatibility, but the process strips out substantial legacy metadata. This article details the specific metadata, navigation commands, structura" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="metadata-lost-when-converting-vob-to-mp4">Metadata Lost When
+Converting VOB to MP4</h1>
+<p>Converting DVD video files (VOB) to modern MP4 containers
+significantly reduces file size and improves device compatibility, but
+the process strips out substantial legacy metadata. This article details
+the specific metadata, navigation commands, structural data, and
+auxiliary streams commonly discarded during the VOB-to-MP4 transcoding
+process.</p>
+<h3 id="dvd-navigation-and-menu-structuring-data">DVD Navigation and
+Menu Structuring Data</h3>
+<p>Standard DVDs rely on IFO (Information) files coupled with VOB
+containers to manage playback logic. When extracting or converting raw
+VOB files to an MP4, the player logic instructions are entirely lost.
+This includes:</p>
+<ul>
+<li><strong>Menu Navigation Trees:</strong> Button positions, highlight
+states, and interactive routing scripts.</li>
+<li><strong>Multi-Angle Data:</strong> Interleaved video streams
+providing multiple camera angles for the same scene are reduced to a
+single selected angle, discarding alternative stream references.</li>
+<li><strong>Cell and Program Chains (PGC):</strong> DVD sequencing maps,
+non-linear play order tags, and seamless branch jumps.</li>
+<li><strong>Title/Chapter Labels:</strong> While chapter timestamps can
+be mapped to MP4 chapter marks, the underlying DVD cell IDs and native
+chapter pointers do not carry over automatically.</li>
+</ul>
+<h3 id="closed-captioning-and-subpicture-metadata">Closed Captioning and
+Subpicture Metadata</h3>
+<p>DVDs use distinct legacy formats for subtitles and captions that
+rarely transfer to MP4 without explicit separate extraction:</p>
+<ul>
+<li><strong>Line 21 Closed Captions (EIA-608):</strong> Embedded
+directly inside the MPEG-2 video stream’s user data packets, these
+closed captions are usually ignored by standard MP4 encoders unless
+explicitly filtered and converted to timed text tracks (like TTML or
+TX3G).</li>
+<li><strong>Subpicture Color Palettes and Positioning:</strong> DVD
+subtitles are run-length encoded bitmap graphics (VOBSUB) tied to a
+16-color lookup table stored in the IFO file. When converted to an MP4
+container, the color index table, forced subtitle display flags, and
+pixel-coordinate positioning values are dropped unless burned directly
+into the image or converted to vector-based text formats.</li>
+</ul>
+<h3 id="audio-encoding-and-dynamic-range-flags">Audio Encoding and
+Dynamic Range Flags</h3>
+<p>The audio tracks on a DVD (typically AC-3 or DTS) feature
+studio-specific metadata aimed at standalone home theater decoders:</p>
+<ul>
+<li><strong>Dialnorm (Dialogue Normalization):</strong> AC-3 metadata
+tags that instruct the playback system to adjust master volume to
+maintain consistent speech levels across sources.</li>
+<li><strong>Dynamic Range Compression (DRC) Profiles:</strong>
+Instruction flags embedded inside AC-3 frames defining compression
+curves for night-listening modes.</li>
+<li><strong>Matrix Mixdown and Surround Flags:</strong> Downmixing
+instructions (such as Dolby Surround/Pro Logic steering flags) signaling
+whether a stereo downmix should preserve surround phase information.
+When converted to AAC audio in an MP4, these proprietary flags are
+discarded.</li>
+</ul>
+<h3 id="codec-and-display-flags">Codec and Display Flags</h3>
+<p>The MPEG-2 elementary stream contains hardware-specific playback
+properties that modern H.264/H.265 MP4 files replace or ignore:</p>
+<ul>
+<li><strong>Non-Square Pixel Aspect Ratios:</strong> DVDs rely on
+Display Aspect Ratio (DAR) flags to stretch 720x480 (NTSC) or 720x576
+(PAL) non-square pixels into 4:3 or 16:9 displays. Converters often burn
+this stretch into standardized square-pixel dimensions, discarding the
+original anamorphic signal flags.</li>
+<li><strong>Interlacing and Telecine Tags:</strong> Flags such as
+"Repeat First Field" and "Progressive Frame" flags (used for 3:2
+pulldown) are permanently removed once the video is deinterlaced to a
+steady progressive frame rate.</li>
+<li><strong>GOP Timecodes:</strong> Original Group of Pictures timecode
+references used for frame-accurate tape-to-DVD master indexing are
+rewritten to a continuous presentation timestamp (PTS) starting from
+zero.</li>
+</ul>
+<h3 id="access-control-and-regional-identifiers">Access Control and
+Regional Identifiers</h3>
+<ul>
+<li><strong>Region Coding (RPC):</strong> Byte markers that limit
+playback to specific geographical hardware regions.</li>
+<li><strong>Parental Control Masks:</strong> Age-based authorization
+levels defined in the disc's management blocks to automatically skip
+mature scenes are eliminated during the linear conversion to an MP4
+file.</li>
+</ul></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/metadata-lost-when-converting-vob-to-mp-4';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

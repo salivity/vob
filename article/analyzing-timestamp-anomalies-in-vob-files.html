@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analyzing Timestamp Anomalies in VOB Files - vob</title>
+    <meta name="description" content="Digital forensic investigators uncover tampering in modified Video Object (VOB) files by identifying chronological inconsistencies between the host filesystem, container metadata, and elementary stream timing structures. Because VOB files are based on the">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/analyzing-timestamp-anomalies-in-vob-files">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Analyzing Timestamp Anomalies in VOB Files - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/analyzing-timestamp-anomalies-in-vob-files" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Digital forensic investigators uncover tampering in modified Video Object (VOB) files by identifying chronological inconsistencies between the host filesystem, container metadata, and elementary stream timing structures. Because VOB files are based on the" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="analyzing-timestamp-anomalies-in-vob-files">Analyzing Timestamp
+Anomalies in VOB Files</h1>
+<p>Digital forensic investigators uncover tampering in modified Video
+Object (VOB) files by identifying chronological inconsistencies between
+the host filesystem, container metadata, and elementary stream timing
+structures. Because VOB files are based on the MPEG-2 Program Stream
+format, they embed internal clock references that frequently
+desynchronize when an unauthorized edit, splice, or re-encoding occurs.
+By dissecting these internal layers—specifically examining Pack Headers,
+Packetized Elementary Stream (PES) headers, and DVD Information (IFO)
+tables—investigators can establish whether a video has been manipulated,
+truncated, or forged.</p>
+<h3 id="1-comparing-filesystem-and-internal-timestamps">1. Comparing
+Filesystem and Internal Timestamps</h3>
+<p>Forensic analysis begins by establishing a baseline using external
+filesystem attributes (MACB timestamps: Modified, Accessed, Created, and
+Born). Investigators compare these values against internal container
+metadata. If the filesystem shows a creation date that predates or
+heavily contradicts the internal stream generation times, the file
+warrants deeper inspection. However, because external timestamps are
+easily spoofed using simple command-line utilities, investigators treat
+internal MPEG-2 stream markers as the definitive source of chronological
+integrity.</p>
+<h3 id="2-inspecting-system-clock-references-scr">2. Inspecting System
+Clock References (SCR)</h3>
+<p>VOB files rely on a System Clock Reference (SCR) stored in the pack
+header (<code>0x000001BA</code>). The SCR synchronizes the playback
+system's internal clock with the multiplexed audio and video
+streams.</p>
+<p>In an unaltered, continuous recording, the SCR increases
+monotonically and smoothly across packs. When investigators parse the
+raw stream, they look for:</p>
+<ul>
+<li><strong>SCR Resets:</strong> Sudden drops to zero or lower values,
+indicating spliced footage from another source or an appended recording
+session.</li>
+<li><strong>SCR Gaps:</strong> Unnatural jumps in the timeline that do
+not align with standard frame intervals, indicating deleted scenes or
+dropped frames.</li>
+<li><strong>Jitter and Irregular Intervals:</strong> An inconsistent
+increase rate between packs, which commonly points to third-party
+consumer remuxing software that failed to maintain standard MPEG-2
+multiplexing compliance.</li>
+</ul>
+<h3 id="3-evaluating-pts-and-dts-discrepancies">3. Evaluating PTS and
+DTS Discrepancies</h3>
+<p>Within the Packetized Elementary Stream (PES) headers
+(<code>0x000001E0</code> for video), MPEG-2 encodes two crucial timing
+mechanisms:</p>
+<ul>
+<li><strong>Presentation Time Stamp (PTS):</strong> Tells the decoder
+when to display a specific frame.</li>
+<li><strong>Decoding Time Stamp (DTS):</strong> Tells the decoder when
+to decompress a frame (used when B-frames introduce out-of-order
+decoding).</li>
+</ul>
+<p>Investigators use forensic media analyzers to extract PTS and DTS
+values on a frame-by-frame basis. A legitimate recording presents a
+uniform progression of PTS values matching the defined frame rate (e.g.,
+increments of 3003 ticks for 29.97 fps at a 90 kHz clock). Modified
+files often display:</p>
+<ul>
+<li>Non-sequential PTS jumps at edit points.</li>
+<li>Negative PTS differences (PTS moving backward without a standard
+stream reset marker).</li>
+<li>DTS values that exceed PTS values, which violates the MPEG-2
+standard and indicates post-production manipulation.</li>
+</ul>
+<h3 id="4-auditing-group-of-pictures-gop-alignment">4. Auditing Group of
+Pictures (GOP) Alignment</h3>
+<p>Video in a VOB container is organized into Groups of Pictures (GOP),
+typically initiated by an Intra-coded frame (I-frame) and preceded by a
+GOP header (<code>0x000001B8</code>). GOP headers contain a time code
+representing hours, minutes, seconds, and picture frames.</p>
+<p>Investigators map these GOP time codes directly against the PES-level
+PTS. In a modified VOB file, editors often cut footage without
+re-encoding the entire stream (lossless cutting). This leaves an open
+GOP or an abrupt change in the expected GOP cadence (such as a standard
+12-frame or 15-frame structure suddenly interrupted by a 4-frame GOP),
+along with a mismatched GOP time code that clashes with the surrounding
+PTS markers.</p>
+<h3 id="5-cross-referencing-associated-ifo-files">5. Cross-Referencing
+Associated IFO Files</h3>
+<p>When a VOB file originates from a standard DVD structure, it operates
+alongside an Information (IFO) file (e.g., <code>VTS_01_0.IFO</code>).
+The IFO file contains the Video Title Set Program Chain Table (VTS_PGC),
+which includes the exact playback duration, chapter transition times,
+and cell start/end sector addresses.</p>
+<p>Investigators parse the IFO navigation tables and match them against
+the VOB:</p>
+<ul>
+<li><strong>Cell Playback Timelines:</strong> If the VOB playback stream
+contains frames extending beyond the sector ranges or total time defined
+in the cell tables, hidden or appended data may be present.</li>
+<li><strong>Time Maps (VTS_TMAPT):</strong> DVDs map playback intervals
+(usually every few seconds) to specific sectors. Discrepancies between
+the time map table and the actual SCR/PTS found at those sector
+addresses confirm stream replacement or surgical splicing.</li>
+</ul>
+<h3 id="6-hexadecimal-and-residue-carving">6. Hexadecimal and Residue
+Carving</h3>
+<p>When metadata streams have been deliberately stripped or unified by
+sophisticated video editing suites, investigators analyze the boundaries
+between data packs using raw hex inspection. Unaltered VOB files
+strictly maintain 2048-byte sector alignment.</p>
+<p>Spliced edits often leave fragmented packs, padding bytes
+(<code>0x000001BF</code>), or orphaned sequence headers containing
+historical metadata. If an investigator finds remnants of previous
+multiplexing parameters—such as an abandoned sequence display extension
+or varying aspect ratio flags inside the stream—it provides conclusive
+proof that the VOB file is an assembly of disparate sources rather than
+a pristine capture.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/analyzing-timestamp-anomalies-in-vob-files';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

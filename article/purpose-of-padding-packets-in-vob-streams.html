@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Purpose of Padding Packets in VOB Streams - vob</title>
+    <meta name="description" content="In a DVD Video Object (VOB) stream, padding packets—often referred to as stuffing or zero-byte packets—serve essential synchronization, alignment, and multiplexing roles. Because VOB files are based on the MPEG-2 Program Stream format, they must adhere to">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/purpose-of-padding-packets-in-vob-streams">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Purpose of Padding Packets in VOB Streams - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/purpose-of-padding-packets-in-vob-streams" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="In a DVD Video Object (VOB) stream, padding packets—often referred to as stuffing or zero-byte packets—serve essential synchronization, alignment, and multiplexing roles. Because VOB files are based on the MPEG-2 Program Stream format, they must adhere to" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="purpose-of-padding-packets-in-vob-streams">Purpose of Padding
+Packets in VOB Streams</h1>
+<p>In a DVD Video Object (VOB) stream, padding packets—often referred to
+as stuffing or zero-byte packets—serve essential synchronization,
+alignment, and multiplexing roles. Because VOB files are based on the
+MPEG-2 Program Stream format, they must adhere to rigid physical sector
+requirements and decoder buffer limits. Padding packets allow the
+multiplexer to fill empty gaps, ensure consistent data rates, and align
+content to exact physical sector boundaries without corrupting the
+decodable audio and video data.</p>
+<h3 id="enforcing-fixed-sector-sizes-2048-bytes">Enforcing Fixed Sector
+Sizes (2,048 Bytes)</h3>
+<p>The primary physical reason for padding packets is the architecture
+of optical media. DVDs are formatted into physical sectors of precisely
+2,048 bytes (2 KB). Every individual "Pack" within a VOB file must match
+this 2,048-byte limit exactly to align with the optical disc's read
+operations.</p>
+<p>Compressed video, audio, and subtitle packets rarely divide evenly
+into 2,048-byte units. When a data payload—such as an MPEG-2 Video
+Elementary Stream—falls short of filling a complete pack, the
+multiplexer appends a padding packet containing non-functional filler
+bytes (often <code>0x00</code> or <code>0xFF</code>) to reach the
+required 2,048-byte mark.</p>
+<h3 id="buffer-management-and-bitrate-regulation">Buffer Management and
+Bitrate Regulation</h3>
+<p>MPEG-2 decoders rely on the Video Buffer Verifier (VBV) model to
+prevent buffer underflows (where the decoder runs out of data to
+display) and buffer overflows (where the incoming data exceeds the
+decoder's memory).</p>
+<p>When encoding at a Constant Bit Rate (CBR), or when an active
+Variable Bit Rate (VBR) dip falls below the minimum transfer rate needed
+by the DVD drive, padding packets are inserted. They carry timestamps
+(Presentation Time Stamps and System Clock References) like normal
+packets, keeping the system clock running accurately while transferring
+"empty" payload that the decoder can safely discard without starving the
+decoding pipeline.</p>
+<h3 id="structural-and-navigational-alignment">Structural and
+Navigational Alignment</h3>
+<p>DVD playback is broken down into Video Object Units (VOBUs), Cells,
+and Programs, each managed by Navigation Packs (<code>NV_PCK</code>). A
+VOBU must always begin with an <code>NV_PCK</code> aligned precisely to
+the start of a sector.</p>
+<p>When a video sequence, chapter point, or GOP (Group of Pictures)
+ends, the final data pack of that unit usually does not contain enough
+compressed data to reach the sector boundary. A padding packet rounds
+out the remaining bytes of that pack. This guarantees that the
+subsequent VOBU, chapter transition, or interactive menu begins cleanly
+at the start of a fresh 2,048-byte sector.</p>
+<h3 id="mpeg-2-padding-packet-identification">MPEG-2 Padding Packet
+Identification</h3>
+<p>In the underlying MPEG-2 multiplex, a padding packet is formally
+assigned the Stream ID <code>0xBE</code> (Padding Stream). When a DVD
+player's demultiplexer parses the pack header and encounters
+<code>0xBE</code>, it simply reads the length field of the packet and
+skips the specified number of payload bytes, routing none of the filler
+to the audio or video processing units.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/purpose-of-padding-packets-in-vob-streams';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

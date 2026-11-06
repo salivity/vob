@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How IFO Files Map Chapters to VOB Sectors - vob</title>
+    <meta name="description" content="DVD-Video playback relies on IFO (Information) files to control navigation and translate user actions into physical disc reads. This article details the internal data structures that DVD players use to bridge the gap between abstract user selections—such">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/how-ifo-files-map-chapters-to-vob-sectors">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How IFO Files Map Chapters to VOB Sectors - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/how-ifo-files-map-chapters-to-vob-sectors" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="DVD-Video playback relies on IFO (Information) files to control navigation and translate user actions into physical disc reads. This article details the internal data structures that DVD players use to bridge the gap between abstract user selections—such" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-ifo-files-map-chapters-to-vob-sectors">How IFO Files Map
+Chapters to VOB Sectors</h1>
+<p>DVD-Video playback relies on IFO (Information) files to control
+navigation and translate user actions into physical disc reads. This
+article details the internal data structures that DVD players use to
+bridge the gap between abstract user selections—such as choosing a
+chapter from a menu—and the exact Logical Block Addressing (LBA) sector
+addresses located within associated Video Object (VOB) files.</p>
+<h3 id="1-chapter-request-to-part-of-title-ptt">1. Chapter Request to
+Part-of-Title (PTT)</h3>
+<p>When a user selects a chapter, the playback device does not query the
+VOB file directly. Instead, it queries the Video Title Set Information
+file (<code>VTS_XX_0.IFO</code>). Within this file, chapters are
+formally designated as Parts-of-Title (PTT).</p>
+<p>The player accesses the Title Set Part-of-Title Search Pointer Table
+(<code>VTS_PTT_SRPT</code>). This lookup table maps the selected Title
+number and Chapter (PTT) number to two critical identifiers:</p>
+<ul>
+<li><strong>PGCN (Program Chain Number):</strong> Identifies which
+Program Chain contains the presentation data.</li>
+<li><strong>PGN (Program Number):</strong> Identifies the specific
+Program (the logical chapter unit) within that Program Chain.</li>
+</ul>
+<h3 id="2-program-chain-information-table-vts_pgciti">2. Program Chain
+Information Table (<code>VTS_PGCITI</code>)</h3>
+<p>Once the player identifies the correct PGC and Program number, it
+traverses to the Program Chain Information Table
+(<code>VTS_PGCITI</code>), which houses the specific Program Chain
+Information (<code>VTS_PGCI</code>) block.</p>
+<p>Inside the target PGC structure, the player consults the Program Map
+(<code>PGC_PGMAP</code>). This map acts as an index converting the
+Program Number (PGN) into an entry-level <strong>Cell Number</strong>.
+In DVD architecture, a Program is composed of one or more sequential
+Cells, with the first Cell representing the starting point of the
+chapter.</p>
+<h3 id="3-cell-playback-information-c_pbi">3. Cell Playback Information
+(<code>C_PBI</code>)</h3>
+<p>To convert the Cell number into a physical disc location, the IFO
+reader accesses the Cell Playback Information Table
+(<code>C_PBIT</code>) inside the active PGC. Each Cell entry contains
+exact byte and sector coordinates for media playback, including:</p>
+<ul>
+<li><strong><code>C_FVOBU_SA</code> (Cell First VOBU Start
+Address):</strong> A 4-byte value defining the starting sector of the
+Cell's first Video Object Unit (VOBU).</li>
+<li><strong><code>C_LVOBU_SA</code> (Cell Last VOBU Start
+Address):</strong> A 4-byte value defining the starting sector of the
+Cell’s final VOBU.</li>
+</ul>
+<p>The <code>C_FVOBU_SA</code> value represents a relative sector offset
+from the beginning of the Title Set's VOB file group
+(<code>VTS_XX_1.VOB</code> through <code>VTS_XX_N.VOB</code>). Because
+the DVD file system views these split VOB segments as one continuous
+stream of 2,048-byte sectors, this relative sector value directly
+identifies the exact block where video decoding must begin.</p>
+<h3 id="4-sector-resolution-and-navigation-packs">4. Sector Resolution
+and Navigation Packs</h3>
+<p>The optical drive adds the relative <code>C_FVOBU_SA</code> sector
+offset to the base physical start sector of the VTS VOB files on the
+disc. The drive head jumps directly to this absolute Logical Block
+Address (LBA).</p>
+<p>At this sector, the VOB stream always begins with a
+<strong>Navigation Pack (NV_PCK)</strong>. The NV_PCK contains:</p>
+<ul>
+<li><strong>PCI (Presentation Control Information):</strong> Handles
+real-time display timestamps, angles, and subpicture display
+parameters.</li>
+<li><strong>DSI (Data Search Information):</strong> Re-confirms relative
+sector pointers to neighboring VOBUs and GOPs (Group of Pictures),
+allowing the MPEG-2 decoder to synchronize video and audio buffers
+immediately upon arrival at the chapter mark.</li>
+</ul></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/how-ifo-files-map-chapters-to-vob-sectors';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

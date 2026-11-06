@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How Disc Rot Damages VOB File Packet Integrity - vob</title>
+    <meta name="description" content="Optical disc rot is the physical and chemical degradation of a DVD&#39;s reflective and data layers, causing unreadable sectors that directly corrupt the internal structure of stored Video Object (VOB) files. This article explains the physical mechanics of di">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/how-disc-rot-damages-vob-file-packet-integrity">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How Disc Rot Damages VOB File Packet Integrity - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/how-disc-rot-damages-vob-file-packet-integrity" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Optical disc rot is the physical and chemical degradation of a DVD&#39;s reflective and data layers, causing unreadable sectors that directly corrupt the internal structure of stored Video Object (VOB) files. This article explains the physical mechanics of di" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-disc-rot-damages-vob-file-packet-integrity">How Disc Rot
+Damages VOB File Packet Integrity</h1>
+<p>Optical disc rot is the physical and chemical degradation of a DVD's
+reflective and data layers, causing unreadable sectors that directly
+corrupt the internal structure of stored Video Object (VOB) files. This
+article explains the physical mechanics of disc rot, how read errors
+bypass error-correction layers, and the exact way this degradation
+destroys the multiplexed MPEG-2 Program Stream packets inside a VOB
+file, leading to decoding failures, visual artifacts, and data loss.</p>
+<h3 id="physical-breakdown-of-the-disc-medium">Physical Breakdown of the
+Disc Medium</h3>
+<p>Optical discs store digital data as microscopic microscopic pits and
+lands along a spiral track, read by a laser reflecting off an internal
+metallic layer (usually aluminum, silver, or gold). Disc rot occurs when
+chemical corrosion, oxidation, or mechanical delamination breaks down
+this reflective layer or the polycarbonate bonding adhesives.</p>
+<p>When oxygen, moisture, or manufacturing impurities seep into the disc
+layers, the reflective metal oxidizes. For aluminum, oxidation creates
+aluminum oxide, turning the reflective surface milky, translucent, or
+speckled with pinholes. When a DVD drive’s laser hits these oxidized
+regions, the light scatters rather than reflecting back to the
+photodiode sensor. The optical pickup unit can no longer differentiate
+between pits and lands, resulting in a raw read failure at the physical
+layer.</p>
+<h3 id="failure-of-error-correction-rspc">Failure of Error Correction
+(RSPC)</h3>
+<p>DVD media use Reed-Solomon Product Code (RSPC) error correction to
+reconstruct missing or distorted bits. Data on a DVD is divided into
+physical sectors of 2,064 bytes, which include user data, error
+detection codes (EDC), and error correction parity.</p>
+<p>Minor surface imperfections, such as small scratches, fall within the
+error-correcting budget of the RSPC algorithm. However, disc rot causes
+large, continuous cluster errors (burst errors) across adjacent tracks.
+Once the physical damage exceeds the maximum number of correctable bytes
+per ECC block (16 sectors), the drive's firmware cannot reconstruct the
+missing data. The drive returns an unrecoverable read error (I/O error)
+or passes null/garbage bytes to the file system.</p>
+<h3 id="corruption-of-the-2048-byte-dvd-sector">Corruption of the
+2,048-Byte DVD Sector</h3>
+<p>At the logical format level (Universal Disk Format or UDF), a DVD
+allocates file data in 2,048-byte logical sectors. A VOB file is
+constructed precisely around this 2,048-byte boundary: every single
+logical sector on a DVD-Video disc maps to exactly one MPEG-2 Program
+Stream (PS) "Pack."</p>
+<p>When disc rot destroys the physical sector, the 2,048-byte user data
+payload inside that sector is either truncated, filled with zeros, or
+entirely missing. Because the physical structure directly mirrors the
+logical packet structure, the physical damage translates into a 1:1
+destruction of complete VOB data units.</p>
+<h3 id="disruption-of-pack-and-pes-headers">Disruption of Pack and PES
+Headers</h3>
+<p>A standard VOB file consists of multiplexed video, audio, and
+subtitle streams wrapped in MPEG-2 Program Stream packets. Each
+2,048-byte pack begins with a 14-byte <strong>Pack Header</strong>,
+containing a system clock reference (SCR) and the 4-byte start code
+<code>0x000001BA</code>. Following the Pack Header are <strong>PES
+(Packetized Elementary Stream) Packets</strong>, which include their own
+headers indicating stream IDs (e.g., <code>0x000001E0</code> for MPEG-2
+video, <code>0x000001BD</code> for AC-3 audio).</p>
+<p>Disc rot corrupts these headers in several distinct ways:</p>
+<ul>
+<li><strong>Lost Pack Synchronization:</strong> If disc rot mutates the
+<code>0x000001BA</code> prefix, the demultiplexer cannot identify where
+the pack begins, causing the parser to lose synchronization with the
+stream.</li>
+<li><strong>Corrupted Presentation Time Stamps (PTS):</strong> PES
+headers carry Presentation Time Stamps (PTS) and Decoding Time Stamps
+(DTS) to synchronize audio and video. Bitrot inside these fields
+corrupts the playback timeline, leading to immediate audio-video
+desynchronization or buffer underflows that freeze media players.</li>
+<li><strong>Payload Truncation:</strong> If the PES packet length field
+is corrupted, the demuxer miscalculates the boundary of the enclosed
+payload, reading raw audio bytes as video data or vice versa.</li>
+</ul>
+<h3 id="impact-on-elementary-streams-mpeg-2-video-and-audio">Impact on
+Elementary Streams (MPEG-2 Video and Audio)</h3>
+<p>Inside the corrupted PES packets lie the raw video and audio
+elementary streams. MPEG-2 video relies heavily on temporal compression
+using I-frames (Intra-coded), P-frames (Predicted), and B-frames
+(Bi-directional).</p>
+<ul>
+<li><strong>I-Frame Damage:</strong> If the rotting sector overlaps with
+an I-frame, the reference picture for the entire Group of Pictures (GOP)
+is destroyed. Because subsequent P-frames and B-frames calculate their
+pixel data based on this reference, the decoder produces severe
+macroblocking, pixelation, and visual tearing that persists until the
+next valid I-frame is parsed.</li>
+<li><strong>Slice Header Loss:</strong> MPEG-2 frames are divided into
+horizontal slices, each beginning with a slice start code
+(<code>0x00000101</code> through <code>0x000001AF</code>). If physical
+corruption overwrites a slice header, the decoder drops the entire
+horizontal block of video.</li>
+<li><strong>Audio Stream Glitches:</strong> Audio streams (such as LPCM,
+AC-3, or DTS) lack the temporal redundancy of video. Physical corruption
+of audio packets results in sharp acoustic pops, dropped frames, or
+muted audio channels as the decoder discards invalid audio sync words
+(<code>0x0B77</code> for AC-3).</li>
+</ul>
+<p>When disc rot advances, multiple contiguous sectors fail
+simultaneously. At this stage, the demuxer encounters entirely missing
+GOPs and Navigation Packs (NV_PCK), rendering the VOB file structurally
+invalid and halting playback entirely.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/how-disc-rot-damages-vob-file-packet-integrity';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

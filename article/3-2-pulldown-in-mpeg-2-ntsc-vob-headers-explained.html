@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3:2 Pulldown in MPEG-2 NTSC VOB Headers Explained - vob</title>
+    <meta name="description" content="This article explains the mechanism of 3:2 pulldown and details how standard-definition NTSC DVD Video Object (VOB) files implement it through MPEG-2 stream metadata. You will learn the mathematics behind converting 24 fps film to 29.97 fps television vid">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/3-2-pulldown-in-mpeg-2-ntsc-vob-headers-explained">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="3:2 Pulldown in MPEG-2 NTSC VOB Headers Explained - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/3-2-pulldown-in-mpeg-2-ntsc-vob-headers-explained" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains the mechanism of 3:2 pulldown and details how standard-definition NTSC DVD Video Object (VOB) files implement it through MPEG-2 stream metadata. You will learn the mathematics behind converting 24 fps film to 29.97 fps television vid" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="32-pulldown-in-mpeg-2-ntsc-vob-headers-explained">3:2 Pulldown
+in MPEG-2 NTSC VOB Headers Explained</h1>
+<p>This article explains the mechanism of 3:2 pulldown and details how
+standard-definition NTSC DVD Video Object (VOB) files implement it
+through MPEG-2 stream metadata. You will learn the mathematics behind
+converting 24 fps film to 29.97 fps television video, the difference
+between hard and soft telecine, and the specific syntax elements within
+the MPEG-2 <code>picture_coding_extension()</code> header—principally
+<code>repeat_first_field</code> and <code>top_field_first</code>—that
+instruct playback devices to construct an interlaced output on the
+fly.</p>
+<h3 id="what-is-32-pulldown">What is 3:2 Pulldown?</h3>
+<p>Standard cinematic film is shot at 24 frames per second (fps). The
+NTSC television standard, however, operates at 29.97 frames per second,
+displayed as 59.94 interlaced fields per second. To display 24 fps
+content on an NTSC display, the frame rate must be converted through a
+process known as telecine, or 3:2 pulldown (often referred to
+interchangeably as 2:3 pulldown).</p>
+<p>The process begins by slowing the film slightly by 0.1% to 23.976 fps
+to match the NTSC time base. To distribute 24 progressive frames across
+30 frame intervals (60 fields), every group of four film frames is
+converted into five video frames (ten fields).</p>
+<p>Each progressive frame is split into two fields: the Top field (odd
+lines) and the Bottom field (even lines). These fields are repeated in
+an alternating 3-field, 2-field cadence:</p>
+<ul>
+<li><strong>Film Frame A:</strong> Displayed across 2 fields (Top,
+Bottom).</li>
+<li><strong>Film Frame B:</strong> Displayed across 3 fields (Top,
+Bottom, Top).</li>
+<li><strong>Film Frame C:</strong> Displayed across 2 fields (Bottom,
+Top).</li>
+<li><strong>Film Frame D:</strong> Displayed across 3 fields (Bottom,
+Top, Bottom).</li>
+</ul>
+<p>This 2-3-2-3 pattern maps four original frames across ten fields,
+resulting in a smooth, continuous 59.94 fields per second output.</p>
+<h3 id="hard-telecine-vs-soft-telecine">Hard Telecine vs. Soft
+Telecine</h3>
+<p>In MPEG-2 NTSC VOB files, 3:2 pulldown can be applied in two
+ways:</p>
+<ol type="1">
+<li><strong>Hard Telecine:</strong> The pulldown is applied
+<em>before</em> encoding. The encoder records 29.97 interlaced frames
+directly onto the disc. Because redundant fields are compressed into the
+stream, this approach wastes bit budget and makes reverse telecine
+(detelicining) computationally difficult.</li>
+<li><strong>Soft Telecine:</strong> The video is encoded natively at
+23.976 progressive frames per second. Instead of physically storing
+duplicate fields, the stream contains metadata flags that instruct the
+MPEG-2 decoder to execute the 3:2 pulldown during playback. Soft
+telecine maximizes image quality by allocating bits only to unique
+progressive frames.</li>
+</ol>
+<h3 id="how-32-pulldown-is-signaled-in-mpeg-2-headers">How 3:2 Pulldown
+is Signaled in MPEG-2 Headers</h3>
+<p>Soft telecine is signaled inside the MPEG-2 video elementary stream
+(<code>ISO/IEC 13818-2</code>) encapsulated within the VOB's Program
+Stream. Specifically, the flags reside within the <strong>Picture Coding
+Extension</strong> header (<code>picture_coding_extension()</code>),
+which immediately follows the <strong>Picture Header</strong> for every
+coded frame.</p>
+<p>Three fields inside this extension govern the pulldown behavior:</p>
+<ul>
+<li><strong><code>progressive_frame</code> (1 bit):</strong> Set to
+<code>1</code>, signaling that the underlying coded frame is progressive
+rather than interlaced.</li>
+<li><strong><code>repeat_first_field</code> (RFF, 1 bit):</strong>
+Indicates whether the decoder must repeat the first displayed field of
+the frame to generate an extra field.</li>
+<li><strong><code>top_field_first</code> (TFF, 1 bit):</strong>
+Specifies whether the top field or the bottom field must be output
+first.</li>
+</ul>
+<h3 id="the-4-frame-cadence-sequence">The 4-Frame Cadence Sequence</h3>
+<p>To execute soft 3:2 pulldown, the encoder alternates
+<code>repeat_first_field</code> and <code>top_field_first</code> across
+successive progressive frames in a strict four-frame cycle:</p>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;">Coded Frame</th>
+<th style="text-align: left;"><code>progressive_frame</code></th>
+<th style="text-align: left;"><code>top_field_first</code> (TFF)</th>
+<th style="text-align: left;"><code>repeat_first_field</code> (RFF)</th>
+<th style="text-align: left;">Fields Output by Decoder</th>
+<th style="text-align: left;">Field Count</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Frame 0</strong></td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">Top, Bottom</td>
+<td style="text-align: left;">2</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Frame 1</strong></td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">Top, Bottom, Top</td>
+<td style="text-align: left;">3</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Frame 2</strong></td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">Bottom, Top</td>
+<td style="text-align: left;">2</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Frame 3</strong></td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">Bottom, Top, Bottom</td>
+<td style="text-align: left;">3</td>
+</tr>
+</tbody>
+</table>
+<p>When the decoder encounters <code>repeat_first_field = 1</code>, it
+holds the frame in memory and re-displays its first field (as determined
+by <code>top_field_first</code>) after the second field has been
+shown.</p>
+<p>Because an odd number of fields (3) was output for Frame 1, the field
+parity flips for Frame 2: the next chronological field on an interlaced
+display must be a Bottom field. Therefore, Frame 2 sets
+<code>top_field_first = 0</code>. After Frame 3 outputs three fields
+(Bottom, Top, Bottom), the cycle completes, returning to
+<code>top_field_first = 1</code> for the next sequence.</p>
+<p>Through this header signaling, the playback device outputs standard
+59.94i NTSC video over analog connections, while modern progressive
+displays can ignore the flags and render the underlying 23.976p source
+directly.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/3-2-pulldown-in-mpeg-2-ntsc-vob-headers-explained';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

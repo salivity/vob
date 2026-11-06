@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Can You Split a VOB File by Byte Count? - vob</title>
+    <meta name="description" content="This article examines whether a VOB (Video Object) file can be split arbitrarily by raw byte count without corrupting the container. It explores the underlying MPEG-2 Program Stream architecture, details what happens at the byte level during an unaligned">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/can-you-split-a-vob-file-by-byte-count">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Can You Split a VOB File by Byte Count? - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/can-you-split-a-vob-file-by-byte-count" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article examines whether a VOB (Video Object) file can be split arbitrarily by raw byte count without corrupting the container. It explores the underlying MPEG-2 Program Stream architecture, details what happens at the byte level during an unaligned" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="can-you-split-a-vob-file-by-byte-count">Can You Split a VOB File
+by Byte Count?</h1>
+<p>This article examines whether a VOB (Video Object) file can be split
+arbitrarily by raw byte count without corrupting the container. It
+explores the underlying MPEG-2 Program Stream architecture, details what
+happens at the byte level during an unaligned split, and explains why
+byte-level slicing causes playback artifacts even if the stream remains
+technically recoverable.</p>
+<h3 id="the-short-answer">The Short Answer</h3>
+<p>Strictly speaking, no. Slicing a VOB file at a completely random byte
+offset will corrupt the specific packet crossing that boundary. However,
+because VOB files are based on the MPEG-2 Program Stream (MPEG-2 PS)
+format, the file will not become entirely unreadable. Most media players
+will drop the damaged packet and resume playback at the next valid start
+code.</p>
+<h3 id="the-structure-of-a-vob-file">The Structure of a VOB File</h3>
+<p>To understand how byte splitting affects a VOB file, it helps to
+understand its internal structure:</p>
+<ul>
+<li><strong>MPEG-2 Program Stream:</strong> Unlike modern containers
+like MP4 or MKV that rely on centralized index headers (such as
+<code>moov</code> atoms), a VOB file is a packetized, continuous
+stream.</li>
+<li><strong>Packets and Packs:</strong> Data inside a VOB is organized
+into discrete units called Packs (which contain a Pack Header) and
+Packetized Elementary Streams (PES).</li>
+<li><strong>DVD Sector Size:</strong> In DVD-Video authoring, every VOB
+pack is aligned precisely to 2,048 bytes (2 KB), matching the optical
+sector size of a DVD disc.</li>
+</ul>
+<h3 id="what-happens-during-an-arbitrary-byte-split">What Happens During
+an Arbitrary Byte Split?</h3>
+<p>If you use a basic command-line tool (like <code>split</code> on
+Linux or a generic file cutter) to divide a VOB file at an arbitrary
+byte count, several issues arise:</p>
+<ol type="1">
+<li><strong>Broken Packet Headers:</strong> If the split lands in the
+middle of a pack header or PES header, that packet is truncated. The
+beginning chunk will end with incomplete data, and the next chunk will
+start with orphaned payload data missing its identifying header.</li>
+<li><strong>Loss of Synchronization:</strong> A decoder must scan
+forward through the second chunk until it finds a valid 4-byte start
+code (such as <code>0x000001BA</code> for a pack header). Everything
+before that start code is discarded.</li>
+<li><strong>Broken Group of Pictures (GOP):</strong> Video frames rely
+on predictive compression (I, P, and B frames). If a split occurs
+mid-GOP, the second file will lack the reference I-frame (keyframe)
+required to decode subsequent frames, resulting in heavy macroblocking
+or a blank screen until the next keyframe arrives.</li>
+<li><strong>Timestamp Disruptions:</strong> Audio and video
+synchronization relies on Presentation Time Stamps (PTS). Truncated
+packets can desynchronize audio and video streams at the split
+point.</li>
+</ol>
+<h3 id="why-dvd-vob-files-are-split-by-file-size">Why DVD VOB Files Are
+Split by File Size</h3>
+<p>Commercial DVDs famously split video into multiple 1 GB
+(<code>VTS_01_1.VOB</code>, <code>VTS_01_2.VOB</code>) segments. While
+these look like raw byte splits, they are not completely arbitrary.
+Authoring software ensures that the cut occurs exactly on a 2,048-byte
+sector boundary. Furthermore, the accompanying IFO files hold
+navigational data detailing the exact sector locations of cells and
+chapters across those splits.</p>
+<h3 id="the-correct-way-to-split-a-vob-file">The Correct Way to Split a
+VOB File</h3>
+<p>If you must split a VOB file without re-encoding:</p>
+<ul>
+<li><strong>Sector-Aligned Splitting:</strong> If maintaining raw stream
+structure is your only goal, split strictly on multiples of 2,048 bytes.
+This prevents packet header truncation, though it will not solve
+GOP/keyframe playback issues.</li>
+<li><strong>Keyframe-Aware Splitting:</strong> Use container-aware tools
+(such as FFmpeg with <code>-c copy</code>, or specialized tools like
+MPEG2Schnitt) to split at keyframe boundaries. This preserves the
+container structure, guarantees instant playback on the split segments,
+and avoids A/V synchronization errors.</li>
+</ul></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/can-you-split-a-vob-file-by-byte-count';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

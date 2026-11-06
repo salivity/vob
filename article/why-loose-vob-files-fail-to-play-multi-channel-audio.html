@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why Loose VOB Files Fail to Play Multi-Channel Audio - vob</title>
+    <meta name="description" content="Playing loose VOB (Video Object) files on standalone media players, smart TVs, and hardware decoders frequently results in flat stereo sound rather than full 5.1 surround audio. This issue occurs primarily because standalone VOB files lack the critical na">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/why-loose-vob-files-fail-to-play-multi-channel-audio">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why Loose VOB Files Fail to Play Multi-Channel Audio - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/why-loose-vob-files-fail-to-play-multi-channel-audio" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Playing loose VOB (Video Object) files on standalone media players, smart TVs, and hardware decoders frequently results in flat stereo sound rather than full 5.1 surround audio. This issue occurs primarily because standalone VOB files lack the critical na" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-loose-vob-files-fail-to-play-multi-channel-audio">Why Loose
+VOB Files Fail to Play Multi-Channel Audio</h1>
+<p>Playing loose VOB (Video Object) files on standalone media players,
+smart TVs, and hardware decoders frequently results in flat stereo sound
+rather than full 5.1 surround audio. This issue occurs primarily because
+standalone VOB files lack the critical navigation metadata provided by
+DVD <code>.IFO</code> files, which forces hardware chipsets to
+misidentify the primary audio stream, fail HDMI bitstream passthrough
+negotiation, or default to a safe two-channel downmix.</p>
+<h3 id="the-absence-of-ifo-navigation-metadata">The Absence of IFO
+Navigation Metadata</h3>
+<p>On standard DVD media, <code>.VOB</code> files do not exist in
+isolation. They are governed by <code>.IFO</code> (Information) files
+located in the <code>VIDEO_TS</code> directory. The IFO file contains
+the track map, specifying audio formats (such as AC-3 Dolby Digital or
+DTS), channel counts, language codes, and stream IDs.</p>
+<p>When you extract a "loose" VOB file onto a flash drive or network
+share, the hardware decoder loses this structural roadmap. Standalone
+hardware players—unlike software players such as VLC—rely on
+hardware-level System-on-Chip (SoC) instructions that often assume the
+first readable stream (<code>0x80</code> or <code>0x81</code>) is the
+default track. In many DVD releases, the first stream is a two-channel
+stereo mix, director's commentary, or an uncompressed PCM stereo track,
+causing the player to ignore the secondary multi-channel track
+entirely.</p>
+<h3 id="mpeg-2-program-stream-parsing-limitations">MPEG-2 Program Stream
+Parsing Limitations</h3>
+<p>A VOB file is fundamentally a modified MPEG-2 Program Stream (PS).
+Because the DVD specification allows multiple multiplexed audio and
+video streams within a single file, the player must actively parse the
+private stream headers (<code>Private Stream 1</code> or
+<code>0xBD</code>) to isolate Dolby Digital (AC-3) or DTS audio
+packets.</p>
+<p>Software decoders have ample processing overhead to scan the file
+ahead of time, index every audio packet, and present selection options
+to the user. In contrast, hardware decoders are constrained by
+fixed-function microcode. If the microcode cannot detect a complete
+global header at the very beginning of the raw file, it may fail to
+identify the audio codec's channel configuration correctly, reverting to
+the safest common denominator: stereo PCM.</p>
+<h3 id="hdmi-handshake-and-downmixing-safety-protocols">HDMI Handshake
+and Downmixing Safety Protocols</h3>
+<p>Hardware media players communicate with AV receivers and soundbars
+through HDMI or optical (TOSLINK) connections. When transmitting
+surround sound, the source device relies on High-Definition Multimedia
+Interface (HDMI) Extended Display Identification Data (EDID) handshakes
+to verify that the receiver can decode the incoming stream.</p>
+<p>If a loose VOB file presents fragmented audio headers or inconsistent
+packet presentation timestamps (PTS), the hardware decoder treats the
+stream as potentially corrupt. To avoid sending malformed bitstreams
+that can cause sudden, speaker-damaging bursts of white noise or audio
+dropouts, the decoder automatically downmixes the multichannel signal to
+a two-channel stereo mix before outputting the signal over HDMI.</p>
+<h3 id="timestamp-discontinuities-in-split-files">Timestamp
+Discontinuities in Split Files</h3>
+<p>DVD titles are conventionally split into 1 GB VOB segments
+(<code>VTS_01_1.VOB</code>, <code>VTS_01_2.VOB</code>, etc.). The first
+segment might contain the proper stream headers, while subsequent
+segments carry mid-stream audio packets with non-zero timestamps and
+missing audio headers.</p>
+<p>If a hardware player attempts to play one of these sequential chunks
+independently, it cannot establish the audio channel layout from the
+middle of the stream. Without the master timeline provided by the DVD
+player engine, the hardware decoder will either play no audio at all or
+fall back to single-stream stereo output.</p>
+<h3 id="resolution">Resolution</h3>
+<p>To resolve this limitation without sacrificing audio quality, the
+MPEG-2 video and surround audio streams inside the loose VOB files
+should be remuxed into a modern container, such as MKV or MP4. Remuxing
+does not re-encode or compress the data; it extracts the raw video and
+multi-channel AC-3/DTS streams and places them into a format that
+contains clear, standardized channel metadata that hardware decoders can
+reliably read.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/why-loose-vob-files-fail-to-play-multi-channel-audio';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

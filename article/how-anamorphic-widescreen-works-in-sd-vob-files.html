@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How Anamorphic Widescreen Works in SD VOB Files - vob</title>
+    <meta name="description" content="Anamorphic widescreen encoding allows standard definition DVD Video Object (VOB) containers to store 16:9 widescreen video without sacrificing vertical resolution to hardcoded black bars. By horizontally squeezing a widescreen master image into a standard">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/how-anamorphic-widescreen-works-in-sd-vob-files">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How Anamorphic Widescreen Works in SD VOB Files - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/how-anamorphic-widescreen-works-in-sd-vob-files" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Anamorphic widescreen encoding allows standard definition DVD Video Object (VOB) containers to store 16:9 widescreen video without sacrificing vertical resolution to hardcoded black bars. By horizontally squeezing a widescreen master image into a standard" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-anamorphic-widescreen-works-in-sd-vob-files">How Anamorphic
+Widescreen Works in SD VOB Files</h1>
+<p>Anamorphic widescreen encoding allows standard definition DVD Video
+Object (VOB) containers to store 16:9 widescreen video without
+sacrificing vertical resolution to hardcoded black bars. By horizontally
+squeezing a widescreen master image into a standard 4:3 storage frame
+and utilizing embedded aspect ratio metadata flags, the DVD format
+delivers full-resolution video that displays properly on both modern
+widescreen monitors and legacy standard-definition televisions.</p>
+<h3 id="the-standard-definition-resolution-barrier">The Standard
+Definition Resolution Barrier</h3>
+<p>The DVD-Video specification mandates strict resolution limits
+governed by the MPEG-2 video stream inside the VOB container. Video
+streams must conform to standard definition broadcast standards: 720×480
+pixels for NTSC (at 29.97 fps) or 720×576 pixels for PAL (at 25
+fps).</p>
+<p>Neither of these base resolutions natively matches a 16:9 aspect
+ratio when calculated with standard square pixels. Without anamorphic
+encoding, displaying widescreen content required "letterboxing," where
+black bars were permanently encoded above and below the image. In an
+NTSC transfer, this letterbox method wasted up to 25% of the available
+480 vertical lines, leaving only roughly 360 lines of actual image
+detail.</p>
+<h3 id="the-horizontal-compression-process">The Horizontal Compression
+Process</h3>
+<p>Anamorphic encoding solves the letterbox problem by capturing the
+full 16:9 frame across the entire standard definition pixel canvas:</p>
+<ol type="1">
+<li><strong>Pre-Encoding Squeeze:</strong> The full 16:9 master video is
+horizontally compressed by a factor of 0.75 (or 4:3 relative to
+16:9).</li>
+<li><strong>Full-Frame Storage:</strong> The squeezed image is mapped
+directly across the full 720×480 or 720×576 frame. Because the entire
+sensor or film area occupies all available horizontal and vertical lines
+inside the VOB, no scan lines are wasted on blank letterbox areas. If
+viewed without correction, the resulting raw video frames look
+unnaturally tall and thin.</li>
+</ol>
+<h3 id="signaling-via-metadata-and-flags">Signaling via Metadata and
+Flags</h3>
+<p>The VOB container and the MPEG-2 sequence headers within it tell the
+decoding hardware how to interpret the squeezed image through metadata
+flags:</p>
+<ul>
+<li><strong>MPEG-2 Sequence Header:</strong> The video stream contains
+an embedded Display Aspect Ratio (DAR) flag set to <code>16:9</code>
+rather than <code>4:3</code>.</li>
+<li><strong>IFO Files:</strong> The companion DVD Information (IFO)
+files outside the VOB mirror this setting, identifying the video title
+set as an anamorphic 16:9 asset before the decoder initiates
+playback.</li>
+</ul>
+<p>These flags define the Pixel Aspect Ratio (PAR), informing the
+decoder that the stored pixels are rectangular rather than square. For
+NTSC 16:9, the effective pixel aspect ratio is roughly 1.185:1, while
+for PAL 16:9, it is roughly 1.422:1.</p>
+<h3 id="playback-reconstruction-and-display-handling">Playback
+Reconstruction and Display Handling</h3>
+<p>When a DVD player or software media player reads the VOB file, the
+decoder processes the 16:9 DAR flag and restores the correct visual
+geometry based on the user's display configuration:</p>
+<ul>
+<li><strong>Widescreen Displays (16:9):</strong> The player horizontally
+expands the 720-pixel grid during output. On a digital display with
+square pixels, an NTSC 720×480 frame is scaled to approximately 854×480
+(or upscaled to 1920×1080), restoring normal human proportions with all
+480 vertical lines of resolution preserved.</li>
+<li><strong>Standard Displays (4:3):</strong> If the player is connected
+to a legacy 4:3 display, it reads additional instructions in the VOB
+stream—either generating an on-the-fly letterbox downsample (discarding
+lines dynamically while keeping the original data intact) or applying a
+center crop via Pan-and-Scan vectors defined by the original disc
+author.</li>
+</ul>
+<p>Through this flag-driven scaling process, the standard definition VOB
+container achieves maximum visual fidelity on widescreen displays while
+retaining complete backward compatibility.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/how-anamorphic-widescreen-works-in-sd-vob-files';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

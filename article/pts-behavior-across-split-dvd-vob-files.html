@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PTS Behavior Across Split DVD VOB Files - vob</title>
+    <meta name="description" content="When a DVD title spans multiple 1 GB Video Object (VOB) files, Presentation Timestamps (PTS) do not reset or alter at the physical split seam; instead, they remain strictly continuous. The split between files like VTS011.VOB and VTS012.VOB is purely a fil">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/pts-behavior-across-split-dvd-vob-files">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="PTS Behavior Across Split DVD VOB Files - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/pts-behavior-across-split-dvd-vob-files" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="When a DVD title spans multiple 1 GB Video Object (VOB) files, Presentation Timestamps (PTS) do not reset or alter at the physical split seam; instead, they remain strictly continuous. The split between files like VTS011.VOB and VTS012.VOB is purely a fil" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="pts-behavior-across-split-dvd-vob-files">PTS Behavior Across
+Split DVD VOB Files</h1>
+<p>When a DVD title spans multiple 1 GB Video Object (VOB) files,
+Presentation Timestamps (PTS) do not reset or alter at the physical
+split seam; instead, they remain strictly continuous. The split between
+files like <code>VTS_01_1.VOB</code> and <code>VTS_01_2.VOB</code> is
+purely a file-system constraint rather than a container or codec
+boundary. This article explains how PTS values flow across these seams,
+how MPEG-2 Program Stream packs interact at the split point, and what
+distinguishes a physical file boundary from a logical timestamp
+discontinuity.</p>
+<h3 id="the-physical-nature-of-vob-splitting">The Physical Nature of VOB
+Splitting</h3>
+<p>DVD-Video specifications require that no single file exceed 1 GiB
+(1,073,741,824 bytes) to maintain compatibility with the UDF 1.02 and
+ISO 9660 file systems. When an authored title exceeds this limit, the
+multiplexer cuts the resulting MPEG-2 Program Stream into 1 GB
+segments.</p>
+<p>This cut occurs strictly at the boundary of a 2,048-byte DVD sector
+(pack). It does not represent the end of a video sequence, a Group of
+Pictures (GOP), or an audio frame. Because the split is an arbitrary
+physical partition of a single continuous stream, the underlying
+elementary streams remain uninterrupted.</p>
+<h3 id="timestamp-continuity-at-the-seam">Timestamp Continuity at the
+Seam</h3>
+<p>In a standard MPEG-2 Program Stream, the PTS dictates when a decoded
+video picture or audio frame must be presented to the viewer. At the
+exact boundary where <code>VOB_1</code> ends and <code>VOB_2</code>
+begins:</p>
+<ul>
+<li><strong>Monotonic Progression:</strong> The PTS values in the
+elementary stream packets (PES headers) continue incrementally based on
+the media's nominal frame rate and sample rate. If the last video frame
+in the first file has a PTS corresponding to <code>00:14:58.966</code>,
+the first video frame in the next file will carry a PTS of
+<code>00:14:59.000</code> (assuming a 29.97 fps sequence).</li>
+<li><strong>System Clock Reference (SCR):</strong> Like the PTS, the
+System Clock Reference values embedded in the pack headers continue
+linearly across the seam. The decoder's System Time Clock (STC) does not
+reload or reset.</li>
+<li><strong>跨-Packet Payloads:</strong> An elementary stream packet or
+even a compressed frame can logically span across the split. A PES
+packet header may reside in the final sector of
+<code>VTS_01_1.VOB</code>, while the remaining payload carrying the
+actual picture data resides in the opening sector of
+<code>VTS_01_2.VOB</code>.</li>
+</ul>
+<h3 id="physical-seams-vs-logical-discontinuities">Physical Seams vs.
+Logical Discontinuities</h3>
+<p>It is critical to separate the physical file seam from DVD logical
+markers. A PTS reset or jump on a DVD is governed by the
+<code>.IFO</code> metadata and DVD Cell properties, not the
+<code>.VOB</code> file cut:</p>
+<ol type="1">
+<li><strong>Seamless Splits:</strong> If a file boundary falls in the
+middle of a continuous Cell or between seamlessly linked Cells, there is
+zero gap, no change in the PTS timebase, and no decoder flush.</li>
+<li><strong>Discontinuities:</strong> A discontinuity in PTS only occurs
+if the multiplexer deliberately starts a new Cell marked as non-seamless
+(such as an angle change, layer break, or jump between separate Program
+Chains). In these cases, the IFO flags a discontinuity, and the PTS
+jumps to a new baseline. However, these logical boundaries rarely align
+with the arbitrary 1 GB file cut.</li>
+</ol>
+<h3 id="implications-for-demuxing-and-playback">Implications for
+Demuxing and Playback</h3>
+<p>DVD-compliant playback hardware reads sequential VOB files as a
+single contiguous stream by concatenating their sector streams in
+memory.</p>
+<p>Issues only arise when modern media players or demuxing utilities
+process VOB files as standalone entities rather than parts of a
+whole:</p>
+<ul>
+<li><strong>Standalone Parsing Failures:</strong> If a demuxer inspects
+<code>VTS_01_2.VOB</code> in isolation, it will encounter frames with
+PTS values starting far above zero, often without a sequence header or
+IDR keyframe at byte zero.</li>
+<li><strong>Audio Desynchronization:</strong> Slicing or converting
+split VOBs individually shifts audio and video sync because the audio
+PES packets and video PES packets are interleaved with different buffer
+latencies. Concatenating the elementary streams prior to demuxing or
+using tools that parse the entire set via the <code>.IFO</code> file is
+required to preserve the continuous flow of PTS.</li>
+</ul></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/pts-behavior-across-split-dvd-vob-files';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

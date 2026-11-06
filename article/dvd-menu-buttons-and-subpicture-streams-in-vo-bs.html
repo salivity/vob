@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DVD Menu Buttons and Subpicture Streams in VOBs - vob</title>
+    <meta name="description" content="Interactive DVD menus rely on the multiplexed architecture of a Video Object (VOB) file to present responsive, visually dynamic navigation. While the background visual and audio are rendered as standard MPEG-2 video and digital audio tracks, interactive b">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/dvd-menu-buttons-and-subpicture-streams-in-vo-bs">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="DVD Menu Buttons and Subpicture Streams in VOBs - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/dvd-menu-buttons-and-subpicture-streams-in-vo-bs" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Interactive DVD menus rely on the multiplexed architecture of a Video Object (VOB) file to present responsive, visually dynamic navigation. While the background visual and audio are rendered as standard MPEG-2 video and digital audio tracks, interactive b" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="dvd-menu-buttons-and-subpicture-streams-in-vobs">DVD Menu
+Buttons and Subpicture Streams in VOBs</h1>
+<p>Interactive DVD menus rely on the multiplexed architecture of a Video
+Object (VOB) file to present responsive, visually dynamic navigation.
+While the background visual and audio are rendered as standard MPEG-2
+video and digital audio tracks, interactive buttons depend on a
+synchronized subpicture stream combined with navigation data. This
+article explains how the subpicture stream functions as a graphical
+overlay, how Navigation Packs define button coordinates, and how
+color-switching mechanisms create the illusion of interactive button
+states like selection and activation.</p>
+<h3 id="the-role-of-the-subpicture-stream-in-menus">The Role of the
+Subpicture Stream in Menus</h3>
+<p>In a DVD menu VOB, the background video stream provides the
+underlying artwork, animations, and static button text or icons. The
+subpicture stream acts as an overlay positioned directly on top of this
+background video.</p>
+<p>Rather than rendering full-color graphics, the subpicture stream is a
+run-length encoded, 2-bit bitmap. This 2-bit depth restricts the
+subpicture to four distinct pixel types:</p>
+<ul>
+<li><strong>Background:</strong> Typically set to fully transparent so
+the underlying MPEG-2 video remains visible.</li>
+<li><strong>Pattern (Foreground):</strong> Defines the primary shape of
+the button highlight (such as an outline, arrow, or text overlay).</li>
+<li><strong>Emphasis 1:</strong> Used for antialiasing, borders, or
+secondary accent colors on the button highlight.</li>
+<li><strong>Emphasis 2:</strong> Used for additional contrast, shadows,
+or outer borders.</li>
+</ul>
+<h3 id="button-mapping-via-navigation-packs-nv_pck">Button Mapping via
+Navigation Packs (NV_PCK)</h3>
+<p>The subpicture bitmap itself contains no logical programming; it only
+holds graphical pixels. The interactive intelligence is embedded in the
+Presentation Control Information (PCI) buffers within the Navigation
+Packs (NV_PCK) multiplexed alongside the video and subpicture
+packets.</p>
+<p>Within the PCI packet lies the Highlight Information (HLI) table,
+which defines:</p>
+<ol type="1">
+<li><strong>Button Boundaries:</strong> Rectangular coordinates (X and Y
+offsets) that delineate the interactive zones on the screen. Up to 36
+buttons can be mapped for standard 4:3 menus, or up to 18 for 16:9
+widescreen menus.</li>
+<li><strong>Navigation Links:</strong> Data specifying which button is
+selected next when the user presses the Up, Down, Left, or Right
+directional keys on a remote control.</li>
+<li><strong>Command Execution:</strong> Specific VMGI/VTSM instructions
+(such as <code>JumpTT</code> or <code>LinkPGCN</code>) triggered when a
+button is confirmed.</li>
+</ol>
+<h3 id="handling-states-normal-selected-and-activated">Handling States:
+Normal, Selected, and Activated</h3>
+<p>A menu button exists in one of three states:</p>
+<ul>
+<li><strong>Normal:</strong> The default state when the button is
+inactive.</li>
+<li><strong>Selected:</strong> The state when the user navigates onto
+the button using directional arrows.</li>
+<li><strong>Activated:</strong> The momentary state triggered when the
+user presses "Enter" or "OK."</li>
+</ul>
+<p>The subpicture graphic is drawn across the entire frame, covering all
+buttons simultaneously. The DVD player displays different states not by
+redrawing the graphic, but by altering the palette mapping within the
+button's defined bounding box.</p>
+<p>The HLI specifies distinct Color Lookup Table (CLUT) mappings and
+transparency (alpha) values for the "Selected" and "Activated"
+states:</p>
+<ul>
+<li>In the <strong>Normal</strong> state, the subpicture pixels over a
+button are generally mapped to 100% transparency, making the overlay
+invisible and revealing the background video artwork underneath.</li>
+<li>In the <strong>Selected</strong> state, the DVD player instantly
+swaps the color and alpha indices for that button's bounding box, making
+the subpicture highlight visible (e.g., turning a transparent outline
+into a solid yellow border).</li>
+<li>In the <strong>Activated</strong> state, a third color and alpha
+mapping is applied briefly (e.g., turning the border blue) before
+executing the button's navigation command.</li>
+</ul>
+<h3 id="efficiency-and-synchronization">Efficiency and
+Synchronization</h3>
+<p>By delegating interactivity to the subpicture and PCI streams, the
+DVD-Video standard eliminates the latency of loading new video frames
+when a user navigates a menu. The hardware simply modifies color and
+transparency registers on an existing 2-bit overlay, enabling immediate
+visual feedback while the background video loops seamlessly beneath
+it.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/dvd-menu-buttons-and-subpicture-streams-in-vo-bs';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

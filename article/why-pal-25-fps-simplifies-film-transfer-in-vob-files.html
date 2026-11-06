@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why PAL 25 fps Simplifies Film Transfer in VOB Files - vob</title>
+    <meta name="description" content="This article explores how the 25 frames per second (fps) standard used in the PAL broadcast format streamlines the process of transferring theatrical film to digital DVD VOB files. By avoiding complex interlacing cadences through a direct frame-matching t">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/why-pal-25-fps-simplifies-film-transfer-in-vob-files">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why PAL 25 fps Simplifies Film Transfer in VOB Files - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/why-pal-25-fps-simplifies-film-transfer-in-vob-files" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explores how the 25 frames per second (fps) standard used in the PAL broadcast format streamlines the process of transferring theatrical film to digital DVD VOB files. By avoiding complex interlacing cadences through a direct frame-matching t" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-pal-25-fps-simplifies-film-transfer-in-vob-files">Why PAL 25
+fps Simplifies Film Transfer in VOB Files</h1>
+<p>This article explores how the 25 frames per second (fps) standard
+used in the PAL broadcast format streamlines the process of transferring
+theatrical film to digital DVD VOB files. By avoiding complex
+interlacing cadences through a direct frame-matching technique known as
+"PAL speed-up," mastering engineers can preserve native progressive
+imagery, eliminate telecine judder, and optimize MPEG-2 compression
+efficiency.</p>
+<h3 id="the-frame-rate-challenge">The Frame Rate Challenge</h3>
+<p>Traditional motion picture film is photographed and projected at a
+standard rate of 24 fps. When transferring this physical film to digital
+video formats like the MPEG-2 program streams inside DVD VOB (Video
+Object) files, the frame rate must be conformed to television display
+standards. In the NTSC standard (used primarily in North America and
+Japan), video displays at approximately 29.97 fps. In the PAL standard
+(used across Europe, Australia, and parts of Asia and Africa), video
+runs at 25 fps.</p>
+<h3 id="eliminating-the-need-for-32-pulldown">Eliminating the Need for
+3:2 Pulldown</h3>
+<p>In NTSC transfers, bridging the gap between 24 fps and 29.97 fps
+requires a complex process called a 3:2 pulldown. This process
+duplicates alternating fields across adjacent frames to create 60
+interlaced fields per second. This conversion introduces telecine
+judder—a noticeable stutter during panning shots—and creates hybrid
+frames containing fields from two different points in time, complicating
+both playback and digital deinterlacing.</p>
+<p>In contrast, the PAL standard runs at 25 fps, which is remarkably
+close to film's 24 fps. Because the difference is only one frame per
+second (roughly 4.1%), engineers do not need to synthesize extra frames
+or split fields unevenly. Instead, each single frame of film is mapped
+directly to one single frame of video (two interlaced fields, known as a
+2:2 pulldown).</p>
+<h3 id="frame-to-frame-mapping-pal-speed-up">Frame-to-Frame Mapping (PAL
+Speed-Up)</h3>
+<p>The primary method used to transfer film to PAL VOB files is simply
+speeding up playback by 4.167%. The 24 film frames are played in the
+span of 25 video frames per second.</p>
+<p>This 1:1 frame relationship offers distinct technical advantages:</p>
+<ul>
+<li><strong>Pristine Temporal Integrity:</strong> Every frame stored in
+the VOB file represents an exact, complete exposure from the original
+celluloid reel.</li>
+<li><strong>Absence of Judder:</strong> Motion remains entirely smooth
+because there are no repeated or interlaced hybrid frames interrupting
+the natural cadence.</li>
+<li><strong>Easy Progressive Reconstruction:</strong> Modern digital
+displays can deinterlace 2:2 pulldown PAL streams without edge artifacts
+or combing effects, rendering true progressive frames effortlessly.</li>
+</ul>
+<h3 id="mpeg-2-compression-benefits-in-vob-files">MPEG-2 Compression
+Benefits in VOB Files</h3>
+<p>The DVD-Video specification stores video inside VOB containers using
+MPEG-2 compression. MPEG-2 relies heavily on temporal
+compression—predicting changes between sequential frames using I, P, and
+B-frames.</p>
+<p>When an NTSC video uses 3:2 pulldown, the artificial combination of
+fields across different time intervals introduces artificial high
+frequencies and temporal noise, forcing the encoder to allocate higher
+bitrates to compensate for compression artifacts. Because PAL film
+transfers retain a pure 1:1 frame progression, the temporal redundancy
+between frames remains natural and clean. This allows the MPEG-2 encoder
+to compress the footage much more efficiently, resulting in better
+visual quality at equivalent bitrates.</p>
+<h3 id="audio-adjustments">Audio Adjustments</h3>
+<p>The only compromise required by this method is the corresponding 4.1%
+increase in audio speed, which raises the pitch of the soundtrack by
+roughly 0.707 semitones. In modern digital mastering, this is routinely
+corrected using digital pitch-shifting algorithms that lower the pitch
+back to the original key without altering the playback speed, ensuring
+the transfer remains faithful to the original theatrical release.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/why-pal-25-fps-simplifies-film-transfer-in-vob-files';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

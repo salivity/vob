@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Can a VOB File Have Multiple Aspect Ratios? - vob</title>
+    <meta name="description" content="A single VOB (Video Object) file can technically contain both 4:3 and 16:9 aspect ratio content in sequence, but standard DVD playback specifications strictly discourage or prevent it. While the underlying MPEG-2 video stream allows aspect ratio changes a">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/can-a-vob-file-have-multiple-aspect-ratios">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Can a VOB File Have Multiple Aspect Ratios? - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/can-a-vob-file-have-multiple-aspect-ratios" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="A single VOB (Video Object) file can technically contain both 4:3 and 16:9 aspect ratio content in sequence, but standard DVD playback specifications strictly discourage or prevent it. While the underlying MPEG-2 video stream allows aspect ratio changes a" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="can-a-vob-file-have-multiple-aspect-ratios">Can a VOB File Have
+Multiple Aspect Ratios?</h1>
+<p>A single VOB (Video Object) file can technically contain both 4:3 and
+16:9 aspect ratio content in sequence, but standard DVD playback
+specifications strictly discourage or prevent it. While the underlying
+MPEG-2 video stream allows aspect ratio changes at sequence headers,
+DVD-Video standards require a single Video Title Set (VTS) to maintain a
+uniform display aspect ratio. As a result, how this content behaves
+depends entirely on whether it is played as a standalone digital file or
+as part of an authored DVD.</p>
+<h3 id="the-underlying-mpeg-2-technical-reality">The Underlying MPEG-2
+Technical Reality</h3>
+<p>A VOB file is fundamentally an MPEG-2 Program Stream containing
+multiplexed video, audio, and subtitle tracks. At the stream level,
+MPEG-2 allows new Sequence Headers to appear periodically. Each Sequence
+Header carries display aspect ratio (DAR) metadata, which can switch
+between 4:3 and 16:9.</p>
+<p>If you concatenate two MPEG-2 video streams with different aspect
+ratios into a single <code>.vob</code> file, the file remains
+technically valid at the bitstream level. Modern software media players
+like VLC, MPC-HC, or MPV read these inline headers dynamically and can
+adjust the display window or output aspect ratio on the fly when the
+transition occurs.</p>
+<h3 id="dvd-video-specification-restrictions">DVD-Video Specification
+Restrictions</h3>
+<p>While standalone media players can handle inline aspect ratio
+switches, the official DVD-Video specification operates differently.
+When authoring a DVD:</p>
+<ol type="1">
+<li><strong>IFO Files Dictate Display Settings:</strong> A DVD player
+does not inspect the VOB video headers to determine the aspect ratio.
+Instead, it reads the <code>.IFO</code> file associated with the Video
+Title Set (VTS). The IFO file declares the aspect ratio for the entire
+VTS up front.</li>
+<li><strong>Fixed Format per Title Set:</strong> An authoring tool sets
+the aspect ratio attribute for an entire VTS as either 4:3 or 16:9. A
+single VTS cannot be marked as both.</li>
+<li><strong>Player Disruption:</strong> If a VOB with changing aspect
+ratios is forced onto a standard DVD within the same title, standalone
+DVD players will stick to the aspect ratio declared in the IFO file.
+This forces the secondary ratio to stretch or squash, or in some
+hardware players, causes decoding errors, video freezing, or distorted
+video output.</li>
+</ol>
+<h3 id="how-dvd-standards-handle-mixed-aspect-ratios">How DVD Standards
+Handle Mixed Aspect Ratios</h3>
+<p>To properly display both 4:3 and 16:9 content on a standard DVD
+without distortion, the content must be authored using one of two
+standard approaches:</p>
+<ul>
+<li><strong>Separate Video Title Sets (VTS):</strong> The 4:3 content is
+authored into one VTS (e.g., <code>VTS_01_*.VOB</code>), and the 16:9
+content is authored into another (e.g., <code>VTS_02_*.VOB</code>). The
+DVD menu allows seamless switching between them, giving each its own
+dedicated IFO settings.</li>
+<li><strong>Pillarboxing or Letterboxing:</strong> The content is
+unified into a single aspect ratio before encoding. For example, 4:3
+footage can be embedded within a 16:9 frame using black bars on the
+sides (pillarboxing), ensuring the entire stream remains 16:9 throughout
+the file.</li>
+</ul>
+<h3 id="summary">Summary</h3>
+<p>A single VOB file can hold both 4:3 and 16:9 footage sequentially,
+and common computer media players will render the switch correctly.
+However, it violates standard DVD-Video authoring rules and will cause
+display distortion or playback failure on standalone DVD players unless
+properly separated into distinct title sets or padded to a uniform frame
+size.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/can-a-vob-file-have-multiple-aspect-ratios';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

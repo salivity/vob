@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How DTS Handles Out-of-Order B-Frames in VOB - vob</title>
+    <meta name="description" content="In DVD-Video VOB (Video Object) containers based on the MPEG-2 Program Stream specification, bidirectional predictive frames (B-frames) require reference data from both past and future anchor frames to decode properly. Because a future reference frame mus">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/how-dts-handles-out-of-order-b-frames-in-vob">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How DTS Handles Out-of-Order B-Frames in VOB - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/how-dts-handles-out-of-order-b-frames-in-vob" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="In DVD-Video VOB (Video Object) containers based on the MPEG-2 Program Stream specification, bidirectional predictive frames (B-frames) require reference data from both past and future anchor frames to decode properly. Because a future reference frame mus" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-dts-handles-out-of-order-b-frames-in-vob">How DTS Handles
+Out-of-Order B-Frames in VOB</h1>
+<p>In DVD-Video VOB (Video Object) containers based on the MPEG-2
+Program Stream specification, bidirectional predictive frames (B-frames)
+require reference data from both past and future anchor frames to decode
+properly. Because a future reference frame must be decoded before a
+B-frame can be reconstructed, the physical transmission order of frames
+inside the VOB differs from their final playback sequence. The Decoding
+Time Stamp (DTS) works in tandem with the Presentation Time Stamp (PTS)
+inside the Packetized Elementary Stream (PES) headers to instruct the
+hardware decoder exactly when to unpack and reconstruct these
+out-of-order frames, preventing buffer underflows and visual
+stutter.</p>
+<h3 id="the-display-order-vs-decoding-order-problem">The Display Order
+vs. Decoding Order Problem</h3>
+<p>MPEG-2 video utilizes three primary picture types: Intra-coded
+(I-frames), Predictive (P-frames), and Bidirectional (B-frames). While
+I-frames and P-frames serve as reference anchors, B-frames rely on
+motion vectors referencing both the preceding and succeeding anchor
+frames.</p>
+<p>Consider a standard playback sequence (Presentation Order):</p>
+<ul>
+<li><strong>I0 – B1 – B2 – P3</strong></li>
+</ul>
+<p>To display frame <code>B1</code>, the decoder requires the pixel data
+from both <code>I0</code> and <code>P3</code>. Consequently,
+<code>P3</code> must arrive and decode before <code>B1</code> can be
+processed. The stream multiplexer therefore reorders the frames into the
+bitstream sequence (Decoding Order):</p>
+<ul>
+<li><strong>I0 – P3 – B1 – B2</strong></li>
+</ul>
+<h3 id="the-separation-of-dts-and-pts">The Separation of DTS and
+PTS</h3>
+<p>Because the decoding sequence diverges from the display sequence, the
+MPEG-2 standard separates timing instructions into two 33-bit counters
+embedded in the PES header:</p>
+<ol type="1">
+<li><strong>Decoding Time Stamp (DTS):</strong> Specifies the exact
+moment the compressed picture must be removed from the decoder buffer
+and decompressed by the video processor.</li>
+<li><strong>Presentation Time Stamp (PTS):</strong> Specifies the exact
+moment the fully reconstructed picture must be sent from the frame store
+to the display output.</li>
+</ol>
+<p>When display order and decoding order match (such as in an audio
+stream, or a video stream consisting solely of I-frames and P-frames
+without frame reordering), DTS is omitted to save bandwidth, and the
+decoder treats PTS as the target for both operations. When B-frames are
+introduced, DTS becomes mandatory for the anchor frames.</p>
+<h3 id="how-dts-processes-b-frames-in-the-decoder-buffer">How DTS
+Processes B-Frames in the Decoder Buffer</h3>
+<p>Inside the VOB pipeline, the decoder manages these timestamps using a
+dedicated Video Buffering Verifier (VBV) buffer:</p>
+<ol type="1">
+<li><strong>Reordering the Anchor:</strong> Frame <code>P3</code> enters
+the buffer with an early DTS and a late PTS. The DTS triggers immediate
+decompression of <code>P3</code>. Once decompressed, the decoded image
+of <code>P3</code> is stored in a reference frame buffer and held,
+rather than immediately sent to the display.</li>
+<li><strong>Decoding the B-Frames:</strong> When <code>B1</code> arrives
+at the decoder, its DTS triggers decompression. Because <code>I0</code>
+and <code>P3</code> are already decoded and sitting in the reference
+memory, <code>B1</code> can interpolate between them immediately.</li>
+<li><strong>Equivalence on B-Frames:</strong> Because B-frames are never
+used as references for subsequent frames, they do not need to be
+retained in reference memory. For B-frames, the DTS and PTS values are
+identical, meaning the frame is decoded and presented at the exact same
+instant.</li>
+<li><strong>Final Presentation:</strong> While the B-frames are decoded
+and displayed in rapid succession according to their timestamps,
+<code>P3</code> remains in the buffer until the system clock matches its
+distinct, later PTS value, at which point it is finally pushed to the
+display.</li>
+</ol>
+<p>Through this split-timestamp mechanism, the DTS dictates the
+non-linear computation timeline required by temporal compression, while
+the PTS maintains a continuous, linear output for playback.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/how-dts-handles-out-of-order-b-frames-in-vob';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How VOB Relates to MPEG-2 Program Streams - vob</title>
+    <meta name="description" content="A VOB (Video Object) file is a specialized container format used on DVD-Video media that is fundamentally based on the MPEG-2 Program Stream (PS) standard (ISO/IEC 13818-1). While standard MPEG-2 Program Streams define a generic method for multiplexing sy">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/how-vob-relates-to-mpeg-2-program-streams">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How VOB Relates to MPEG-2 Program Streams - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/how-vob-relates-to-mpeg-2-program-streams" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="A VOB (Video Object) file is a specialized container format used on DVD-Video media that is fundamentally based on the MPEG-2 Program Stream (PS) standard (ISO/IEC 13818-1). While standard MPEG-2 Program Streams define a generic method for multiplexing sy" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-vob-relates-to-mpeg-2-program-streams">How VOB Relates to
+MPEG-2 Program Streams</h1>
+<p>A VOB (Video Object) file is a specialized container format used on
+DVD-Video media that is fundamentally based on the MPEG-2 Program Stream
+(PS) standard (ISO/IEC 13818-1). While standard MPEG-2 Program Streams
+define a generic method for multiplexing synchronized video, audio, and
+system data, the DVD-Video specification heavily restricts and extends
+this format to meet the demands of optical disc playback. This article
+examines the exact relationship between the standard MPEG-2 Program
+Stream and the VOB container, highlighting their shared architecture,
+unique extensions, and structural constraints.</p>
+<h3 id="the-underlying-architecture">The Underlying Architecture</h3>
+<p>At its core, a VOB file is an MPEG-2 Program Stream. The MPEG-2
+Program Stream standard divides multiplexed data into units known as
+"packs," which contain a pack header followed by one or more Packetized
+Elementary Stream (PES) packets carrying compressed elementary streams
+such as video and audio.</p>
+<p>VOB files inherit this base architecture directly. Any standard VOB
+file consists of a continuous sequence of MPEG-2 packs. However, while
+the generic MPEG-2 PS specification allows variable pack sizes and
+flexible stream allocations, the DVD specification imposes rigid rules
+to guarantee real-time playback from physical optical drives.</p>
+<h3 id="sector-alignment-and-pack-size">Sector Alignment and Pack
+Size</h3>
+<p>Standard MPEG-2 Program Streams do not mandate a fixed pack size;
+packs can vary in length depending on the multiplexer's implementation.
+In contrast, the DVD-Video specification requires that every pack within
+a VOB file be exactly 2,048 bytes long.</p>
+<p>This 2 KB limitation directly matches the logical sector size of a
+DVD disc. By enforcing a fixed pack size aligned with the physical disc
+sectors, DVD players can read, buffer, and process packets without
+having to assemble fragmented data across sector boundaries, drastically
+reducing processing overhead and latency during playback.</p>
+<h3 id="audio-and-sub-picture-extensions-via-private-streams">Audio and
+Sub-Picture Extensions via Private Streams</h3>
+<p>Standard MPEG-2 Program Streams natively support MPEG-1 and MPEG-2
+audio layers. However, the commercial DVD format required support for
+formats such as Dolby Digital (AC-3), DTS, Linear PCM, and sub-picture
+overlays (run-length encoded graphics used for subtitles and menu
+highlights).</p>
+<p>To incorporate these non-MPEG formats without violating the standard,
+DVD authors utilized the standard MPEG-2 "Private Stream 1" identifier
+(stream ID <code>0xBD</code>). Within a VOB file, non-MPEG audio codecs
+and DVD sub-pictures are packed inside Private Stream 1 PES packets,
+preceded by DVD-specific sub-stream headers that identify whether the
+payload is AC-3, DTS, LPCM, or subtitle data.</p>
+<h3 id="dvd-specific-navigation-packs-nv_pck">DVD-Specific Navigation
+Packs (NV_PCK)</h3>
+<p>The most significant structural departure of a VOB file from a
+standard MPEG-2 Program Stream is the introduction of the Video Object
+Unit (VOBU). A VOBU represents a presentation unit typically lasting
+between 0.4 and 1.0 seconds, corresponding to a Group of Pictures
+(GOP).</p>
+<p>Every VOBU must begin with a specialized Navigation Pack
+(<code>NV_PCK</code>), carrying the MPEG-2 "Private Stream 2" identifier
+(<code>0xBF</code>). This pack contains two distinct payloads:</p>
+<ul>
+<li><strong>Presentation Control Information (PCI):</strong> Contains
+playback instructions, angle change data, button definitions for
+interactive menus, and timing markers.</li>
+<li><strong>Data Search Information (DSI):</strong> Contains forward and
+backward jump addresses relative to the current position, enabling
+smooth fast-forward, rewind, seamless branching, and chapter
+seeking.</li>
+</ul>
+<p>Generic MPEG-2 Program Streams have no knowledge of VOBUs or
+Navigation Packs. While standard players can ignore these packs because
+they utilize legal MPEG-2 stream IDs, the navigation features remain
+inert without a dedicated DVD playback engine.</p>
+<h3 id="multiplexing-and-encryption-constraints">Multiplexing and
+Encryption Constraints</h3>
+<p>Standard MPEG-2 allows multiple video streams and largely
+unrestricted bitrates. A VOB file, by contrast, restricts content to a
+single MPEG-2 (or MPEG-1) video stream with a strict combined total
+bitrate ceiling of 10.08 Mbps (including video, audio, and
+sub-pictures).</p>
+<p>Furthermore, VOB files on commercial DVDs frequently employ Content
+Scramble System (CSS) encryption. While the MPEG-2 PS header specifies
+bits for copyright and scrambling flags, the actual CSS algorithm and
+key structures are exclusive to DVD implementations and outside the
+standard MPEG-2 specification.</p>
+<h3 id="compatibility">Compatibility</h3>
+<p>Because a VOB file adheres to the core syntactical rules of ISO/IEC
+13818-1, renaming a <code>.vob</code> file to <code>.mpg</code> often
+allows basic software media players to demux and decode the primary
+video and MPEG audio tracks. However, full DVD functionality—including
+interactive menu navigation, alternate audio track selection (such as
+AC-3 or DTS), and subtitle display—requires a player that understands
+the DVD-specific extensions layered onto the base MPEG-2 Program Stream
+framework.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/how-vob-relates-to-mpeg-2-program-streams';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

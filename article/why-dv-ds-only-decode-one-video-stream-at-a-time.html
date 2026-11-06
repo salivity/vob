@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why DVDs Only Decode One Video Stream at a Time - vob</title>
+    <meta name="description" content="The DVD-Video specification strictly limits playback to a single active video stream at any given moment, even though the underlying VOB (Video Object) container supports multiple interleaved tracks. This restriction was not an oversight, but a deliberate">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/why-dv-ds-only-decode-one-video-stream-at-a-time">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why DVDs Only Decode One Video Stream at a Time - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/why-dv-ds-only-decode-one-video-stream-at-a-time" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The DVD-Video specification strictly limits playback to a single active video stream at any given moment, even though the underlying VOB (Video Object) container supports multiple interleaved tracks. This restriction was not an oversight, but a deliberate" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-dvds-only-decode-one-video-stream-at-a-time">Why DVDs Only
+Decode One Video Stream at a Time</h1>
+<p>The DVD-Video specification strictly limits playback to a single
+active video stream at any given moment, even though the underlying VOB
+(Video Object) container supports multiple interleaved tracks. This
+restriction was not an oversight, but a deliberate engineering decision
+rooted in the hardware limitations of the late 1990s. The standard
+prioritized affordable consumer hardware, manageable disc read
+bandwidth, and strict buffer management over advanced multi-stream
+features like native picture-in-picture.</p>
+<h3 id="hardware-cost-and-decoder-complexity">Hardware Cost and Decoder
+Complexity</h3>
+<p>When the DVD format was standardized in the mid-1990s, MPEG-2 video
+decoding was computationally demanding. Consumer DVD players relied on
+specialized, hardwired Application-Specific Integrated Circuits (ASICs)
+rather than general-purpose processors to handle real-time
+decompression. Incorporating two separate MPEG-2 hardware decoders into
+a single player would have nearly doubled the silicon footprint and
+memory requirements, driving production costs too high for widespread
+consumer adoption. By enforcing a single-stream decoding rule,
+manufacturers could use a single, cost-effective decoding pipeline
+across all compliant hardware.</p>
+<h3 id="bitrate-and-drive-read-speed-limits">Bitrate and Drive Read
+Speed Limits</h3>
+<p>The DVD specification caps the maximum overall data transfer rate
+from the disc at 10.08 Mbps, with the video stream itself capped at
+around 9.8 Mbps. Standard 1x DVD drive mechanisms of that era were
+designed to read data at approximately 11.08 Mbps. Decoding two
+independent, high-quality MPEG-2 streams simultaneously would have
+required splitting this limited bandwidth, drastically degrading visual
+quality, or requiring faster, more expensive drive mechanisms prone to
+read errors.</p>
+<h3 id="buffer-management-constraints">Buffer Management
+Constraints</h3>
+<p>MPEG-2 playback relies on a strictly regulated Video Buffer Verifier
+(VBV) model to prevent buffer underflows (stuttering) and overflows. DVD
+players were manufactured with very small amounts of onboard RAM—often
+just enough to hold the required VBV buffer and an audio buffer. Running
+simultaneous decoders would have required dual VBV buffers and complex
+scheduling logic to ensure both buffers remained consistently filled
+from a single optical pickup head reading a physical disc.</p>
+<h3 id="how-multi-angle-playback-works">How Multi-Angle Playback
+Works</h3>
+<p>The DVD standard does accommodate multiple viewpoints through its
+"multi-angle" feature, but this does not involve simultaneous decoding.
+Instead, the video streams are chopped into small blocks called
+Interleaved Video Units (ILVU) and placed alternately on the disc. When
+a viewer switches angles, the optical pickup simply repositions itself
+to read the alternative stream's blocks. The data is still routed
+through the single video decoder sequentially, allowing seamless
+switching between angles without ever requiring the hardware to process
+more than one stream at once.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/why-dv-ds-only-decode-one-video-stream-at-a-time';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

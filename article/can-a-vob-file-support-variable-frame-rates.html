@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Can a VOB File Support Variable Frame Rates? - vob</title>
+    <meta name="description" content="A VOB (Video Object) file cannot support variable frame rates (VFR) natively without pulldown flags. Because the VOB format is fundamentally based on the MPEG-2 Program Stream specification and strictly governed by DVD-Video standards, it mandates a const">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/can-a-vob-file-support-variable-frame-rates">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Can a VOB File Support Variable Frame Rates? - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/can-a-vob-file-support-variable-frame-rates" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="A VOB (Video Object) file cannot support variable frame rates (VFR) natively without pulldown flags. Because the VOB format is fundamentally based on the MPEG-2 Program Stream specification and strictly governed by DVD-Video standards, it mandates a const" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="can-a-vob-file-support-variable-frame-rates">Can a VOB File
+Support Variable Frame Rates?</h1>
+<p>A VOB (Video Object) file cannot support variable frame rates (VFR)
+natively without pulldown flags. Because the VOB format is fundamentally
+based on the MPEG-2 Program Stream specification and strictly governed
+by DVD-Video standards, it mandates a constant frame rate (CFR). Any
+appearance of variable frame rate behavior—such as presenting 24 frames
+per second film content within a 29.97 fps broadcast stream—is achieved
+entirely through metadata flags like 3:2 pulldown rather than true,
+native variable frame rate encoding.</p>
+<h3 id="mpeg-2-and-dvd-specifications-mandate-cfr">MPEG-2 and DVD
+Specifications Mandate CFR</h3>
+<p>The underlying video stream inside a VOB file is almost universally
+MPEG-2 (or occasionally MPEG-1). In the MPEG-2 video specification
+(ISO/IEC 13818-2), the sequence header defines a fixed frame rate code
+for the stream. This frame rate applies to the entire sequence,
+enforcing a constant time interval between frames. Valid standard rates
+are hardcoded into the specification (such as 23.976, 24, 25, 29.97, 50,
+or 59.94 fps). There is no native mechanism within standard MPEG-2 to
+assign arbitrary, variable display durations to individual frames on the
+fly.</p>
+<h3 id="how-frame-rate-variation-is-simulated">How Frame Rate Variation
+is Simulated</h3>
+<p>To display cinematic content (typically shot at 24 or 23.976 fps) on
+standard television displays (typically 29.97 or 25 fps), the DVD format
+relies on telecine and pulldown metadata flags.</p>
+<p>The video frames are encoded at a progressive 23.976 fps, but the
+bitstream includes flags such as <code>repeat_first_field</code> and
+<code>top_field_first</code>. During playback, the decoder reads these
+flags and dynamically generates repeated fields to output a constant
+29.97 fps interlaced signal. While this gives the illusion of adapting
+between two different frame rates, the underlying stream remains
+governed by constant timing parameters dictated by the container and
+codec standards.</p>
+<h3 id="vob-vs-modern-containers">VOB vs. Modern Containers</h3>
+<p>Modern containers like MKV (Matroska) and MP4 support native variable
+frame rates by utilizing distinct presentation timestamps (PTS) for
+every individual video frame, allowing frames to have different
+durations without any sequence-level restrictions. The MPEG-2 Program
+Stream structure used by VOB files lacks this flexible timing model. If
+a modern variable frame rate video is multiplexed into a VOB container
+without adhering to strict constant frame rate standards and standard
+pulldown signaling, playback will result in audio/video
+desynchronization, stuttering, or outright decoder failure.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/can-a-vob-file-support-variable-frame-rates';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

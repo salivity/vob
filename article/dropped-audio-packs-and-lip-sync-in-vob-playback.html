@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dropped Audio Packs and Lip-Sync in VOB Playback - vob</title>
+    <meta name="description" content="Dropped audio packs during prolonged VOB (DVD Video Object) playback directly cause cumulative audio-video desynchronization, commonly referred to as lip-sync drift. Because VOB files rely on an MPEG-2 Program Stream multiplex with interleaved timestamps,">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/dropped-audio-packs-and-lip-sync-in-vob-playback">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Dropped Audio Packs and Lip-Sync in VOB Playback - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/dropped-audio-packs-and-lip-sync-in-vob-playback" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Dropped audio packs during prolonged VOB (DVD Video Object) playback directly cause cumulative audio-video desynchronization, commonly referred to as lip-sync drift. Because VOB files rely on an MPEG-2 Program Stream multiplex with interleaved timestamps," />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="dropped-audio-packs-and-lip-sync-in-vob-playback">Dropped Audio
+Packs and Lip-Sync in VOB Playback</h1>
+<p>Dropped audio packs during prolonged VOB (DVD Video Object) playback
+directly cause cumulative audio-video desynchronization, commonly
+referred to as lip-sync drift. Because VOB files rely on an MPEG-2
+Program Stream multiplex with interleaved timestamps, missing audio data
+breaks timeline continuity. Over extended playback periods, these
+missing packets cause the audio to lead or trail the video, severely
+disrupting the alignment between spoken dialogue and on-screen lip
+movement.</p>
+<h3 id="the-role-of-packs-and-timestamps-in-vob-files">The Role of Packs
+and Timestamps in VOB Files</h3>
+<p>VOB files multiplex video, audio, and subtitle streams into discrete
+2048-byte sectors known as packs. Each pack contains a System Clock
+Reference (SCR), while individual elementary streams within them contain
+Presentation Time Stamps (PTS). The playback engine reads the PTS to
+determine the exact millisecond an audio sample or video frame should be
+rendered.</p>
+<p>When physical disc degradation, read errors, or faulty remuxing
+processes drop audio packs, a portion of the raw audio stream is
+permanently lost.</p>
+<h3 id="why-lip-sync-drifts-over-prolonged-playback">Why Lip-Sync Drifts
+Over Prolonged Playback</h3>
+<p>The human ear detects lip-sync errors when audio is delayed by more
+than 45 milliseconds or advanced by more than 125 milliseconds. The
+effect of dropped audio packs on this threshold depends heavily on how
+the media player handles timeline continuity:</p>
+<ul>
+<li><strong>Freewheeling or Non-PTS Playback:</strong> Some decoders
+only read the initial PTS to align streams at start-up, thereafter
+relying on a continuous sample count to maintain timing. If audio packs
+drop, the audio track loses temporal length while the video track
+continues unimpeded. Over a two-hour playback session, repeated drops
+compound missing audio frames, creating a progressively worsening drift
+where visual lip movements lag noticeably behind earlier-heard
+speech.</li>
+<li><strong>Audio-as-Master Clock:</strong> Many media engines designate
+the audio clock as the master reference to prevent audible pitch shifts.
+If audio packs drop and the decoder does not register the time gap, the
+audio timeline shrinks. The player will continuously stall or skip video
+frames to force synchronization with the shortened audio timeline,
+causing visible stutter alongside lip-sync jitter.</li>
+<li><strong>Video-as-Master Clock:</strong> If the video stream dictates
+the clock, the player detects that the incoming audio PTS values no
+longer align with the video presentation. If the decoder lacks
+gap-filling routines, the audio may temporarily mute, desync completely,
+or attempt to stretch subsequent samples, resulting in audible artifacts
+and disconnected speech synchronization.</li>
+</ul>
+<h3 id="decoder-handling-and-packet-recovery">Decoder Handling and
+Packet Recovery</h3>
+<p>The severity of lip-sync degradation depends on the media player's
+fault-tolerance:</p>
+<ul>
+<li><strong>Silence Insertion:</strong> Robust decoders detect missing
+audio PTS sequences and dynamically pad the gap with silence or
+duplicate previous audio frames. This maintains the audio timeline's
+absolute length, preventing cumulative drift and confining the issue to
+a momentary, often imperceptible audio drop.</li>
+<li><strong>Timeline Truncation:</strong> Basic or legacy decoders
+simply stitch the next received audio pack to the previous one. This
+permanently shifts the timeline forward by the duration of the dropped
+content, making synchronization errors irreversible without manually
+stopping and restarting playback.</li>
+</ul>
+<h3 id="solutions-for-preventing-lip-sync-errors">Solutions for
+Preventing Lip-Sync Errors</h3>
+<p>Resolving lip-sync issues caused by dropped packs requires
+reconstructing the stream's timing metadata. Demuxing the VOB file using
+stream-repair tools allows software to scan for PTS discontinuities and
+insert precise silent frames to replace the lost packs. Alternatively,
+re-encoding the VOB into a modern container (such as MKV or MP4) using
+decoders that enforce continuous timecode synchronization ensures the
+audio and video tracks stay locked over prolonged viewing.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/dropped-audio-packs-and-lip-sync-in-vob-playback';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

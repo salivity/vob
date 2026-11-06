@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interlaced VOB to Progressive: Essential Video Filters - vob</title>
+    <meta name="description" content="Transcoding interlaced VOB (Video Object) files from DVDs to modern progressive formats requires a specific set of video filters to eliminate visual artifacts and ensure proper geometry. This guide covers the essential filters needed during the conversion">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/interlaced-vob-to-progressive-essential-video-filters">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Interlaced VOB to Progressive: Essential Video Filters - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/interlaced-vob-to-progressive-essential-video-filters" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Transcoding interlaced VOB (Video Object) files from DVDs to modern progressive formats requires a specific set of video filters to eliminate visual artifacts and ensure proper geometry. This guide covers the essential filters needed during the conversion" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1
+id="interlaced-vob-to-progressive-essential-video-filters">Interlaced
+VOB to Progressive: Essential Video Filters</h1>
+<p>Transcoding interlaced VOB (Video Object) files from DVDs to modern
+progressive formats requires a specific set of video filters to
+eliminate visual artifacts and ensure proper geometry. This guide covers
+the essential filters needed during the conversion process, focusing on
+deinterlacing, inverse telecine, aspect ratio correction, edge cropping,
+and MPEG-2 artifact cleanup to produce clean, high-quality progressive
+video suitable for modern displays.</p>
+<h3 id="1-deinterlacing-filters-for-native-interlacing">1. Deinterlacing
+Filters (for Native Interlacing)</h3>
+<p>When the source material was recorded natively with interlaced video
+cameras (such as live television, sports, or camcorder footage),
+alternate lines represent different points in time. Applying a dedicated
+deinterlacer interpolates these fields into full progressive frames.</p>
+<ul>
+<li><strong>QTGMC (VapourSynth/Avisynth):</strong> The gold standard in
+motion-compensated deinterlacing. It preserves maximum spatial detail
+and eliminates edge shimmer, though it requires significant
+computational power.</li>
+<li><strong>BWDIF (Bob Weaver Deinterlacing Filter):</strong> A fast,
+modern motion-adaptive deinterlacer widely available in FFmpeg and
+HandBrake that significantly outperforms older algorithms with minimal
+blurring.</li>
+<li><strong>YADIF (Yet Another Deinterlacing Filter):</strong> A
+standard, lightweight motion-adaptive filter suitable for fast
+transcoding, though it may leave minor temporal artifacts compared to
+BWDIF or QTGMC.</li>
+</ul>
+<h3 id="2-inverse-telecine-ivtc-filters-for-film-content">2. Inverse
+Telecine (IVTC) Filters (for Film Content)</h3>
+<p>Most DVD movies stored in NTSC VOB files are not natively interlaced;
+they are 24fps film telecined to 29.97fps using a 3:2 pulldown pattern.
+Running a standard deinterlacer on telecined footage results in stutter
+and loss of resolution. Instead, an Inverse Telecine filter must be used
+to reverse the pulldown and restore the native 23.976fps progressive
+frames.</p>
+<ul>
+<li><strong>Field Matchers (e.g., TFM in Avisynth,
+<code>fieldmatch</code> in FFmpeg):</strong> Recombines paired fields
+back into original progressive frames.</li>
+<li><strong>Decimators (e.g., TDecimate in Avisynth,
+<code>decimate</code> in FFmpeg):</strong> Drops the redundant frames
+created by the 3:2 pulldown to restore smooth 23.976fps playback.</li>
+</ul>
+<h3 id="3-aspect-ratio-and-scaling-filters">3. Aspect Ratio and Scaling
+Filters</h3>
+<p>VOB files use non-square pixels (Storage Aspect Ratio, or SAR). Both
+NTSC (720x480) and PAL (720x576) rely on Display Aspect Ratio (DAR)
+flags to stretch the image to 4:3 or 16:9 during playback. To convert to
+a universal progressive format, the pixels must be mapped to square
+pixels (1:1 SAR).</p>
+<ul>
+<li><strong>Scaling Filters (Lanczos, Spline36, Bicubic):</strong> Used
+to resize the video to square-pixel progressive resolutions (e.g.,
+scaling 720x480 16:9 to 854x480 or 1024x576 for PAL) while minimizing
+aliasing.</li>
+<li><strong>Anamorphic Passthrough:</strong> Alternatively, software can
+maintain the native frame dimensions while writing square
+pixel-compatible container metadata, bypassing the need for a resizing
+filter.</li>
+</ul>
+<h3 id="4-cropping-filters">4. Cropping Filters</h3>
+<p>DVD VOB files frequently contain analog blanking lines,
+head-switching noise, or soft black pillarboxes at the horizontal edges
+(typically resulting in an active image narrower than the 720-pixel
+width).</p>
+<ul>
+<li><strong>Cropping (<code>crop</code> filter):</strong> Essential for
+removing black borders and non-active image areas before encoding.
+Removing inactive pixels prevents the video encoder from wasting bitrate
+on high-contrast edges and avoids black bars on widescreen displays.
+Dimensions should always be kept to even numbers (mod 2) to maintain
+chroma subsampling alignment.</li>
+</ul>
+<h3 id="5-deblocking-and-denoising-filters">5. Deblocking and Denoising
+Filters</h3>
+<p>VOB files use the legacy MPEG-2 compression standard, which exhibits
+heavy 8x8 block artifacts and mosquito noise around sharp edges at DVD
+bitrates.</p>
+<ul>
+<li><strong>Deblocking Filters (e.g., Postprocessing/PP
+filters):</strong> Smooth the boundaries between 8x8 DCT blocks without
+wiping out high-frequency foreground details.</li>
+<li><strong>Spatial-Temporal Denoising (e.g., NLMeans, HQDN3D):</strong>
+Light temporal denoising removes analog grain and compression noise
+common in older DVD transfers, enabling the progressive encoder (such as
+H.264 or AV1) to compress the video far more efficiently.</li>
+</ul></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/interlaced-vob-to-progressive-essential-video-filters';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

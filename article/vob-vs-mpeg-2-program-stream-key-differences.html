@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VOB vs MPEG-2 Program Stream: Key Differences - vob</title>
+    <meta name="description" content="While a VOB (Video Object) file is fundamentally built on the MPEG-2 Program Stream (PS) specification, it is not identical to a generic .mpg or .mpeg file. VOB is a strictly specialized subset and extension of the MPEG-2 standard, engineered explicitly f">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/vob-vs-mpeg-2-program-stream-key-differences">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="VOB vs MPEG-2 Program Stream: Key Differences - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/vob-vs-mpeg-2-program-stream-key-differences" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="While a VOB (Video Object) file is fundamentally built on the MPEG-2 Program Stream (PS) specification, it is not identical to a generic .mpg or .mpeg file. VOB is a strictly specialized subset and extension of the MPEG-2 standard, engineered explicitly f" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="vob-vs-mpeg-2-program-stream-key-differences">VOB vs MPEG-2
+Program Stream: Key Differences</h1>
+<p>While a VOB (Video Object) file is fundamentally built on the MPEG-2
+Program Stream (PS) specification, it is not identical to a generic
+<code>.mpg</code> or <code>.mpeg</code> file. VOB is a strictly
+specialized subset and extension of the MPEG-2 standard, engineered
+explicitly for the DVD-Video format. Generic MPEG-2 Program Streams are
+flexible containers designed for general storage and broadcasting,
+whereas VOB files incorporate proprietary data structures, strictly
+bounded constraints, and multiplexed navigation elements required for
+DVD playback.</p>
+<h2 id="the-architectural-relationship">The Architectural
+Relationship</h2>
+<p>The MPEG-2 Program Stream (ISO/IEC 13818-1) defines how elemental
+video, audio, and metadata streams are combined into a single,
+synchronized timeline. DVD developers adopted this standard as the
+foundation for DVD-Video but added strict rules. Every standard VOB file
+is an MPEG-2 Program Stream, but not every MPEG-2 Program Stream
+qualifies as a valid VOB.</p>
+<h2 id="navigation-and-search-data-nv_pck">Navigation and Search Data
+(NV_PCK)</h2>
+<p>The most significant structural difference is the inclusion of
+Navigation Packs (NV_PCK) within VOB files:</p>
+<ul>
+<li><strong>VOB Files:</strong> Contain special data packets interleaved
+directly into the stream at the start of every Video Object Unit
+(VOBU)—typically every 0.4 to 1.0 seconds. These packs consist of
+Presentation Control Information (PCI) and Data Search Information
+(DSI). They control real-time operations such as non-seamless
+multi-angle switching, chapter skipping, audio track selection, and
+fast-forward/rewind scanning.</li>
+<li><strong>Generic MPEG-2 PS:</strong> Has no concept of DVD navigation
+packs. Seeking relies strictly on standard sequence headers, timestamps
+(PTS/DTS), or external indexers.</li>
+</ul>
+<h2 id="subtitle-and-overlay-support">Subtitle and Overlay Support</h2>
+<p>Subtitles are handled completely differently between the two
+formats:</p>
+<ul>
+<li><strong>VOB Files:</strong> Use a DVD-specific format known as
+"Subpictures." These are 2-bit, run-length-encoded bitmap overlays that
+support up to 32 different subtitle streams, menu button highlights, and
+forced captions. They are muxed as private data streams (Private Stream
+1).</li>
+<li><strong>Generic MPEG-2 PS:</strong> Typically relies on EIA-608/708
+closed captions embedded within the video stream's picture user data,
+teletext, or external text-based subtitle files. They do not natively
+support DVD-style run-length-encoded bitmap menus.</li>
+</ul>
+<h2 id="audio-codec-restrictions">Audio Codec Restrictions</h2>
+<p>While generic MPEG-2 PS allows for various audio types, VOB limits
+audio codecs strictly to DVD-compliant formats:</p>
+<ul>
+<li><strong>VOB Files:</strong> Exclusively use AC-3 (Dolby Digital),
+DTS, Linear PCM (uncompressed), or MPEG-1 Audio Layer II (MP2, mostly
+standard in PAL regions). These streams are packed using specific
+DVD-defined stream IDs.</li>
+<li><strong>Generic MPEG-2 PS:</strong> Commonly uses MPEG-1 Audio Layer
+II or MP3, and in broader implementations can package AAC, PCM, or
+alternative broadcast audio formats without adhering to DVD bitrate or
+channel restrictions.</li>
+</ul>
+<h2 id="file-size-limits-and-segmentation">File Size Limits and
+Segmentation</h2>
+<ul>
+<li><strong>VOB Files:</strong> Are strictly limited to a maximum file
+size of 1 GiB (1,048,576 KiB). This design guarantees compatibility with
+the UDF 1.02 and ISO 9660 file systems used on DVD-Video media. Long
+movies are split across multiple sequentially numbered files (e.g.,
+<code>VTS_01_1.VOB</code>, <code>VTS_01_2.VOB</code>) that form a
+continuous stream.</li>
+<li><strong>Generic MPEG-2 PS:</strong> Has no inherent file-size
+limitation defined by the container. A single <code>.mpg</code> file can
+scale to the maximum limit of whatever host file system (such as NTFS or
+ext4) stores it.</li>
+</ul>
+<h2 id="encryption-and-copy-protection">Encryption and Copy
+Protection</h2>
+<ul>
+<li><strong>VOB Files:</strong> Native support for the Content Scramble
+System (CSS). The stream packets can be encrypted at the sector level,
+requiring authorized authentication keys to decrypt during
+playback.</li>
+<li><strong>Generic MPEG-2 PS:</strong> Contains no native specification
+for CSS encryption.</li>
+</ul>
+<h2 id="dependency-on-accompanying-files">Dependency on Accompanying
+Files</h2>
+<p>A generic <code>.mpg</code> file is standalone; any standard media
+player can read the header and play the video seamlessly.</p>
+<p>A VOB file, however, is designed to be part of a larger ecosystem.
+While many modern media players can decode the raw audio and video in an
+isolated VOB file, true playback—including correct aspect ratio
+selection, audio-track labeling, and chapter access—often relies on
+external <code>.IFO</code> (Information) and <code>.BUP</code> (Backup)
+files stored alongside the VOB on the DVD.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/vob-vs-mpeg-2-program-stream-key-differences';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

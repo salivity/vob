@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recover Damaged VOB Files from Optical Media - vob</title>
+    <meta name="description" content="Optical disc degradation—caused by scratches, disc rot, or chemical breakdown—often leads to read errors that render VOB (Video Object) files unplayable. Standard operating systems typically freeze or abort copying when encountering these corrupted sector">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/recover-damaged-vob-files-from-optical-media">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Recover Damaged VOB Files from Optical Media - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/recover-damaged-vob-files-from-optical-media" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Optical disc degradation—caused by scratches, disc rot, or chemical breakdown—often leads to read errors that render VOB (Video Object) files unplayable. Standard operating systems typically freeze or abort copying when encountering these corrupted sector" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="recover-damaged-vob-files-from-optical-media">Recover Damaged
+VOB Files from Optical Media</h1>
+<p>Optical disc degradation—caused by scratches, disc rot, or chemical
+breakdown—often leads to read errors that render VOB (Video Object)
+files unplayable. Standard operating systems typically freeze or abort
+copying when encountering these corrupted sectors. To salvage partially
+damaged VOB files, specialized recovery utilities are required to bypass
+read errors, harvest intact sectors, and reconstruct the video stream.
+This guide outlines the most effective software tools designed to
+retrieve VOB video from compromised optical media.</p>
+<h3 id="isobuster">IsoBuster</h3>
+<p>IsoBuster is an industry-standard specialized data recovery tool for
+optical media, including CD, DVD, and Blu-ray. It bypasses the operating
+system's standard file system handling and communicates directly with
+the drive hardware.</p>
+<ul>
+<li><strong>How it helps with VOBs:</strong> When encountering bad
+sectors, IsoBuster allows users to customize retry counts, ignore
+unreadable sectors, or replace bad sectors with blank data. This enables
+the complete recovery of the surrounding readable data, preserving the
+container structure so the remaining VOB contents can still play.</li>
+<li><strong>Key Feature:</strong> "Extract but filter only Mpg-frames,"
+which pulls raw MPEG video directly from heavily corrupted DVD sectors
+even if the VOB file structure is missing.</li>
+</ul>
+<h3 id="gnu-ddrescue">GNU ddrescue</h3>
+<p>GNU ddrescue is an advanced, terminal-based data recovery tool
+available on Linux and macOS. It functions by copying data from one file
+or block device (such as a degraded DVD-ROM drive) to an image file on a
+healthy drive.</p>
+<ul>
+<li><strong>How it helps with VOBs:</strong> ddrescue uses a
+sophisticated algorithm that reads all healthy sectors first without
+putting excessive stress on the damaged medium. Once the easy data is
+copied, it returns to scrape the damaged areas, logging the bad sectors
+in a mapfile.</li>
+<li><strong>Key Feature:</strong> Non-destructive recovery. Once the
+disc image (<code>.iso</code>) is created, you can safely extract and
+rebuild the VOB files using virtual drive tools without risking further
+mechanical wear to the original disc.</li>
+</ul>
+<h3 id="roadkils-unstoppable-copier">Roadkil’s Unstoppable Copier</h3>
+<p>Roadkil’s Unstoppable Copier is a lightweight, free utility for
+Windows and Linux designed specifically to recover files from discs with
+physical damage or bad sectors.</p>
+<ul>
+<li><strong>How it helps with VOBs:</strong> When a standard file
+transfer encounters a read error, the system halts the operation.
+Unstoppable Copier continues copying despite read errors, filling the
+unreadable portions of the VOB file with null bytes.</li>
+<li><strong>Key Feature:</strong> The resulting VOB file maintains its
+original file size and timeline, allowing video decoders to simply skip
+over the dropped frames instead of crashing.</li>
+</ul>
+<h3 id="dvd-decrypter">DVD Decrypter</h3>
+<p>Although development ceased years ago, DVD Decrypter remains a
+powerful legacy tool for pulling VOB streams off aging, scratched
+DVDs.</p>
+<ul>
+<li><strong>How it helps with VOBs:</strong> Under its I/O settings,
+users can explicitly disable read-retry limits and configure the
+software to automatically ignore read errors without prompting.</li>
+<li><strong>Key Feature:</strong> Operating in "IFO Mode" or "File
+Mode," it can extract individual VOB cells directly to a hard drive,
+bypassing non-essential menus and targeting only the main video
+titles.</li>
+</ul>
+<h3 id="post-recovery-repair-fixing-truncated-vob-streams">Post-Recovery
+Repair: Fixing Truncated VOB Streams</h3>
+<p>Once recovered using sector-skipping tools, the resulting VOB files
+may contain broken timecodes, missing headers, or corrupt audio/video
+synchronization. Two secondary tools are commonly used to make these
+files fully playable:</p>
+<ul>
+<li><strong>ProjectX:</strong> A free Java-based utility that demuxes
+damaged MPEG-2/VOB files, fixing cut-off GOPs (Group of Pictures),
+clearing out stream errors, and re-aligning audio/video sync.</li>
+<li><strong>HandBrake / FFmpeg:</strong> Re-encoding or re-muxing the
+recovered VOB through FFmpeg
+(<code>ffmpeg -err_detect ignore_err -i input.vob -c copy output.mp4</code>)
+allows playback software to ignore residual transport stream errors and
+convert the intact video into a modern, stable format.</li>
+</ul></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/recover-damaged-vob-files-from-optical-media';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

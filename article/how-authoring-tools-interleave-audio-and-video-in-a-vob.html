@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How Authoring Tools Interleave Audio and Video in a VOB - vob</title>
+    <meta name="description" content="DVD authoring tools multiplex separate video, audio, and subpicture assets into a single Video Object (VOB) file by interleaving them at the sector level. Because a VOB is an implementation of the MPEG-2 Program Stream, an authoring tool must package each">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/how-authoring-tools-interleave-audio-and-video-in-a-vob">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How Authoring Tools Interleave Audio and Video in a VOB - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/how-authoring-tools-interleave-audio-and-video-in-a-vob" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="DVD authoring tools multiplex separate video, audio, and subpicture assets into a single Video Object (VOB) file by interleaving them at the sector level. Because a VOB is an implementation of the MPEG-2 Program Stream, an authoring tool must package each" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-authoring-tools-interleave-audio-and-video-in-a-vob">How
+Authoring Tools Interleave Audio and Video in a VOB</h1>
+<p>DVD authoring tools multiplex separate video, audio, and subpicture
+assets into a single Video Object (VOB) file by interleaving them at the
+sector level. Because a VOB is an implementation of the MPEG-2 Program
+Stream, an authoring tool must package each elementary stream into
+standardized packets and time-align them according to strict buffer
+constraints. By calculating decode and presentation timestamps against a
+shared reference clock, the multiplexer schedules video frames, audio
+samples, and bitmap subtitles into discrete Video Object Units (VOBUs),
+guaranteeing synchronized, continuous playback without decoder buffer
+underflow or overflow.</p>
+<h3 id="the-foundation-2048-byte-sectors-and-pes-packets">The
+Foundation: 2048-Byte Sectors and PES Packets</h3>
+<p>A VOB file is physically arranged into fixed-size sectors of 2,048
+bytes (2 KB), matching the native sector size of DVD media. Elementary
+streams—MPEG-2 video, AC-3 or LPCM audio, and run-length encoded
+subpicture graphics—are first segmented into Packetized Elementary
+Stream (PES) packets.</p>
+<p>The authoring tool places each PES packet inside a 2048-byte
+structure known as a Pack. Each Pack begins with a 14-byte Pack Header
+containing a System Clock Reference (SCR), followed by a PES header,
+stream-specific private headers, and the raw payload data. Because each
+Pack generally carries only one type of media, interleaving occurs by
+alternating these 2 KB sectors on the disc.</p>
+<h3 id="time-stamping-and-the-system-target-decoder-std">Time Stamping
+and the System Target Decoder (STD)</h3>
+<p>To determine the exact order of interleaved packets, the authoring
+tool runs a simulation of the MPEG System Target Decoder (STD). The DVD
+player contains distinct physical buffers for video, audio, and
+subpicture streams. The authoring multiplexer must ensure that none of
+these buffers run dry (underflow) or spill over (overflow).</p>
+<ol type="1">
+<li><strong>System Clock Reference (SCR):</strong> Defines the exact
+arrival time of a sector into the player's demultiplexer.</li>
+<li><strong>Decode Time Stamp (DTS):</strong> Directs the decoder when
+to remove and decode an access unit (such as a compressed B-frame or
+P-frame).</li>
+<li><strong>Presentation Time Stamp (PTS):</strong> Directs the hardware
+when to display the reconstructed frame, play the audio frame, or show
+the subtitle bitmap.</li>
+</ol>
+<p>Because processing requires time, packets must arrive in the player’s
+buffers before their PTS. Audio and subpicture data are therefore
+written to the disc slightly ahead of the video frame they coincide with
+chronologically.</p>
+<h3 id="the-video-object-unit-vobu">The Video Object Unit (VOBU)</h3>
+<p>Interleaving is organized into blocks called Video Object Units
+(VOBUs). A VOBU typically represents 0.4 to 1.0 seconds of playback and
+corresponds to an MPEG-2 Group of Pictures (GOP).</p>
+<p>Every VOBU strictly adheres to a standard layout:</p>
+<ul>
+<li><strong>Navigation Pack (NV_PCK):</strong> Always the very first
+2048-byte sector of a VOBU. It contains Real-Time Data Information (RDI)
+and Data Search Information (DSI) that allow the player to execute trick
+play (fast-forward, rewind) and jump to specific audio/subpicture
+tracks.</li>
+<li><strong>Video Packs (V_PCK):</strong> Contain the compressed I-, P-,
+and B-frames forming the GOP.</li>
+<li><strong>Audio Packs (A_PCK):</strong> Contain PCM, AC-3, or DTS
+frames corresponding to the time span of the VOBU.</li>
+<li><strong>Subpicture Packs (SP_PCK):</strong> Contain the menus or
+timed subtitle overlays.</li>
+</ul>
+<h3 id="the-multiplexing-algorithm">The Multiplexing Algorithm</h3>
+<p>When writing a VOBU, the authoring tool’s multiplexer uses a priority
+scheduler to interleave the sectors:</p>
+<ol type="1">
+<li><strong>Write the Navigation Pack:</strong> The NV_PCK is placed at
+the start of the address block.</li>
+<li><strong>Allocate Constant Audio:</strong> Uncompressed or compressed
+audio must maintain an unbroken acoustic timeline. Because audio streams
+have low, constant bitrates relative to video, the authoring tool
+schedules audio packs at regular, predictable intervals throughout the
+VOBU to prevent audio buffer starvation.</li>
+<li><strong>Insert Bursty Subpictures:</strong> Subpictures are
+asynchronous. A subtitle bitmap or menu highlight appears all at once,
+requiring a burst of sectors. The tool divides the subpicture data into
+SP_PCKs and distributes them across the sectors preceding the subtitle's
+starting PTS, ensuring the player has fully loaded the graphic into
+memory before rendering.</li>
+<li><strong>Fill with Video:</strong> Video consumes the majority of the
+DVD’s 10.08 Mbps maximum multiplex rate. The authoring tool fills all
+remaining sector slots with video packs. If variable bitrate (VBR) video
+dips and the total combined bitrate falls below the target sector rate,
+the authoring tool inserts Padding Packs to maintain a consistent
+bitstream timing.</li>
+</ol>
+<p>By strictly sequencing packets based on decoder arrival deadlines
+rather than simultaneous display times, the authoring tool ensures that
+the optical laser reads all disparate streams in a single, continuous
+track without seeking.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/how-authoring-tools-interleave-audio-and-video-in-a-vob';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

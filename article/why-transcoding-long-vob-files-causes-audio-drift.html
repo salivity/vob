@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why Transcoding Long VOB Files Causes Audio Drift - vob</title>
+    <meta name="description" content="Audio drift during the transcoding of long-duration VOB (Video Object) files occurs when audio and video streams gradually lose synchronization over time. This issue is typically caused by non-linear Presentation Time Stamps (PTS), unhandled pulldown flag">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/why-transcoding-long-vob-files-causes-audio-drift">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why Transcoding Long VOB Files Causes Audio Drift - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/why-transcoding-long-vob-files-causes-audio-drift" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Audio drift during the transcoding of long-duration VOB (Video Object) files occurs when audio and video streams gradually lose synchronization over time. This issue is typically caused by non-linear Presentation Time Stamps (PTS), unhandled pulldown flag" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-transcoding-long-vob-files-causes-audio-drift">Why
+Transcoding Long VOB Files Causes Audio Drift</h1>
+<p>Audio drift during the transcoding of long-duration VOB (Video
+Object) files occurs when audio and video streams gradually lose
+synchronization over time. This issue is typically caused by non-linear
+Presentation Time Stamps (PTS), unhandled pulldown flags, improperly
+merged split VOB containers, or missing frames that dumb transcoders
+fail to reconcile. Understanding the architecture of DVD MPEG-2 Program
+Streams and how modern encoders process them reveals why this
+desynchronization happens and how it can be prevented.</p>
+<h3 id="timestamp-discontinuities-and-resets">Timestamp Discontinuities
+and Resets</h3>
+<p>VOB files are based on the MPEG-2 Program Stream format, which relies
+on Presentation Time Stamps (PTS) and Decoding Time Stamps (DTS) to
+maintain synchronization between elementary audio and video streams. In
+commercial DVDs, these timestamps are rarely continuous across a full
+feature film. Layer breaks, chapter transitions, or multi-angle segments
+often introduce timestamp resets or gaps.</p>
+<p>Simpler transcoding utilities often ignore these internal timestamp
+gaps and assume a constant, uninterrupted stream of packets from
+beginning to end. When a utility strips or misinterprets the original
+PTS markers, it processes the streams sequentially. A gap of even a few
+milliseconds in the video stream—without a corresponding gap in the
+audio—compounds across multiple instances, creating noticeable audio
+drift by the end of a two-hour file.</p>
+<h3 id="dvd-file-segmentation-the-1-gb-split-problem">DVD File
+Segmentation (The 1 GB Split Problem)</h3>
+<p>The DVD-Video specification mandates that VOB files cannot exceed 1
+GB (1,048,576 KB) in size, causing long-duration titles to be split
+across multiple files (such as <code>VTS_01_1.VOB</code>,
+<code>VTS_01_2.VOB</code>, and so on).</p>
+<p>Audio drift frequently occurs when users transcode these files
+individually and stitch them together later, or when a utility processes
+them as separate entities rather than a contiguous stream. The
+transition points between split VOB files often contain partial audio
+frames, padding packets, or overlapping timestamps governed by the DVD's
+<code>.IFO</code> navigation files. Transcoding without parsing the
+master <code>.IFO</code> file prevents the encoder from knowing where
+the actual program stream starts and ends, leading to cumulative frame
+misalignment at every 1 GB boundary.</p>
+<h3 id="telecine-and-32-pulldown-flags">Telecine and 3:2 Pulldown
+Flags</h3>
+<p>Many NTSC DVDs store film content recorded at 23.976 frames per
+second (fps) but broadcast it at 29.97 fps using a technique called 3:2
+pulldown. Rather than encoding duplicate frames directly into the video
+stream, the MPEG-2 stream uses flags such as
+<code>repeat_first_field</code> to instruct the playback device to
+repeat specific fields dynamically.</p>
+<p>When transcoding utilities encounter these flags over long durations,
+two problems can arise:</p>
+<ul>
+<li><strong>Improper Inverse Telecine (IVTC):</strong> If the decoder
+fails to properly honor or remove pulldown flags, it may drop or
+duplicate frames inconsistently.</li>
+<li><strong>Variable vs. Constant Frame Rate Mismatches:</strong> If the
+software forces a rigid 29.97 fps output on a stream with irregular
+pulldown flags without adjusting the audio timeline, the total video
+runtime will drift away from the fixed-length audio track.</li>
+</ul>
+<h3 id="packet-drops-and-corrupted-sectors">Packet Drops and Corrupted
+Sectors</h3>
+<p>DVD media is prone to read errors, scratches, and mastering defects.
+While hardware DVD players are designed to mask these dropouts by
+duplicating frames or inserting silence to keep the playback clock
+aligned, basic transcoding software often drops damaged packets
+entirely.</p>
+<p>If damaged video packets are discarded while the corresponding AC-3
+or DTS audio packets remain intact, the video timeline shortens while
+the audio timeline remains unchanged. Over a long playback duration,
+multiple minor dropped packets accumulate, causing the audio to lag
+increasingly behind the video.</p>
+<h3 id="fixed-audio-frame-sizes-vs-flexible-video-frames">Fixed Audio
+Frame Sizes vs. Flexible Video Frames</h3>
+<p>Compressed audio formats such as AC-3 (Dolby Digital) and MP2 have
+rigid frame sizes. An AC-3 audio frame, for example, strictly represents
+1,536 audio samples (32 milliseconds at a 48 kHz sample rate). Video
+frames, conversely, depend strictly on the timebase of the
+container.</p>
+<p>When a transcoder converts an analog or broadcast-sourced VOB without
+enforcing strict audio-to-video clock alignment (such as sample
+insertion or dropping), the fractional differences between the video
+frame duration and audio frame duration accumulate. Over an hour of
+playback, these microsecond discrepancies aggregate into hundreds of
+milliseconds of perceptual drift.</p>
+<h3 id="how-to-prevent-audio-drift-in-vob-transcoding">How to Prevent
+Audio Drift in VOB Transcoding</h3>
+<p>To avoid synchronization drift when processing long-duration VOB
+files:</p>
+<ol type="1">
+<li><strong>Open the IFO File, Not the VOB:</strong> Always point
+transcoding utilities to the primary <code>.IFO</code> file (or the full
+DVD folder structure). This ensures the software reads the master
+chapter, title, and timestamp map rather than guessing the layout of raw
+VOB chunks.</li>
+<li><strong>Utilize Modern Demuxing Libraries:</strong> Use transcoding
+software powered by libraries like FFmpeg or Libav that feature explicit
+synchronization flags (such as FFmpeg's <code>-async</code> or
+<code>aresample</code> filters) to insert silence or trim audio frames
+dynamically to match video PTS markers.</li>
+<li><strong>Avoid Raw Binary Concatenation:</strong> Never combine VOB
+files using basic file-concatenation commands prior to encoding, as this
+fails to align the timestamps at the boundaries. Instead, use
+specialized tools to remux the streams into a single container like MKV
+before encoding.</li>
+</ol></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/why-transcoding-long-vob-files-causes-audio-drift';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

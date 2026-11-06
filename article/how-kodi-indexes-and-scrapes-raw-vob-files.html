@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How Kodi Indexes and Scrapes Raw VOB Files - vob</title>
+    <meta name="description" content="Managing a digital movie collection stored in raw VOB format presents unique challenges due to how DVD structures split video across multiple files. This article explains the technical process Kodi uses to identify, index, and scrape metadata for VOB arch">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/how-kodi-indexes-and-scrapes-raw-vob-files">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How Kodi Indexes and Scrapes Raw VOB Files - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/how-kodi-indexes-and-scrapes-raw-vob-files" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Managing a digital movie collection stored in raw VOB format presents unique challenges due to how DVD structures split video across multiple files. This article explains the technical process Kodi uses to identify, index, and scrape metadata for VOB arch" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-kodi-indexes-and-scrapes-raw-vob-files">How Kodi Indexes and
+Scrapes Raw VOB Files</h1>
+<p>Managing a digital movie collection stored in raw VOB format presents
+unique challenges due to how DVD structures split video across multiple
+files. This article explains the technical process Kodi uses to
+identify, index, and scrape metadata for VOB archives, whether they are
+arranged in standard DVD <code>VIDEO_TS</code> directory structures or
+stored as loose individual video files, and details best practices for
+seamless library integration.</p>
+<h3 id="understanding-vob-files-in-kodi">Understanding VOB Files in
+Kodi</h3>
+<p>VOB (Video Object) is the core container format used on DVD-Video
+discs. In an uncompressed or raw DVD rip, feature-length movies are
+rarely contained within a single file. Instead, the DVD specification
+splits data into consecutive 1 GB segments (such as
+<code>VTS_01_1.VOB</code>, <code>VTS_01_2.VOB</code>, and
+<code>VTS_01_3.VOB</code>) alongside accompanying control files like
+<code>.IFO</code> and <code>.BUP</code>.</p>
+<p>Kodi approaches VOB files in two distinct ways depending on their
+storage structure: as part of a complete DVD structure or as standalone
+video files.</p>
+<h3 id="scraping-standard-dvd-structures-video_ts">Scraping Standard DVD
+Structures (<code>VIDEO_TS</code>)</h3>
+<p>When an archive preserves the original DVD folder hierarchy, Kodi
+does not index every individual <code>.VOB</code> file as an independent
+movie. Instead, it recognizes the overall directory as a single cohesive
+media item.</p>
+<ol type="1">
+<li><strong>Folder Hierarchy Recognition</strong>: Kodi's scanner
+monitors for the presence of a <code>VIDEO_TS</code> folder or
+accompanying <code>VIDEO_TS.IFO</code> and <code>VTS_XX_0.IFO</code>
+files. When these are detected, Kodi's video engine flags the directory
+as a DVD image.</li>
+<li><strong>Metadata Matching</strong>: By default, Kodi evaluates the
+name of the folder containing the <code>VIDEO_TS</code> directory (or
+the parent folder itself if the files sit at root level) to perform the
+scraper lookup against configured databases like The Movie Database
+(TMDb). For example, a path like
+<code>Movies/The Matrix (1999)/VIDEO_TS/</code> prompts the scraper to
+search for "The Matrix (1999)".</li>
+<li><strong>Database Entry and Playback Linking</strong>: Kodi creates a
+single record in its internal SQLite database
+(<code>MyVideosXX.db</code>). Rather than pointing to the first video
+segment (<code>VTS_01_1.VOB</code>), the library record points to
+<code>VIDEO_TS.IFO</code>. This instructs Kodi’s built-in player
+(VideoPlayer) to launch the DVD navigation engine, allowing full access
+to menus, audio tracks, subtitles, and seamless playback across the
+split VOB segments.</li>
+</ol>
+<h3 id="scraping-loose-or-standalone-vob-files">Scraping Loose or
+Standalone VOB Files</h3>
+<p>If the raw archive consists of extracted, merged, or renamed single
+<code>.VOB</code> files without the surrounding DVD navigation files
+(e.g., <code>Gladiator (2000).vob</code>), Kodi treats them identically
+to common video containers like <code>.MKV</code> or
+<code>.MP4</code>.</p>
+<ol type="1">
+<li><strong>Filename Evaluation</strong>: The scraper cleans up common
+scene tags, resolutions, and codec labels from the filename based on
+Kodi’s internal regex definitions.</li>
+<li><strong>API Query</strong>: The cleaned string and year are
+dispatched to the designated scraper to fetch plot summaries, cast
+lists, ratings, and artwork.</li>
+<li><strong>File Stacking</strong>: If a movie remains split into parts
+outside of a DVD folder (for instance,
+<code>Movie Name (2001) - pt1.vob</code> and
+<code>Movie Name (2001) - pt2.vob</code>), Kodi's file-stacking
+mechanism links them sequentially into a single library entry, playing
+the parts back-to-back automatically.</li>
+</ol>
+<h3 id="improving-vob-indexing-accuracy">Improving VOB Indexing
+Accuracy</h3>
+<p>To prevent misidentifications, duplicate entries, or scraper failures
+with raw VOB media, adhere to the following rules:</p>
+<ul>
+<li><strong>Keep Folder Structures Intact</strong>: Ensure the complete
+<code>VIDEO_TS</code> folder—including all <code>.IFO</code> and
+<code>.BUP</code> files—is preserved. Missing <code>.IFO</code> files
+force Kodi to guess the sequence, often leading to each 1 GB chunk
+appearing as an individual, unlinked title.</li>
+<li><strong>Adopt the "Movies in Separate Folders" Setting</strong>:
+When adding the source in Kodi, enable the option labeled "Movies are in
+separate folders that match the movie title." This ensures the scraper
+extracts the title from the parent directory rather than attempting to
+parse filenames like <code>VTS_01_1.VOB</code>.</li>
+<li><strong>Use Local NFO Files for Offline Accuracy</strong>: For
+custom DVD masters, home videos, or rare discs not present on public
+scrapers, place a text file named after the folder or named
+<code>movie.nfo</code> in the root directory alongside
+<code>VIDEO_TS</code>. Kodi will bypass online scraping and parse the
+local XML data directly into the library.</li>
+</ul></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/how-kodi-indexes-and-scrapes-raw-vob-files';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

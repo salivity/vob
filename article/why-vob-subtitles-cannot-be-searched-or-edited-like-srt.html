@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why VOB Subtitles Cannot Be Searched or Edited Like SRT - vob</title>
+    <meta name="description" content="VOB subtitles cannot be directly searched, copied, or edited using a standard text editor because they are stored as graphical images rather than text-based character data. Unlike SRT files, which contain human-readable text and timing codes, subtitles wi">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/why-vob-subtitles-cannot-be-searched-or-edited-like-srt">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why VOB Subtitles Cannot Be Searched or Edited Like SRT - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/why-vob-subtitles-cannot-be-searched-or-edited-like-srt" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="VOB subtitles cannot be directly searched, copied, or edited using a standard text editor because they are stored as graphical images rather than text-based character data. Unlike SRT files, which contain human-readable text and timing codes, subtitles wi" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-vob-subtitles-cannot-be-searched-or-edited-like-srt">Why VOB
+Subtitles Cannot Be Searched or Edited Like SRT</h1>
+<p>VOB subtitles cannot be directly searched, copied, or edited using a
+standard text editor because they are stored as graphical images rather
+than text-based character data. Unlike SRT files, which contain
+human-readable text and timing codes, subtitles within VOB files are
+multiplexed bitmapped image overlays. To edit or search the text inside
+a VOB subtitle stream, the images must first be converted into editable
+text using Optical Character Recognition (OCR) software.</p>
+<h3 id="the-fundamental-difference-images-vs-text">The Fundamental
+Difference: Images vs. Text</h3>
+<p>The primary reason for this limitation lies in how the DVD-Video
+specification handles subtitles. In DVD files (VOB containers),
+subtitles are referred to as "SubPictures." These are not digital text
+strings; they are 2-bit or 4-bit raster images—essentially
+low-resolution graphic overlays containing up to four colors for the
+text fill, outline, anti-aliasing, and transparent background. Because
+the computer or DVD player merely draws these picture files over the
+video frame at designated timestamps, the system has no inherent
+understanding of the letters, words, or language displayed.</p>
+<p>In contrast, an SRT (SubRip Text) file is a simple, standardized text
+document encoded in formats like UTF-8 or ASCII. It consists entirely of
+raw text: a sequential number, a start and end timecode, and the actual
+subtitle dialogue. Because every character is stored as a standard
+digital text code, computers, operating systems, and video players can
+easily index, search, copy, paste, and modify the contents using any
+basic text editor.</p>
+<h3 id="why-direct-searching-and-editing-fail-on-vob-subtitles">Why
+Direct Searching and Editing Fail on VOB Subtitles</h3>
+<p>Because VOB subtitles are images:</p>
+<ul>
+<li><strong>Search engines and text algorithms cannot read
+them:</strong> A search function looking for the word "hello" looks for
+specific character encodings (such as binary representations of
+H-E-L-L-O). In a VOB file, "hello" is merely an arrangement of colored
+pixels, rendering text search tools completely blind to the
+content.</li>
+<li><strong>Text editors cannot parse them:</strong> Opening a raw VOB
+stream in a text editor reveals binary video and audio code mixed with
+compressed graphic data. There is no raw text layer to modify, meaning
+you cannot fix a typo, translate a phrase, or restyle the font with a
+keyboard stroke.</li>
+<li><strong>Styling is fixed into pixels:</strong> In an SRT file, the
+playback device determines the font style, size, and color. With a VOB
+SubPicture, the typography is permanently rendered into the bitmap
+itself during the original authoring process.</li>
+</ul>
+<h3 id="how-to-make-vob-subtitles-searchable-and-editable">How to Make
+VOB Subtitles Searchable and Editable</h3>
+<p>To bridge the gap between VOB images and editable text, the bitmap
+subtitles must undergo Optical Character Recognition (OCR). Specialized
+subtitle tools—such as Subtitle Edit or SubRip—isolate the graphical
+subtitle streams, analyze the pixel patterns of each letter, and convert
+those shapes into digital text characters. Once the OCR process matches
+the images to their corresponding letters, the resulting transcript can
+be exported into an SRT file, finally allowing the text to be fully
+searched, corrected, translated, and modified.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/why-vob-subtitles-cannot-be-searched-or-edited-like-srt';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

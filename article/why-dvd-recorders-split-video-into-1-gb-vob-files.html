@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why DVD Recorders Split Video Into 1GB VOB Files - vob</title>
+    <meta name="description" content="Standalone DVD recorders automatically split continuous recordings into 1 GB VOB (Video Object) files to strictly comply with the universal DVD-Video standard. This article explains the technical reasons behind this segmentation, covering file system cons">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/why-dvd-recorders-split-video-into-1-gb-vob-files">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why DVD Recorders Split Video Into 1GB VOB Files - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/why-dvd-recorders-split-video-into-1-gb-vob-files" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Standalone DVD recorders automatically split continuous recordings into 1 GB VOB (Video Object) files to strictly comply with the universal DVD-Video standard. This article explains the technical reasons behind this segmentation, covering file system cons" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-dvd-recorders-split-video-into-1gb-vob-files">Why DVD
+Recorders Split Video Into 1GB VOB Files</h1>
+<p>Standalone DVD recorders automatically split continuous recordings
+into 1 GB VOB (Video Object) files to strictly comply with the universal
+DVD-Video standard. This article explains the technical reasons behind
+this segmentation, covering file system constraints, memory and hardware
+limitations of standalone players, and how seamless playback is
+maintained despite the file boundaries.</p>
+<h3 id="compliance-with-the-dvd-video-specification">Compliance with the
+DVD-Video Specification</h3>
+<p>The primary reason standalone recorders split recordings is adherence
+to the official DVD-Video specification established by the DVD Forum in
+the mid-1990s. The standard mandates that no single VOB file on a
+DVD-Video compliant disc can exceed 1 GiB (1,048,576 KB, or
+1,073,741,824 bytes). For a recorder to generate a standard disc
+playable on any certified DVD player, it must follow this segmentation
+rule during the recording process.</p>
+<h3 id="file-system-limitations">File System Limitations</h3>
+<p>Standard DVDs utilize the UDF Bridge format, which combines UDF 1.02
+and ISO 9660 to ensure compatibility across dedicated optical players
+and computer operating systems. At the time these specifications were
+authored, many computer operating systems, firmware chips, and file
+systems relied on signed 32-bit integers, which struggled to properly
+address files larger than 2 GB. Capping VOB files at 1 GB provided a
+generous safety buffer, preventing integer overflow errors and file read
+failures on legacy systems.</p>
+<h3 id="hardware-and-memory-constraints">Hardware and Memory
+Constraints</h3>
+<p>Standalone DVD players are embedded consumer appliances with limited
+processing power and memory. Optical drives read data sequentially,
+buffering only small chunks of audio and video into onboard RAM.
+Managing addressing tables, seek operations, and timecode lookups within
+1 GB increments significantly reduces computational overhead for
+low-power microcontrollers compared to parsing continuous multi-gigabyte
+files.</p>
+<h3 id="seamless-playback-via-navigation-files">Seamless Playback via
+Navigation Files</h3>
+<p>Although the audio and video streams are split into physical chunks
+labeled <code>VTS_01_1.VOB</code>, <code>VTS_01_2.VOB</code>, and so
+forth, the split is imperceptible to the viewer. When finalizing the
+disc, the standalone recorder writes navigational metadata into
+<code>.IFO</code> (Information) and <code>.BUP</code> (Backup)
+files.</p>
+<p>These navigational files organize the fragmented VOB components into
+a unified Program Chain (PGC). During playback, the player reads
+instructions from the IFO file, seamlessly transitioning from the end of
+one VOB chunk to the start of the next without dropping audio packets or
+interrupting video frames.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/why-dvd-recorders-split-video-into-1-gb-vob-files';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

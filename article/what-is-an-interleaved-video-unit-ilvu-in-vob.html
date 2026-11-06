@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What Is an Interleaved Video Unit (ILVU) in VOB? - vob</title>
+    <meta name="description" content="An Interleaved Video Unit (ILVU) is a foundational structural element in DVD-Video authoring designed to support multi-angle scenes, parental levels, and branching story paths without playback interruption. This article explains what an ILVU is, why it wa">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/what-is-an-interleaved-video-unit-ilvu-in-vob">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="What Is an Interleaved Video Unit (ILVU) in VOB? - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/what-is-an-interleaved-video-unit-ilvu-in-vob" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="An Interleaved Video Unit (ILVU) is a foundational structural element in DVD-Video authoring designed to support multi-angle scenes, parental levels, and branching story paths without playback interruption. This article explains what an ILVU is, why it wa" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="what-is-an-interleaved-video-unit-ilvu-in-vob">What Is an
+Interleaved Video Unit (ILVU) in VOB?</h1>
+<p>An Interleaved Video Unit (ILVU) is a foundational structural element
+in DVD-Video authoring designed to support multi-angle scenes, parental
+levels, and branching story paths without playback interruption. This
+article explains what an ILVU is, why it was developed for optical disc
+technology, and how it physically organizes multi-angle video streams
+within a DVD Video Object (VOB) file.</p>
+<h3 id="understanding-the-interleaved-video-unit-ilvu">Understanding the
+Interleaved Video Unit (ILVU)</h3>
+<p>On a DVD-Video disc, video, audio, and subtitle streams are
+multiplexed into Video Object (VOB) files. Standard playback reads these
+files sequentially. However, features such as multi-angle playback—which
+allows a viewer to switch between different camera views in real
+time—present a physical challenge for optical drives.</p>
+<p>Because optical drive pick-up heads take a noticeable amount of time
+to physically move (seek) across disc tracks, storing each camera angle
+as a separate, continuous file would cause the video to freeze or
+stutter whenever the viewer changed angles. To solve this, the DVD
+specification introduced the Interleaved Video Unit (ILVU). An ILVU is a
+contiguous segment of video containing one or more Video Object Units
+(VOBUs) belonging to a specific angle, typically lasting between 0.5 and
+2 seconds.</p>
+<h3 id="how-ilvu-organizes-multi-angle-streams">How ILVU Organizes
+Multi-Angle Streams</h3>
+<p>Instead of placing entire video tracks one after the other, the DVD
+authoring process chops each angle into small ILVU blocks and alternates
+them sequentially inside the same VOB file.</p>
+<p>If a scene has three camera angles (Angle 1, Angle 2, and Angle 3),
+the VOB organizes the physical data in an interleaved pattern:</p>
+<ol type="1">
+<li><strong>ILVU 1:</strong> Angle 1 (Time 00:00 – 00:01)</li>
+<li><strong>ILVU 2:</strong> Angle 2 (Time 00:00 – 00:01)</li>
+<li><strong>ILVU 3:</strong> Angle 3 (Time 00:00 – 00:01)</li>
+<li><strong>ILVU 4:</strong> Angle 1 (Time 00:01 – 00:02)</li>
+<li><strong>ILVU 5:</strong> Angle 2 (Time 00:01 – 00:02)</li>
+<li><strong>ILVU 6:</strong> Angle 3 (Time 00:01 – 00:02)</li>
+</ol>
+<h3 id="playback-mechanics-and-buffer-management">Playback Mechanics and
+Buffer Management</h3>
+<p>To play a single angle smoothly from an interleaved VOB, the DVD
+player relies on a track buffer and navigation metadata:</p>
+<ul>
+<li><strong>Buffer Filling:</strong> When playing Angle 1, the laser
+reads ILVU 1 at higher than playback speed and deposits the data into an
+internal track buffer.</li>
+<li><strong>Laser Jump:</strong> While the player plays the video out of
+the buffer, the physical laser quickly skips over ILVU 2 and ILVU 3 to
+locate the start of ILVU 4.</li>
+<li><strong>Buffer Continuity:</strong> Because the jump occurs within
+milliseconds, the track buffer never empties (underflows), producing
+seamless playback.</li>
+<li><strong>Angle Switching:</strong> If the viewer selects Angle 2
+while Angle 1 is playing, the player finishes reading the current Angle
+1 ILVU, checks the navigation tables, and directs the laser head to jump
+immediately to the next sequential ILVU assigned to Angle 2.</li>
+</ul>
+<h3 id="navigation-via-nv_pck-and-dsi">Navigation via NV_PCK and
+DSI</h3>
+<p>This skipping and switching process is coordinated entirely by
+metadata stored inside each VOBU's Navigation Pack
+(<code>NV_PCK</code>). Within this pack, the Data Search Information
+(<code>DSI</code>) sub-stream contains dedicated tables:</p>
+<ul>
+<li><strong>Seamless Multi-Angle Information
+(<code>SML_AGLI</code>):</strong> Explicitly stores the relative sector
+addresses and sizes of the next ILVUs for all available angles.</li>
+<li><strong>Seamless Angle Information
+(<code>SML_AA_IT</code>):</strong> Details the jump destinations
+required for parental management and branching points.</li>
+</ul>
+<p>These pointers allow the player's firmware to know the exact sector
+to seek to before the optical head ever lifts, eliminating calculation
+latency.</p>
+<h3 id="technical-constraints-of-ilvu-multi-angle-setup">Technical
+Constraints of ILVU Multi-Angle Setup</h3>
+<p>For ILVU interleaving to work seamlessly, strict encoding rules must
+be followed during DVD authoring:</p>
+<ul>
+<li><strong>Closed GOPs (Group of Pictures):</strong> Each ILVU must
+begin with an I-frame (Intra-coded frame) and use a closed GOP so it can
+be decoded independently of adjacent units.</li>
+<li><strong>Matching Timestamps:</strong> Presentation Time Stamps (PTS)
+and audio synchronization must align perfectly across all parallel
+angles.</li>
+<li><strong>Bitrate Limitations:</strong> The aggregate size of the
+interleaved blocks and the distance between identical angles must not
+exceed the read transfer rate of the optical drive or the capacity of
+the player's track buffer.</li>
+</ul></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/what-is-an-interleaved-video-unit-ilvu-in-vob';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

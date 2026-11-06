@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How Stuffing Bytes Maintain 2048-Byte VOB Sectors - vob</title>
+    <meta name="description" content="DVD-Video Video Object (VOB) files are built upon the MPEG-2 Program Stream specification, which mandates that all data packs align perfectly with the 2048-byte physical sectors of a DVD. Because compressed video, audio, and subpicture streams produce var">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/how-stuffing-bytes-maintain-2048-byte-vob-sectors">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How Stuffing Bytes Maintain 2048-Byte VOB Sectors - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/how-stuffing-bytes-maintain-2048-byte-vob-sectors" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="DVD-Video Video Object (VOB) files are built upon the MPEG-2 Program Stream specification, which mandates that all data packs align perfectly with the 2048-byte physical sectors of a DVD. Because compressed video, audio, and subpicture streams produce var" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-stuffing-bytes-maintain-2048-byte-vob-sectors">How Stuffing
+Bytes Maintain 2048-Byte VOB Sectors</h1>
+<p>DVD-Video Video Object (VOB) files are built upon the MPEG-2 Program
+Stream specification, which mandates that all data packs align perfectly
+with the 2048-byte physical sectors of a DVD. Because compressed video,
+audio, and subpicture streams produce variable-length data that rarely
+divides evenly into fixed-size blocks, multiplexers utilize stuffing
+bytes and padding packets to fill the remaining void. This article
+explains how stuffing byte allocation dynamically balances payload
+variations, ensuring every VOB pack meets the strict 2048-byte boundary
+required for seamless hardware playback.</p>
+<h3 id="the-2048-byte-structural-requirement">The 2048-Byte Structural
+Requirement</h3>
+<p>Standard DVD media reads data in fixed physical sectors of 2048
+bytes. To avoid costly hardware re-buffering or software realignment
+during optical playback, the DVD specification dictates that every
+logical unit—known as a "pack"—inside a VOB file must match this
+2048-byte sector size precisely.</p>
+<p>A standard pack consists of:</p>
+<ol type="1">
+<li><strong>Pack Header (14 bytes base):</strong> Contains
+synchronization markers, the System Clock Reference (SCR), and multiplex
+rate information.</li>
+<li><strong>System Header (Optional, usually 18–24 bytes):</strong>
+Appears periodically to define stream bounds and buffer sizes.</li>
+<li><strong>PES Packets (Variable):</strong> Packetized Elementary
+Stream packets containing the actual media payloads (e.g., MPEG-2 video,
+AC-3 audio).</li>
+</ol>
+<p>Because audio frames and compressed video slices fluctuate in size,
+the raw media payload almost never perfectly completes the 2048-byte
+target.</p>
+<h3 id="mechanisms-for-stuffing-allocation">Mechanisms for Stuffing
+Allocation</h3>
+<p>The MPEG-2 standard provides multiple hierarchical locations where
+non-payload "stuffing" bytes can be inserted without corrupting the
+media stream. Multiplexers choose among these mechanisms depending on
+how many residual bytes are needed to reach 2048 bytes.</p>
+<h4 id="1-pack-header-stuffing-1-to-7-bytes">1. Pack Header Stuffing (1
+to 7 Bytes)</h4>
+<p>The MPEG-2 pack header includes a 3-bit field called
+<code>pack_stuffing_length</code>. This allows the encoder to insert
+between 1 and 7 stuffing bytes (fixed to the value <code>0xFF</code>)
+directly at the end of the pack header. This mechanism handles
+micro-adjustments where the remaining space is too small to justify a
+new header or packet structure.</p>
+<h4 id="2-pes-header-stuffing-1-to-32-bytes">2. PES Header Stuffing (1
+to 32+ Bytes)</h4>
+<p>When the remaining gap is larger than 7 bytes, stuffing can occur
+within the PES packet header. The PES header includes a
+<code>PES_header_data_length</code> field that specifies the size of
+optional fields and stuffing bytes. Any byte allocated here is filled
+with the fixed hexadecimal value <code>0xFF</code>. The demultiplexer
+reads the designated length, processes any present timestamps (PTS/DTS),
+skips the <code>0xFF</code> stuffing bytes, and immediately begins
+reading the payload.</p>
+<h4 id="3-dedicated-padding-packets-large-gaps">3. Dedicated Padding
+Packets (Large Gaps)</h4>
+<p>When an elementary stream payload ends and leaves a large gap—or when
+an audio frame cannot fit into the remaining space of the current pack
+without splitting—multiplexers insert a complete Padding PES Packet.</p>
+<ul>
+<li><strong>Stream ID:</strong> Identified by the stream ID
+<code>0xBE</code> (Padding Stream).</li>
+<li><strong>Structure:</strong> A standard 6-byte PES header (start code
+prefix, stream ID, and packet length) followed entirely by padding bytes
+(typically <code>0xFF</code> or <code>0x00</code>).</li>
+<li><strong>Use Case:</strong> This method absorbs larger residuals,
+ranging from tens of bytes up to nearly the entire 2048-byte sector
+(e.g., end-of-cell markers or navigational packs).</li>
+</ul>
+<h3 id="the-multiplexing-calculation-process">The Multiplexing
+Calculation Process</h3>
+<p>During authoring, the multiplexer executes a continuous sizing
+algorithm for every pack:</p>
+<ol type="1">
+<li><strong>Calculate Fixed Overhead:</strong> The multiplexer sums the
+lengths of the Pack Header, any optional System Header, and the
+structural PES headers.</li>
+<li><strong>Determine Payload Chunk:</strong> It slices a portion of the
+incoming elementary stream to fit into the remaining capacity.</li>
+<li><strong>Evaluate Remaining Deficit:</strong> <span
+class="math display">\[\text{Deficit} = 2048 - (\text{Overhead} +
+\text{Payload})\]</span></li>
+<li><strong>Apply Stuffing Strategy:</strong>
+<ul>
+<li>If <span class="math inline">\(\text{Deficit} = 0\)</span>, the pack
+is written immediately.</li>
+<li>If <span class="math inline">\(1 \le \text{Deficit} \le 7\)</span>,
+the bytes are appended to the Pack Header via
+<code>pack_stuffing_length</code>.</li>
+<li>If <span class="math inline">\(\text{Deficit} \ge 8\)</span> and
+payload is present, the deficit is appended inside the PES Header
+stuffing area.</li>
+<li>If the deficit cannot fit in the PES header or no payload is
+available for the remainder of the pack, a <code>0xBE</code> padding
+packet is constructed with a length equal to <span
+class="math inline">\(\text{Deficit} - 6\)</span> bytes.</li>
+</ul></li>
+</ol>
+<h3 id="decoder-handling">Decoder Handling</h3>
+<p>When a DVD player reads a 2048-byte sector, the hardware
+demultiplexer parses the headers sequentially. Because stuffing
+locations are strictly defined by length fields in the standard, the
+parser simply discards these bytes before routing the data to video,
+audio, or subpicture decoders. This ensures that the physical drive
+reads a deterministic stream of identical-length sectors while decoders
+receive variable-bitrate streams without timing or buffer
+interruptions.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/how-stuffing-bytes-maintain-2048-byte-vob-sectors';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How Seamless Multi-Angle DVD VOB Switching Works - vob</title>
+    <meta name="description" content="Seamless multi-angle playback allows a viewer to switch camera angles instantaneously during video playback without experiencing buffering, stutter, or desynchronization of audio. This article explains the technical mechanism behind this process on DVD-Vi">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/how-seamless-multi-angle-dvd-vob-switching-works">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How Seamless Multi-Angle DVD VOB Switching Works - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/how-seamless-multi-angle-dvd-vob-switching-works" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Seamless multi-angle playback allows a viewer to switch camera angles instantaneously during video playback without experiencing buffering, stutter, or desynchronization of audio. This article explains the technical mechanism behind this process on DVD-Vi" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-seamless-multi-angle-dvd-vob-switching-works">How Seamless
+Multi-Angle DVD VOB Switching Works</h1>
+<p>Seamless multi-angle playback allows a viewer to switch camera angles
+instantaneously during video playback without experiencing buffering,
+stutter, or desynchronization of audio. This article explains the
+technical mechanism behind this process on DVD-Video, detailing how
+video streams are interleaved into discrete units, how navigation packs
+guide the hardware reader, and how decoder buffers maintain
+uninterrupted presentation during angle transitions.</p>
+<h3 id="the-interleaved-unit-ilvu-architecture">The Interleaved Unit
+(ILVU) Architecture</h3>
+<p>Standard DVD storage cannot support jumping between distant physical
+sectors on a disc fast enough to maintain real-time playback. To solve
+this, multi-angle scenes are authored as interleaved blocks.</p>
+<p>Instead of storing each camera angle as a continuous, separate file,
+the video streams are chopped into small segments called Interleaved
+Units (ILVUs). These units are typically between 0.5 to 1 second long
+(equivalent to one or two Groups of Pictures, or GOPs). The disc
+physically stores these chunks sequentially by alternating the
+angles:</p>
+<ul>
+<li>ILVU A1 (Angle 1, Time 00:00–00:01)</li>
+<li>ILVU A2 (Angle 2, Time 00:00–00:01)</li>
+<li>ILVU A3 (Angle 3, Time 00:00–00:01)</li>
+<li>ILVU B1 (Angle 1, Time 00:01–00:02)</li>
+<li>ILVU B2 (Angle 2, Time 00:01–00:02)</li>
+<li>ILVU B3 (Angle 3, Time 00:01–00:02)</li>
+</ul>
+<p>Every angle shares the exact same audio and subpicture streams to
+prevent any break in sound or subtitles when switching perspectives.</p>
+<h3 id="navigation-packs-and-dsi-pointers">Navigation Packs and DSI
+Pointers</h3>
+<p>Every Video Object Unit (VOBU) within an ILVU begins with a
+Navigation Pack (<code>NV_PCK</code>). This packet contains Data Search
+Information (<code>DSI</code>), which acts as an address book for the
+DVD player's optical pickup.</p>
+<p>Within the DSI is a specific data structure known as Seamless
+Multi-Angle Information (<code>SML_AGLI</code>). The
+<code>SML_AGLI</code> table contains the exact physical sector addresses
+of the <em>next</em> ILVU for every available angle. For example, while
+the player is reading ILVU A1, the <code>SML_AGLI</code> table provides
+the target sector addresses for:</p>
+<ul>
+<li>The next chunk of the current angle (ILVU B1)</li>
+<li>The next chunk of alternate angles (ILVU B2, ILVU B3, etc.)</li>
+</ul>
+<p>When a viewer presses the angle button on a remote control, the
+player does not jump immediately mid-frame. Instead, it registers the
+request and reads the target address for the selected angle from the
+current ILVU's <code>SML_AGLI</code> table. Once the current ILVU
+finishes reading, the drive head jumps directly to the start sector of
+the designated angle's next ILVU.</p>
+<h3 id="buffer-management-and-track-buffering">Buffer Management and
+Track Buffering</h3>
+<p>Because the optical pickup must physically skip over the interleaved
+sectors of the non-selected angles, it temporarily ceases reading data
+from the disc.</p>
+<p>To hide this mechanical seek latency, the DVD player relies on an
+internal track buffer (a FIFO cache). The optical drive spins faster
+than the video's presentation rate (typically 1x–2x overspeed), reading
+data into the track buffer faster than it is consumed by the MPEG-2
+decoder.</p>
+<p>When an angle jump occurs:</p>
+<ol type="1">
+<li>The read head travels over the unwanted ILVUs to land on the chosen
+angle's next ILVU.</li>
+<li>During this jump time (up to several hundred milliseconds), the
+MPEG-2 decoder continues pulling data uninterrupted from the track
+buffer.</li>
+<li>The read head reaches the target sector and resumes filling the
+buffer before it empties.</li>
+</ol>
+<h3 id="video-stream-synchronization-closed-gops-and-pts">Video Stream
+Synchronization: Closed GOPs and PTS</h3>
+<p>To make the transition visually seamless, each ILVU must be
+independently decodable:</p>
+<ul>
+<li><strong>Closed GOPs:</strong> Every ILVU begins with an MPEG-2
+I-frame (Intra-coded frame) and must be authored as a "Closed GOP." This
+ensures that P-frames and B-frames inside the new angle do not reference
+frames from the previously playing angle.</li>
+<li><strong>Matched Presentation Time Stamps (PTS):</strong> The
+starting PTS of ILVU B1, B2, and B3 are identical. When switching from
+ILVU A1 to ILVU B2, the decoder seamlessly matches the exact timestamp
+of the incoming video with the continuous audio stream, preventing frame
+drops or synchronization drift.</li>
+</ul></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/how-seamless-multi-angle-dvd-vob-switching-works';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

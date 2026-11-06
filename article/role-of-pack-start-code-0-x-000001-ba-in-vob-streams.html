@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Role of Pack Start Code 0x000001BA in VOB Streams - vob</title>
+    <meta name="description" content="The pack start code 0x000001BA serves as the foundational synchronization marker within raw DVD Video Object (VOB) streams, signaling the beginning of a new pack in the MPEG-2 Program Stream architecture. This 32-bit prefix delineates individual data pack">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/role-of-pack-start-code-0-x-000001-ba-in-vob-streams">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Role of Pack Start Code 0x000001BA in VOB Streams - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/role-of-pack-start-code-0-x-000001-ba-in-vob-streams" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The pack start code 0x000001BA serves as the foundational synchronization marker within raw DVD Video Object (VOB) streams, signaling the beginning of a new pack in the MPEG-2 Program Stream architecture. This 32-bit prefix delineates individual data pack" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="role-of-pack-start-code-0x000001ba-in-vob-streams">Role of Pack
+Start Code 0x000001BA in VOB Streams</h1>
+<p>The pack start code <code>0x000001BA</code> serves as the
+foundational synchronization marker within raw DVD Video Object (VOB)
+streams, signaling the beginning of a new pack in the MPEG-2 Program
+Stream architecture. This 32-bit prefix delineates individual data
+packs, encapsulates vital timing information via the System Clock
+Reference, defines multiplexing transfer rates, and ensures that the
+stream properly aligns with the 2,048-byte physical sectors of standard
+DVD media.</p>
+<h3 id="pack-boundary-and-sector-alignment">Pack Boundary and Sector
+Alignment</h3>
+<p>A VOB file is structurally an MPEG-2 Program Stream tailored for
+optical media. To maintain compatibility with DVD file systems (UDF/ISO
+9660), data must be organized into fixed 2,048-byte (2 KB) blocks.</p>
+<p>The 4-byte sequence <code>0x000001BA</code> acts as a unique
+delimiter that tells the demuxer a new 2 KB pack is starting. Because
+raw bitstreams can experience transmission loss or reading errors,
+hardware and software decoders scan for this exact byte sequence to
+establish packet boundaries and align their buffers to the incoming
+stream.</p>
+<h3
+id="timing-and-synchronization-via-system-clock-reference-scr">Timing
+and Synchronization via System Clock Reference (SCR)</h3>
+<p>Directly following the <code>0x000001BA</code> code is the pack
+header, which houses the System Clock Reference (SCR). The SCR is a
+42-bit timestamp composed of a 33-bit base (running at 90 kHz) and a
+9-bit extension (running at 27 MHz).</p>
+<p>The role of this data is to synchronize the decoder’s internal system
+clock (STC) with the encoder’s clock. While Presentation Time Stamps
+(PTS) and Decoding Time Stamps (DTS) inside individual PES packets
+dictate when frames are decoded and displayed, the SCR provided right
+after the <code>0x000001BA</code> marker dictates the precise arrival
+time of the byte stream into the decoder buffers, preventing buffer
+overflow or underflow.</p>
+<h3 id="multiplex-rate-specification">Multiplex Rate Specification</h3>
+<p>Immediately after the SCR field in the pack header, the stream
+specifies the <code>program_mux_rate</code>. This 22-bit integer
+indicates the rate at which the Program Stream was multiplexed, measured
+in units of 50 bytes per second.</p>
+<p>The decoder uses this value to determine the maximum bandwidth of the
+VOB stream at that specific point in time. This information is critical
+for managing data flow, especially when handling multi-angle tracks,
+varying audio streams (AC-3, DTS, LPCM), and dynamic sub-picture data
+multiplexed into the same VOB file.</p>
+<h3 id="stream-parsing-and-error-recovery">Stream Parsing and Error
+Recovery</h3>
+<p>If a reading error occurs—such as a scratched disc surface causing
+dropped bytes—the parser loses track of where packetized elementary
+streams (PES) begin and end. The <code>0x000001BA</code> code provides
+an error-recovery checkpoint. The parser can skip corrupted bytes until
+it encounters <code>0x000001BA</code>, allowing it to discard damaged
+sectors, reset its parsing state, read the new SCR, and safely resume
+playback from the next intact 2 KB pack.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/role-of-pack-start-code-0-x-000001-ba-in-vob-streams';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

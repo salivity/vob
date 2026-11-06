@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How IFO Palettes Define VOB Subpicture Colors - vob</title>
+    <meta name="description" content="DVD subpictures, used for subtitles and menu overlays, do not store actual color values within their raw graphical streams. Instead, they rely on a 16-color Color Lookup Table (CLUT) defined in the DVD&#39;s IFO (Information) file. By pairing a 2-bit pixel ma">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/how-ifo-palettes-define-vob-subpicture-colors">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How IFO Palettes Define VOB Subpicture Colors - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/how-ifo-palettes-define-vob-subpicture-colors" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="DVD subpictures, used for subtitles and menu overlays, do not store actual color values within their raw graphical streams. Instead, they rely on a 16-color Color Lookup Table (CLUT) defined in the DVD&#39;s IFO (Information) file. By pairing a 2-bit pixel ma" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-ifo-palettes-define-vob-subpicture-colors">How IFO Palettes
+Define VOB Subpicture Colors</h1>
+<p>DVD subpictures, used for subtitles and menu overlays, do not store
+actual color values within their raw graphical streams. Instead, they
+rely on a 16-color Color Lookup Table (CLUT) defined in the DVD's IFO
+(Information) file. By pairing a 2-bit pixel mapping system inside the
+VOB’s subpicture stream with the 16-entry YUV palette stored in the
+Program Chain (PGC) of the IFO, the DVD player translates lightweight
+run-length encoded overlays into full-color, anti-aliased graphics on
+the screen.</p>
+<h3 id="the-16-color-palette-in-the-ifo-file">The 16-Color Palette in
+the IFO File</h3>
+<p>The master palette is located within the Program Chain Information
+Table (PGCI) of the title's corresponding IFO file. This table contains
+a dedicated 16-entry array known as the PGC CLUT (Color Lookup
+Table).</p>
+<p>Each entry in the 16-color table is stored as a 32-bit value using
+the YCrCb (often referred to loosely as YUV) color space:</p>
+<ul>
+<li>One byte for Luminance (<span class="math inline">\(Y\)</span>)</li>
+<li>One byte for Blue-difference chroma (<span
+class="math inline">\(Cb\)</span> or <span
+class="math inline">\(U\)</span>)</li>
+<li>One byte for Red-difference chroma (<span
+class="math inline">\(Cr\)</span> or <span
+class="math inline">\(V\)</span>)</li>
+<li>One byte reserved or unused</li>
+</ul>
+<p>This setup allows the title creator to define 16 distinct, full-gamut
+colors that remain globally available throughout that specific Program
+Chain.</p>
+<h3 id="the-2-bit-subpicture-architecture">The 2-Bit Subpicture
+Architecture</h3>
+<p>Subpicture data stored inside the VOB container is optimized for low
+bitrate and fast decoding. The raw graphical stream (the Subpicture
+Unit, or SPU) is a run-length encoded bitmap where each pixel can only
+have one of four possible 2-bit values (binary <code>00</code>,
+<code>01</code>, <code>10</code>, and <code>11</code>).</p>
+<p>These four values represent functional roles rather than fixed
+colors:</p>
+<ul>
+<li><strong>Background (b):</strong> Typically transparent space around
+text or graphics.</li>
+<li><strong>Pattern / Foreground (p):</strong> The main body of the text
+or shape.</li>
+<li><strong>Emphasis 1 (e1):</strong> Used for outlines, shadows, or
+borders.</li>
+<li><strong>Emphasis 2 (e2):</strong> Used for secondary outlines,
+anti-aliasing edges, or highlight fills.</li>
+</ul>
+<p>Because 2 bits cannot directly point to 16 distinct colors, an
+intermediary translation layer is required.</p>
+<h3 id="mapping-2-bit-elements-to-the-16-color-palette">Mapping 2-Bit
+Elements to the 16-Color Palette</h3>
+<p>The link between the 2-bit subpicture and the 16-color IFO palette is
+established via control commands located in the Subpicture Display
+Control Sequence Table (SP_DCSQT), which is embedded alongside the pixel
+data in the VOB.</p>
+<p>Before the player renders a subpicture frame, it processes the
+<code>SET_COLOR</code> command (control command <code>0x03</code>). This
+command contains four 4-bit nibbles, with each nibble representing an
+index from <code>0</code> to <code>15</code>:</p>
+<ol type="1">
+<li>Index for the Background pixel type</li>
+<li>Index for the Pattern pixel type</li>
+<li>Index for the Emphasis 1 pixel type</li>
+<li>Index for the Emphasis 2 pixel type</li>
+</ol>
+<p>When the DVD player encounters a pixel marked as "Pattern"
+(<code>01</code>), it looks at the <code>SET_COLOR</code> assignment to
+find the corresponding palette index (for example, entry 4). The player
+then fetches the YCrCb color value from slot 4 of the IFO's 16-color
+palette and assigns it to that pixel.</p>
+<h3 id="applying-transparency-with-contrast-settings">Applying
+Transparency with Contrast Settings</h3>
+<p>Color definition works hand-in-hand with opacity. Directly following
+the color mapping, the SPU executes the <code>SET_CONTR</code> command
+(control command <code>0x04</code>).</p>
+<p>Like the color command, <code>SET_CONTR</code> supplies four 4-bit
+values (ranging from <code>0x0</code> to <code>0xF</code>) that assign
+an alpha transparency level to each of the four pixel roles:</p>
+<ul>
+<li><code>0x0</code> denotes 100% transparency (invisible).</li>
+<li><code>0xF</code> denotes 100% opacity (solid).</li>
+<li>Intermediate values provide semi-transparency for smooth blending
+against the underlying video.</li>
+</ul>
+<h3 id="the-advantage-of-separating-palette-and-video">The Advantage of
+Separating Palette and Video</h3>
+<p>Decoupling the color definitions from the video stream provides
+several advantages:</p>
+<ul>
+<li><strong>Dynamic Retheming:</strong> A button in a DVD menu can
+change color instantly when selected or activated simply by issuing a
+new <code>SET_COLOR</code> command that points to different indices in
+the IFO palette, requiring no redraw of the image.</li>
+<li><strong>Bandwidth Conservation:</strong> The video stream only
+carries simple 2-bit line art, keeping the bitrate overhead of subtitles
+negligible.</li>
+<li><strong>Global Consistency:</strong> Subtitle text can maintain
+consistent hues and anti-aliasing standards across an entire feature
+film from a single, centralized palette configuration.</li>
+</ul></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/how-ifo-palettes-define-vob-subpicture-colors';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

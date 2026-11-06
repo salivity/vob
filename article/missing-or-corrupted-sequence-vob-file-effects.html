@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Missing or Corrupted Sequence VOB File Effects - vob</title>
+    <meta name="description" content="When a sequential VOB file such as VTS012.VOB is missing or corrupted, the DVD structure breaks, leading to playback failures, missing video segments, and conversion errors. This article explains how DVD sequencing relies on continuous VOB chains, what ha">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/missing-or-corrupted-sequence-vob-file-effects">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Missing or Corrupted Sequence VOB File Effects - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/missing-or-corrupted-sequence-vob-file-effects" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="When a sequential VOB file such as VTS012.VOB is missing or corrupted, the DVD structure breaks, leading to playback failures, missing video segments, and conversion errors. This article explains how DVD sequencing relies on continuous VOB chains, what ha" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="missing-or-corrupted-sequence-vob-file-effects">Missing or
+Corrupted Sequence VOB File Effects</h1>
+<p>When a sequential VOB file such as <code>VTS_01_2.VOB</code> is
+missing or corrupted, the DVD structure breaks, leading to playback
+failures, missing video segments, and conversion errors. This article
+explains how DVD sequencing relies on continuous VOB chains, what
+happens during playback in physical and software players, how ripping
+software handles the missing data, and whether the remaining footage can
+still be salvaged.</p>
+<h3 id="the-role-of-vob-sequences-in-dvd-architecture">The Role of VOB
+Sequences in DVD Architecture</h3>
+<p>Standard DVD-Video structures store movie data inside the
+<code>VIDEO_TS</code> folder, split into 1 GB chunks named sequentially
+(e.g., <code>VTS_01_1.VOB</code>, <code>VTS_01_2.VOB</code>,
+<code>VTS_01_3.VOB</code>). These files are not entirely independent
+videos; they are continuous MPEG-2 program streams split across files to
+comply with the UDF/ISO file system limits. The playback logic, chapter
+points, and timing maps are stored separately in the corresponding
+<code>.IFO</code> file (such as <code>VTS_01_0.IFO</code>).</p>
+<h3 id="playback-failure-in-dvd-players">Playback Failure in DVD
+Players</h3>
+<p>If a physical DVD player or full-disc software player attempts to
+play the title:</p>
+<ul>
+<li><strong>Playback Halts or Freezes:</strong> The player follows the
+sector pointers in the IFO file. When playback reaches the end of
+<code>VTS_01_1.VOB</code> and attempts to address the data blocks
+expected in <code>VTS_01_2.VOB</code>, the player encountered a missing
+address or unreadable sector. This typically results in a frozen screen,
+an indefinite loading loop, or a read error message.</li>
+<li><strong>Timeline and Chapter Inconsistencies:</strong> The DVD menu
+might still load if the menu files (<code>VTS_01_0.VOB</code> and
+<code>VIDEO_TS.VOB</code>) are intact. However, selecting a chapter
+located within or after the missing file will cause an immediate crash
+or reset back to the root menu.</li>
+<li><strong>Skipped Content:</strong> Some modern software players will
+attempt error recovery by jumping to the next available sector. If
+successful, playback skips the entire missing chunk directly to
+<code>VTS_01_3.VOB</code>, causing an abrupt jump in the video and often
+causing audio/video synchronization errors for the remainder of the
+title.</li>
+</ul>
+<h3 id="impact-on-media-players-direct-file-playback">Impact on Media
+Players (Direct File Playback)</h3>
+<p>When playing the files outside the DVD menu structure using media
+players like VLC:</p>
+<ul>
+<li>Individual VOB files act as raw MPEG-2 containers. If
+<code>VTS_01_2.VOB</code> is deleted, <code>VTS_01_1.VOB</code> will
+play normally up to its final frame.</li>
+<li><code>VTS_01_3.VOB</code> can often be opened independently, but it
+may suffer from missing timestamp headers, broken keyframes at the
+start, or audio drift because the initial stream headers were
+established in the earlier files.</li>
+</ul>
+<h3 id="failure-in-ripping-and-transcoding-tools">Failure in Ripping and
+Transcoding Tools</h3>
+<p>Tools like MakeMKV, HandBrake, or FFmpeg rely on the continuous
+stream and the IFO navigational tables to assemble a complete video
+track:</p>
+<ul>
+<li><strong>MakeMKV:</strong> Reads the IFO file to map chapters and
+cells. Missing a sequential VOB causes a read error, leading the
+software to abort the rip or output a corrupt, truncated MKV file.</li>
+<li><strong>HandBrake:</strong> Typically fails during the title
+scanning phase or fails mid-encode when encountering the missing sector,
+resulting in a partial video output up to the end of
+<code>VTS_01_1.VOB</code>.</li>
+<li><strong>Direct Concatenation:</strong> Merging the remaining files
+via command-line tools will result in a hard jump where the missing
+segment was, often breaking the MPEG-2 timecode stamps and causing audio
+desynchronization.</li>
+</ul>
+<h3 id="salvaging-the-remaining-data">Salvaging the Remaining Data</h3>
+<p>If <code>VTS_01_2.VOB</code> cannot be restored:</p>
+<ol type="1">
+<li><strong>Process VOBs Individually:</strong> Treat each remaining VOB
+file as a standalone video file rather than a DVD set. Convert
+<code>VTS_01_1.VOB</code> and <code>VTS_01_3.VOB</code> separately into
+MP4 or MKV formats.</li>
+<li><strong>Re-encode with Fresh Timestamps:</strong> Pass the isolated
+files through a transcoder to rebuild the missing MPEG-2 headers and fix
+timestamp discontinuities before stitching the remaining parts
+together.</li>
+</ol></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/missing-or-corrupted-sequence-vob-file-effects';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

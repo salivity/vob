@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Does Decrypting a VOB File Affect Video Quality? - vob</title>
+    <meta name="description" content="Decrypting a VOB file does not alter or degrade the underlying MPEG-2 video stream quality in any way. Decryption is a strictly mathematical process that removes encryption layers, such as the Content Scramble System (CSS), to restore the data to its orig">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/does-decrypting-a-vob-file-affect-video-quality">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Does Decrypting a VOB File Affect Video Quality? - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/does-decrypting-a-vob-file-affect-video-quality" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Decrypting a VOB file does not alter or degrade the underlying MPEG-2 video stream quality in any way. Decryption is a strictly mathematical process that removes encryption layers, such as the Content Scramble System (CSS), to restore the data to its orig" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="does-decrypting-a-vob-file-affect-video-quality">Does Decrypting
+a VOB File Affect Video Quality?</h1>
+<p>Decrypting a VOB file does not alter or degrade the underlying MPEG-2
+video stream quality in any way. Decryption is a strictly mathematical
+process that removes encryption layers, such as the Content Scramble
+System (CSS), to restore the data to its original, unencrypted state.
+Unless the file is actively re-encoded or compressed by video processing
+software during or after the decryption process, the video and audio
+bitstreams remain 100% bit-for-bit identical to the source media.</p>
+<h3 id="how-vob-decryption-works">How VOB Decryption Works</h3>
+<p>A VOB (Video Object) file is a container format based on the MPEG-2
+Program Stream specification. It multiplexes MPEG-2 video, digital audio
+(such as AC-3 or DTS), and subtitles into interleaved data packets.
+Commercial DVDs protect these streams using encryption schemes,
+primarily CSS.</p>
+<p>CSS works by scrambling the payload data within the sectors of the
+disc using an encryption key. When a decryption tool—often called a DVD
+decrypter or ripper—processes the disc, it performs the following
+steps:</p>
+<ol type="1">
+<li>It authenticates with the disc to acquire or derive the decryption
+keys.</li>
+<li>It mathematically reverses the cipher applied to the scrambled data
+packets.</li>
+<li>It writes the restored, unscrambled data to a local storage
+drive.</li>
+</ol>
+<p>Because this is a symmetric decryption operation, the resulting
+decrypted file contains the exact same bytes that the DVD authoring
+studio originally encoded. No visual data is reinterpreted, resampled,
+or discarded.</p>
+<h3 id="decryption-vs-transcoding">Decryption vs. Transcoding</h3>
+<p>Confusion regarding quality loss usually stems from conflating
+decryption with transcoding.</p>
+<ul>
+<li><strong>Decryption (Lossless):</strong> Simply unlocks the container
+and removes access restrictions. The internal MPEG-2 video stream
+remains untouched. Tools performing a direct stream copy or simple
+ISO/VOB rip fall into this category.</li>
+<li><strong>Transcoding (Lossy):</strong> Decompresses the original
+MPEG-2 video stream and recompresses it into a different format (such as
+converting MPEG-2 to H.264, H.265, or AV1 to reduce file size).
+Re-encoding inherently introduces generational loss, softening details
+and potentially introducing compression artifacts.</li>
+</ul>
+<p>If you use a utility to extract a VOB file without altering its
+codec—often referred to as a "remux" or "raw rip"—the resulting MPEG-2
+video retains its original bitrate, resolution, color matrix, and visual
+fidelity.</p>
+<h3 id="verification-of-bit-for-bit-preservation">Verification of
+Bit-for-Bit Preservation</h3>
+<p>The integrity of a decrypted stream can be verified using
+cryptographic hashes (such as MD5 or SHA-256). If an unencrypted VOB
+file is written to a disc image, read, and decrypted properly, the
+payload packets of the decrypted video stream match the source material
+prior to encryption. The video decoder receives the exact data packets
+created during the initial mastering process, ensuring zero degradation
+in playback quality.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/does-decrypting-a-vob-file-affect-video-quality';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

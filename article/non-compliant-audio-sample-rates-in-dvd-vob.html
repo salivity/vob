@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Non-Compliant Audio Sample Rates in DVD VOB - vob</title>
+    <meta name="description" content="When generating a DVD Video Object (VOB) file, authoring programs require audio streams to conform strictly to the DVD-Video standard, which mandates a sampling rate of 48 kHz (or 96 kHz for certain LPCM tracks). If an authoring program encounters an audi">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/non-compliant-audio-sample-rates-in-dvd-vob">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Non-Compliant Audio Sample Rates in DVD VOB - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/non-compliant-audio-sample-rates-in-dvd-vob" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="When generating a DVD Video Object (VOB) file, authoring programs require audio streams to conform strictly to the DVD-Video standard, which mandates a sampling rate of 48 kHz (or 96 kHz for certain LPCM tracks). If an authoring program encounters an audi" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="non-compliant-audio-sample-rates-in-dvd-vob">Non-Compliant Audio
+Sample Rates in DVD VOB</h1>
+<p>When generating a DVD Video Object (VOB) file, authoring programs
+require audio streams to conform strictly to the DVD-Video standard,
+which mandates a sampling rate of 48 kHz (or 96 kHz for certain LPCM
+tracks). If an authoring program encounters an audio file with a
+non-compliant sample rate—such as 44.1 kHz from a standard CD or MP3, or
+32 kHz from broadcast formats—it will typically respond in one of three
+ways: automatically resampling the audio, halting the process with a
+compile error, or, in rare cases, producing a corrupted VOB file that
+causes playback failures on standalone DVD players.</p>
+<h3 id="1-automatic-resampling-and-transcoding">1. Automatic Resampling
+and Transcoding</h3>
+<p>Most modern and consumer-grade authoring tools (such as DVD Flick,
+ConvertXtoDVD, or Nero) are designed to handle non-compliant assets
+automatically. When these programs detect a sample rate like 44.1 kHz,
+they pass the audio through an internal sample rate converter before
+multiplexing.</p>
+<p>The software resamples the audio stream to 48 kHz and re-encodes it
+into a compliant format (typically Dolby Digital AC-3 or uncompressed
+LPCM). While this ensures the resulting VOB is fully standard-compliant,
+the resampling process can introduce slight processing delays and minor
+quantization artifacts if low-quality conversion algorithms are
+used.</p>
+<h3 id="2-validation-errors-and-build-abortions">2. Validation Errors
+and Build Abortions</h3>
+<p>Professional and strict authoring tools (such as Scenarist, Sonic
+DVDit, or DVD Studio Pro) prioritize specification compliance over
+automation. These programs enforce strict pre-multiplexing verification
+checks.</p>
+<p>If an asset has a non-standard sample rate, the software will not
+attempt to fix it. Instead, the authoring process will abort, generating
+an error such as "Audio sample rate not supported," "Invalid asset for
+DVD-Video specification," or "Multiplexing failed." In this scenario, no
+VOB file is generated until the user manually converts the audio source
+to 48 kHz using an external audio editor.</p>
+<h3 id="3-forced-multiplexing-and-resulting-playback-failures">3. Forced
+Multiplexing and Resulting Playback Failures</h3>
+<p>If a permissive, legacy, or low-level multiplexer (such as older
+command-line tools like <code>mplex</code> or basic FFmpeg pipelines
+with bypassed checks) forces non-compliant audio into a VOB container,
+the file will be generated, but it will violate the DVD standard.</p>
+<p>Hardware DVD players and set-top units rely on fixed-frequency
+hardware digital-to-analog converters (DACs) locked to 48 kHz. When a
+player reads a non-compliant VOB:</p>
+<ul>
+<li><strong>Pitch and Speed Distortion:</strong> A 44.1 kHz stream
+played through a 48 kHz clock plays roughly 8.8% too fast, making audio
+sound unnaturally high-pitched ("chipmunk effect").</li>
+<li><strong>Audio-Video Desynchronization:</strong> Because the audio
+plays faster or slower than the video frames, synchronization quickly
+drifts, leading to noticeable delays within seconds.</li>
+<li><strong>Buffer Underflow and Stutter:</strong> The hardware
+decoder's buffer may empty prematurely, causing harsh audio dropouts,
+digital noise, or clicks.</li>
+<li><strong>Total Playback Failure:</strong> Many standalone players
+will detect the invalid header, mute the audio track entirely, or freeze
+playback completely, displaying a disc read error.</li>
+</ul>
+<h3 id="prevention-and-resolution">Prevention and Resolution</h3>
+<p>To avoid authoring failures or playback corruption, any non-compliant
+audio track must be resampled to 48,000 Hz before authoring. Using a
+dedicated digital audio workstation (DAW) or command-line utility like
+FFmpeg ensures high-quality sample-rate conversion with proper
+dithering, guaranteeing seamless integration into the final VOB
+container.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/non-compliant-audio-sample-rates-in-dvd-vob';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

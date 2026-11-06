@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How UDF Indexes Multi-Gigabyte VOB Sequences - vob</title>
+    <meta name="description" content="This article examines how the Universal Disk Format (UDF) file system manages and indexes multi-gigabyte Video Object (VOB) streams. It explains the relationship between the 1 GB file segmentation imposed by DVD-Video specifications and the underlying UDF">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/how-udf-indexes-multi-gigabyte-vob-sequences">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How UDF Indexes Multi-Gigabyte VOB Sequences - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/how-udf-indexes-multi-gigabyte-vob-sequences" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article examines how the Universal Disk Format (UDF) file system manages and indexes multi-gigabyte Video Object (VOB) streams. It explains the relationship between the 1 GB file segmentation imposed by DVD-Video specifications and the underlying UDF" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-udf-indexes-multi-gigabyte-vob-sequences">How UDF Indexes
+Multi-Gigabyte VOB Sequences</h1>
+<p>This article examines how the Universal Disk Format (UDF) file system
+manages and indexes multi-gigabyte Video Object (VOB) streams. It
+explains the relationship between the 1 GB file segmentation imposed by
+DVD-Video specifications and the underlying UDF architecture, detailing
+how File Entries, Allocation Descriptors, and extent-based block mapping
+allow optical drives and media players to access contiguous media
+sequences efficiently.</p>
+<h2 id="the-1-gb-vob-file-boundary">The 1 GB VOB File Boundary</h2>
+<p>Although the UDF specification natively supports files well into
+exabytes, standard DVD-Video implementations (typically using UDF 1.02)
+enforce a 1 GB (1,073,741,824 bytes) maximum limit on individual
+<code>.VOB</code> files (such as <code>VTS_01_1.VOB</code>,
+<code>VTS_01_2.VOB</code>). This restriction was primarily established
+to ensure compatibility with older 32-bit operating systems, legacy C
+runtimes using signed 32-bit integers, and hybrid UDF/ISO 9660 (UDF
+Bridge) disc layouts.</p>
+<p>Consequently, a multi-gigabyte video stream is stored not as a single
+massive file in the file system table, but as a sequential series of
+split files that together constitute a continuous Video Title Set
+(VTS).</p>
+<h2 id="extent-based-allocation-and-file-entries">Extent-Based
+Allocation and File Entries</h2>
+<p>UDF indexes files using an extent-based allocation model rather than
+a cluster chain table (like FAT) or direct inode blocks (like standard
+Unix file systems). Every file on a UDF partition corresponds to a File
+Entry (FE) descriptor:</p>
+<ol type="1">
+<li><strong>File Identifier Descriptor (FID):</strong> When a directory
+is read, UDF scans the directory's stream of FIDs. Each FID maps a file
+name (e.g., <code>VTS_01_1.VOB</code>) to the Logical Block Address
+(LBA) of that file's File Entry.</li>
+<li><strong>File Entry (FE):</strong> The File Entry contains metadata
+(permissions, timestamps, file length) and an Allocation Descriptor
+field.</li>
+<li><strong>Allocation Descriptors (AD):</strong> DVD implementations
+predominantly use Short Allocation Descriptors (<code>short_ad</code>).
+A <code>short_ad</code> specifies two 32-bit values:
+<ul>
+<li><strong>Extent Length:</strong> The byte size of the contiguous run
+of data.</li>
+<li><strong>Extent Position:</strong> The starting Logical Block Number
+within the partition.</li>
+</ul></li>
+</ol>
+<p>If a file is physically fragmented, its File Entry contains an array
+of these allocation descriptors, each pointing to the start and length
+of a subsequent contiguous block segment.</p>
+<h2 id="physical-contiguity-and-seamless-sequencing">Physical Contiguity
+and Seamless Sequencing</h2>
+<p>To avoid buffer underruns during optical playback, disc mastering
+authoring software writes the extents of sequential VOB files
+contiguously onto the physical sectors of the disc.</p>
+<ul>
+<li>The last sector of <code>VTS_01_1.VOB</code> is immediately followed
+by the first sector of <code>VTS_01_2.VOB</code>.</li>
+<li>While each file has its own discrete File Entry and directory record
+within UDF, the actual storage blocks form an unbroken physical
+sequence.</li>
+<li>The Allocation Descriptors in <code>VTS_01_2.VOB</code> begin at the
+precise LBA directly adjacent to the termination LBA described in
+<code>VTS_01_1.VOB</code>.</li>
+</ul>
+<p>This layout allows the optical drive pickup to read across the file
+boundary without performing a mechanical seek operation.</p>
+<h2 id="filesystem-indexing-vs-dvd-navigation">Filesystem Indexing vs.
+DVD Navigation</h2>
+<p>The UDF file system provides the low-level indexing that translates
+file names and byte offsets into physical disc sectors, but it works in
+tandem with DVD-Video navigation files (<code>.IFO</code> files) to
+present the multi-gigabyte sequence as a unified timeline:</p>
+<ul>
+<li><strong>Sector Translation:</strong> The playback software uses UDF
+descriptors to locate the absolute starting sector (LBA) of the
+sequence.</li>
+<li><strong>VOBU Indexing:</strong> The corresponding <code>.IFO</code>
+file contains Video Object Unit (VOBU) address maps. These maps use
+relative sector offsets rather than file-specific coordinates.</li>
+<li><strong>Boundary Bridging:</strong> Because the DVD player
+calculates sector offsets relative to the entire Title Set, it bypasses
+continuous file-level UDF queries during playback. It relies on UDF
+primarily for the initial file mount and sector resolution, treating the
+contiguous sequence of 1 GB VOB files as a single linear stream mapped
+across the disc.</li>
+</ul></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/how-udf-indexes-multi-gigabyte-vob-sequences';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How 90 kHz Clock Governs PTS in VOB Files - vob</title>
+    <meta name="description" content="In DVD VOB (Video Object) files, maintaining accurate audio and video synchronization depends entirely on Presentation Time Stamps (PTS) calculated against a fixed 90 kHz clock frequency. This article explains the origin of the 90 kHz timebase derived fro">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/how-90-k-hz-clock-governs-pts-in-vob-files">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How 90 kHz Clock Governs PTS in VOB Files - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/how-90-k-hz-clock-governs-pts-in-vob-files" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="In DVD VOB (Video Object) files, maintaining accurate audio and video synchronization depends entirely on Presentation Time Stamps (PTS) calculated against a fixed 90 kHz clock frequency. This article explains the origin of the 90 kHz timebase derived fro" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-90-khz-clock-governs-pts-in-vob-files">How 90 kHz Clock
+Governs PTS in VOB Files</h1>
+<p>In DVD VOB (Video Object) files, maintaining accurate audio and video
+synchronization depends entirely on Presentation Time Stamps (PTS)
+calculated against a fixed 90 kHz clock frequency. This article explains
+the origin of the 90 kHz timebase derived from MPEG-2 standards,
+illustrates how it cleanly maps to common broadcast frame rates, and
+details the mechanics decoders use to translate these clock ticks into
+flawless presentation timing and lip-sync.</p>
+<h3 id="origin-in-the-mpeg-2-standard">Origin in the MPEG-2
+Standard</h3>
+<p>A VOB file is fundamentally an MPEG-2 Program Stream container. Under
+the MPEG-2 specification (ISO/IEC 13818-1), timing relies on a master
+System Time Clock (STC) running at a high-frequency base of 27 MHz. To
+make timestamping lightweight and manageable within packet headers, this
+master clock is divided by 300 to create a 90 kHz sub-clock specifically
+dedicated to presentation and decoding timestamps:</p>
+<p><span class="math display">\[\frac{27\text{ MHz}}{300} = 90\text{ kHz
+(90,000 ticks per second)}\]</span></p>
+<p>Every tick of the 90 kHz clock represents exactly <span
+class="math inline">\(1/90,000\)</span>th of a second (approximately
+11.11 microseconds).</p>
+<h3 id="mathematical-alignment-with-frame-rates">Mathematical Alignment
+with Frame Rates</h3>
+<p>The 90 kHz frequency was intentionally selected by standards bodies
+because 90,000 is divisible by the frame rates common to television and
+cinema standards. This integer divisibility eliminates rounding errors
+that would otherwise accumulate and cause audio-video drift:</p>
+<ul>
+<li><strong>24 fps (Film):</strong> <span class="math inline">\(90,000
+\div 24 = 3,750\)</span> ticks per frame</li>
+<li><strong>25 fps (PAL Video):</strong> <span
+class="math inline">\(90,000 \div 25 = 3,600\)</span> ticks per
+frame</li>
+<li><strong>30 fps (Component Video):</strong> <span
+class="math inline">\(90,000 \div 30 = 3,000\)</span> ticks per
+frame</li>
+<li><strong>29.97 fps (NTSC Video):</strong> <span
+class="math inline">\(90,000 \div (30,000 / 1001) = 3,003\)</span> ticks
+per frame</li>
+</ul>
+<p>Because these intervals resolve to exact integers, each successive
+video frame simply increments the PTS by a fixed number of clock
+units.</p>
+<h3 id="how-pts-functions-in-the-vob-stream">How PTS Functions in the
+VOB Stream</h3>
+<p>Inside a VOB file, raw elementary streams (MPEG-2 video, AC-3 audio,
+DTS audio, and sub-pictures) are sliced into Packetized Elementary
+Stream (PES) packets. Within the header of a PES packet, a PTS can be
+embedded as a 33-bit binary integer.</p>
+<p>When an MPEG-2 demuxer and decoder processes a VOB file, the
+following sequence occurs:</p>
+<ol type="1">
+<li><strong>Clock Synchronization:</strong> The decoder synchronizes its
+internal System Clock Reference (SCR) to the master timeline using
+periodic SCR markers in the stream pack headers.</li>
+<li><strong>Buffer and Decode:</strong> Compressed data is loaded into
+decoding buffers. If a frame has a separate Decode Time Stamp (DTS),
+such as with bidirectional B-frames, it is decoded first.</li>
+<li><strong>Target Presentation:</strong> The decoder monitors the
+running 90 kHz clock. When the local STC reaches the numerical value
+encoded in a packet's PTS, the associated video frame is rendered to the
+display, or the decoded PCM audio block is delivered to the
+digital-to-analog converter.</li>
+</ol>
+<h3 id="audio-video-synchronization-and-drift-prevention">Audio-Video
+Synchronization and Drift Prevention</h3>
+<p>Audio packets also carry 90 kHz PTS values despite audio sample rates
+typically being 48 kHz in DVD production. The decoder computes the
+presentation instant for audio packets using the same 90 kHz counter. By
+evaluating the difference between the audio PTS and video PTS against
+the running system clock, the playback engine can detect sync
+disparities down to a fraction of a millisecond. If processing latency
+causes video to lag, the decoder can drop non-reference frames or repeat
+fields until the video PTS realigns with the audio PTS.</p>
+<h3 id="the-33-bit-counter-limit">The 33-Bit Counter Limit</h3>
+<p>Because PTS values are represented using a 33-bit unsigned integer,
+the maximum value before overflow is <span class="math inline">\(2^{33}
+- 1\)</span> (8,589,934,591 ticks). At 90,000 ticks per second, this
+allows a continuous playback timeline of:</p>
+<p><span class="math display">\[\frac{2^{33}}{90,000 \times 3,600}
+\approx 26.5 \text{ hours}\]</span></p>
+<p>This capacity comfortably exceeds the maximum storage capacity of any
+DVD-Video media, ensuring that timestamp wraparound does not occur
+during normal single-title playback.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/how-90-k-hz-clock-governs-pts-in-vob-files';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why VOB Files Adhere to Optical Sector Boundaries - vob</title>
+    <meta name="description" content="This article explains the critical engineering reasons why DVD-Video VOB (Video Object) files must strictly align with 2,048-byte physical sectors on optical discs. Optical media relies on rigid, block-based addressing architectures governed by the DVD-Vi">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/why-vob-files-adhere-to-optical-sector-boundaries">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why VOB Files Adhere to Optical Sector Boundaries - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/why-vob-files-adhere-to-optical-sector-boundaries" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains the critical engineering reasons why DVD-Video VOB (Video Object) files must strictly align with 2,048-byte physical sectors on optical discs. Optical media relies on rigid, block-based addressing architectures governed by the DVD-Vi" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-vob-files-adhere-to-optical-sector-boundaries">Why VOB Files
+Adhere to Optical Sector Boundaries</h1>
+<p>This article explains the critical engineering reasons why DVD-Video
+VOB (Video Object) files must strictly align with 2,048-byte physical
+sectors on optical discs. Optical media relies on rigid, block-based
+addressing architectures governed by the DVD-Video standard. Adhering to
+these boundaries ensures that standalone hardware players can navigate
+chapters seamlessly, prevent buffer underruns, and access synchronized
+audio, video, and subtitle streams without costly read-overhead or
+playback latency.</p>
+<h3 id="the-fixed-architecture-of-dvd-sectors">The Fixed Architecture of
+DVD Sectors</h3>
+<p>Optical media formats like DVD-ROM and DVD-Video do not read data as
+a continuous, arbitrary stream of bytes. Instead, they organize data
+into fixed physical sectors of precisely 2,048 bytes (2 KB). The optical
+drive's firmware and pickup unit are designed to address, read, and
+verify error correction codes (ECC) on a sector-by-sector basis.</p>
+<p>When files are placed onto a DVD filesystem (typically a hybrid
+UDF/ISO 9660 format), file data naturally divides into these 2 KB
+chunks. For standard data files, partial sector usage at the end of a
+file is acceptable. However, for real-time video streaming from an
+optical pickup, unaligned continuous data creates significant
+performance bottlenecks.</p>
+<h3 id="direct-hardware-addressing-and-ifo-pointers">Direct Hardware
+Addressing and IFO Pointers</h3>
+<p>The primary reason for strict VOB alignment lies in how DVD
+navigation functions. A DVD does not parse a VOB file dynamically; it
+relies on companion IFO (Information) files:</p>
+<ul>
+<li><strong>Logical Block Addressing (LBA):</strong> The IFO file
+contains lookup tables filled with sector numbers rather than byte
+offsets. Every chapter marker, audio track switch, camera angle, and
+cell transition points directly to a specific Logical Block Address
+(LBA) on the disc.</li>
+<li><strong>Navigation Packs (NAV_PACK):</strong> Every Video Object
+Unit (VOBU) inside a VOB file begins with a Navigation Pack. The DVD
+player’s optical pickup uses the IFO's sector pointers to jump directly
+to these packs.</li>
+<li><strong>Boundary Alignment:</strong> If a VOB’s internal VOBU or
+cell starts halfway through a 2,048-byte sector, the hardware player
+cannot jump directly to the target block. Misalignment invalidates the
+sector-based lookup tables, resulting in seeking failures, audio-video
+desynchronization, or navigation errors.</li>
+</ul>
+<h3 id="preventing-buffer-underruns-and-read-latency">Preventing Buffer
+Underruns and Read Latency</h3>
+<p>Standalone DVD players, particularly legacy models from the format's
+inception, operate with minimal processing power and small memory
+buffers. Optical pickup heads are mechanically slow compared to modern
+solid-state or magnetic drives.</p>
+<ul>
+<li><strong>Sequential Reading Overhead:</strong> If a data block spans
+an arbitrary byte range across sector boundaries, the drive must read
+and buffer two full sectors to reconstruct a single contiguous
+packet.</li>
+<li><strong>Seamless Branching:</strong> Interactive features, such as
+multiple viewing angles or branching storylines, require the laser to
+jump between physical tracks instantly. Strict sector alignment ensures
+that the incoming stream starts immediately at the target sector’s
+initial byte, eliminating the computational overhead of discarding
+offset bytes before decoding video frames.</li>
+</ul>
+<h3 id="pack-size-standardization">Pack Size Standardization</h3>
+<p>The MPEG-2 Program Stream format used within DVD-Video specifies that
+every pack (video, audio, subpicture, or navigation) must be precisely
+2,048 bytes in size. Because the logical payload size of each pack
+matches the physical sector size of the DVD medium, a 1:1 mapping exists
+between an MPEG pack and an optical sector.</p>
+<p>By enforcing strict adherence to sector boundaries during disc
+authoring, mastering software ensures that every individual pack
+occupies exactly one physical sector. This 1:1 relationship allows the
+optical drive controller to stream raw data blocks directly from the
+disc straight into the MPEG decoder buffer with zero byte-shifting or
+intermediate memory manipulation.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/why-vob-files-adhere-to-optical-sector-boundaries';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How 4:2:0 Chroma Subsampling Works in VOB Video - vob</title>
+    <meta name="description" content="VOB (Video Object) files serve as the core container format for DVD-Video media, encapsulating MPEG-2 video streams that strictly implement the 4:2:0 chroma subsampling standard. This compression technique significantly reduces overall file size by halvin">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/how-4-2-0-chroma-subsampling-works-in-vob-video">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How 4:2:0 Chroma Subsampling Works in VOB Video - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/how-4-2-0-chroma-subsampling-works-in-vob-video" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="VOB (Video Object) files serve as the core container format for DVD-Video media, encapsulating MPEG-2 video streams that strictly implement the 4:2:0 chroma subsampling standard. This compression technique significantly reduces overall file size by halvin" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-420-chroma-subsampling-works-in-vob-video">How 4:2:0 Chroma
+Subsampling Works in VOB Video</h1>
+<p>VOB (Video Object) files serve as the core container format for
+DVD-Video media, encapsulating MPEG-2 video streams that strictly
+implement the 4:2:0 chroma subsampling standard. This compression
+technique significantly reduces overall file size by halving both the
+horizontal and vertical resolution of color information while preserving
+full-resolution brightness detail. This article explains the
+fundamentals of 4:2:0 subsampling, its specific implementation within
+MPEG-2 VOB containers, how it handles interlaced and progressive video,
+and why it remains a cornerstone of standard-definition digital video
+storage.</p>
+<h3 id="the-role-of-vob-and-mpeg-2-video">The Role of VOB and MPEG-2
+Video</h3>
+<p>A VOB file is a container based on the MPEG-2 Program Stream format.
+It multiplexes digital video, digital audio, subtitles, and navigation
+contents into a single stream. The DVD standard mandates that the
+primary video stream inside a VOB container conform to the MPEG-2
+standard (specifically Main Profile at Main Level, or MP@ML). A
+non-negotiable requirement of this profile is the use of 4:2:0 chroma
+subsampling.</p>
+<h3 id="understanding-420-chroma-subsampling">Understanding 4:2:0 Chroma
+Subsampling</h3>
+<p>Human vision is far more sensitive to variations in brightness
+(luminance) than variations in color (chrominance). Digital video
+exploits this biological trait by separating raw RGB video into the
+YCbCr color space:</p>
+<ul>
+<li><strong>Y (Luma):</strong> Carries the brightness and fine
+detail.</li>
+<li><strong>Cb (Chroma Blue):</strong> Carries the blue-difference color
+information.</li>
+<li><strong>Cr (Chroma Red):</strong> Carries the red-difference color
+information.</li>
+</ul>
+<p>Chroma subsampling uses a three-part ratio (J<span class="emoji"
+data-emoji="a">🅰️</span>b) to describe how color is sampled across a
+reference block of four pixels wide by two pixels tall.</p>
+<p>In a <strong>4:4:4</strong> scheme, every pixel has its own distinct
+luma and chroma values, resulting in zero compression of color data.</p>
+<p>In <strong>4:2:0</strong>, the horizontal chroma sampling rate is
+halved, and the vertical chroma sampling rate is also halved:</p>
+<ul>
+<li>For a 2x2 grid of four pixels, there are 4 luma (Y) samples, but
+only 1 blue-difference (Cb) sample and 1 red-difference (Cr)
+sample.</li>
+<li>The chroma components effectively have one-fourth the spatial
+resolution of the luminance component.</li>
+<li>This reduction lowers the raw uncompressed data payload by 50%
+compared to 4:4:4 video before any temporal or spatial MPEG compression
+algorithms are applied.</li>
+</ul>
+<h3 id="420-subsampling-within-the-vob-container">4:2:0 Subsampling
+Within the VOB Container</h3>
+<p>Inside a standard DVD VOB file, video frames are typically encoded at
+720x480 (NTSC) or 720x576 (PAL). Because of 4:2:0 subsampling:</p>
+<ul>
+<li><strong>Luma (Y) Resolution:</strong> 720x480 (full resolution)</li>
+<li><strong>Chroma (Cb, Cr) Resolution:</strong> 360x240 each (half
+horizontal, half vertical)</li>
+</ul>
+<p>By discarding redundant color data, the MPEG-2 encoder drastically
+reduces the bitrate needed to represent motion video. This efficiency
+allowed full-length standard-definition feature films to fit within the
+physical limits of DVD media—typically 4.7 GB for single-layer discs and
+8.5 GB for dual-layer discs—while maintaining an acceptable balance of
+picture clarity and compression artifacts.</p>
+<h3 id="progressive-vs-interlaced-handling-in-vob-files">Progressive vs.
+Interlaced Handling in VOB Files</h3>
+<p>The DVD specification permits both progressive and interlaced
+scanning, and MPEG-2 handles 4:2:0 chroma differently depending on the
+scan type:</p>
+<ul>
+<li><strong>Progressive Frames:</strong> Chroma samples are derived from
+two adjacent lines within the same frame. The chroma grid aligns
+symmetrically across the luma grid.</li>
+<li><strong>Interlaced Fields:</strong> Standard television broadcasts
+and many DVDs use interlacing, where a frame is split into top and
+bottom fields displayed sequentially. In interlaced MPEG-2 streams,
+sampling chroma across adjacent frame lines would blend data from two
+different moments in time, causing severe visual artifacts known as
+"chroma bleed" or "interlaced chroma comb artifacts." To prevent this,
+the 4:2:0 chroma is subsampled vertically within the <em>same field</em>
+rather than across the full frame.</li>
+</ul>
+<h3 id="playback-and-reconstruction">Playback and Reconstruction</h3>
+<p>When a DVD player or software media player reads a VOB file, the
+hardware or software decoder demultiplexes the MPEG-2 stream and
+reconstructs the missing color information. The decoder uses spatial
+interpolation (upsampling) to calculate the missing Cb and Cr values for
+each pixel, restoring the stream to a 4:4:4 structure before converting
+it back to standard RGB signals for display output.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/how-4-2-0-chroma-subsampling-works-in-vob-video';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

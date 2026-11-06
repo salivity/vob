@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Repair Corrupted VOB File Headers Without IFO - vob</title>
+    <meta name="description" content="When a VOB file is separated from its accompanying IFO file, corrupted pack or system headers can render the video completely unreadable to media players and editing software. This article explains how to inspect, bypass, and reconstruct damaged headers i">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/repair-corrupted-vob-file-headers-without-ifo">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Repair Corrupted VOB File Headers Without IFO - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/repair-corrupted-vob-file-headers-without-ifo" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="When a VOB file is separated from its accompanying IFO file, corrupted pack or system headers can render the video completely unreadable to media players and editing software. This article explains how to inspect, bypass, and reconstruct damaged headers i" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="repair-corrupted-vob-file-headers-without-ifo">Repair Corrupted
+VOB File Headers Without IFO</h1>
+<p>When a VOB file is separated from its accompanying IFO file,
+corrupted pack or system headers can render the video completely
+unreadable to media players and editing software. This article explains
+how to inspect, bypass, and reconstruct damaged headers in an orphaned
+VOB file by aligning stream byte markers, stripping proprietary
+navigation packs, and remuxing elementary streams into a functional
+container.</p>
+<h3 id="understanding-vob-header-structure">Understanding VOB Header
+Structure</h3>
+<p>A VOB (Video Object) file is fundamentally an MPEG-2 Program Stream
+(PS) containing multiplexed video, audio, and subtitle streams,
+interspersed with DVD-specific Navigation Packs (NV_PCKs). Standard
+media players read the IFO file to determine stream layouts, aspect
+ratios, and chapter markers. Without the IFO, a player relies strictly
+on the embedded MPEG-2 pack headers (<code>0x000001BA</code>) and system
+headers (<code>0x000001BB</code>). If these initial bytes are corrupted,
+missing, or misaligned, the file fails to initialize.</p>
+<h3 id="step-1-hex-inspection-and-header-alignment">Step 1: Hex
+Inspection and Header Alignment</h3>
+<p>Before running automated recovery tools, verify that the file starts
+with a valid MPEG-2 pack start code.</p>
+<ol type="1">
+<li>Open the damaged VOB file in a hex editor (such as HxD, Hex Fiend,
+or 010 Editor).</li>
+<li>Look at the very first four bytes of the file. A healthy MPEG-2
+stream begins with: <code>00 00 01 BA</code></li>
+<li>If the file starts with random bytes, null bytes
+(<code>00 00 00 00</code>), or text, search forward for the first
+occurrence of the hex sequence <code>00 00 01 BA</code>.</li>
+<li>Delete all preceding bytes before this sequence so that offset
+<code>0x00000000</code> starts with <code>00 00 01 BA</code>.</li>
+<li>Save the file with a new name. This realignment allows demuxers to
+identify the initial pack header immediately.</li>
+</ol>
+<h3 id="step-2-extracting-elementary-streams-demuxing">Step 2:
+Extracting Elementary Streams (Demuxing)</h3>
+<p>Because VOB files contain private DVD navigation streams (Stream ID
+<code>0xBF</code>) that standard MPEG decoders can trip over, the most
+reliable way to repair the file is to discard the container headers and
+extract the raw elementary streams.</p>
+<p>Tools like <strong>DGIndex</strong> or <strong>ProjectX</strong> read
+raw MPEG packets directly, ignoring broken container-level headers:</p>
+<ol type="1">
+<li>Load the realigned VOB file into <strong>DGIndex</strong>.</li>
+<li>If prompted about broken navigation packs or invalid aspect ratios,
+set the audio track to decode the primary stream (usually AC-3 or
+PCM).</li>
+<li>Set the video output to demux.</li>
+<li>Run the process to separate the stream into a clean elementary video
+file (<code>.m2v</code>) and audio file (<code>.ac3</code> or
+<code>.wav</code>).</li>
+</ol>
+<p>During this step, the demuxer scans packet by packet, reconstructing
+PTS (Presentation Time Stamps) and generating standard elementary
+headers.</p>
+<h3
+id="step-3-remuxing-and-rebuilding-container-headers-with-ffmpeg">Step
+3: Remuxing and Rebuilding Container Headers with FFmpeg</h3>
+<p>Once the stream is demuxed—or if you prefer a command-line solution
+that ignores errors without manual demuxing—use FFmpeg to build new,
+compliant headers. FFmpeg can bypass broken stream markers by forcing
+packet parsing.</p>
+<p>Run the following command in your terminal or command prompt:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ffmpeg</span> <span class="at">-err_detect</span> ignore_err <span class="at">-fflags</span> +genpts <span class="at">-i</span> input.vob <span class="at">-c:v</span> copy <span class="at">-c:a</span> copy output.mpg</span></code></pre></div>
+<ul>
+<li><code>-err_detect ignore_err</code>: Forces the decoder to skip
+corrupted bytes and headers rather than terminating the process.</li>
+<li><code>-fflags +genpts</code>: Regenerates presentation timestamps to
+prevent audio/video desynchronization caused by missing timing
+headers.</li>
+<li><code>-c:v copy -c:a copy</code>: Stream-copies the original video
+and audio without re-encoding, preserving the original quality.</li>
+</ul>
+<p>If the output is intended for modern media players rather than legacy
+DVD systems, replace <code>output.mpg</code> with
+<code>output.mkv</code> or <code>output.mp4</code> to place the raw
+streams into a more modern container format.</p>
+<h3 id="step-4-recreating-ifo-files-for-dvd-playback">Step 4: Recreating
+IFO Files for DVD Playback</h3>
+<p>If the goal is to author a playable DVD structure rather than just
+recover the video:</p>
+<ol type="1">
+<li>Take the recovered <code>.mpg</code> or demuxed <code>.m2v</code>
+and <code>.ac3</code> files.</li>
+<li>Import them into a DVD authoring tool such as
+<strong>IfoEdit</strong> or <strong>DVDStyler</strong>.</li>
+<li>Use the "Create IFOs" function in IfoEdit, pointing to your repaired
+VOB file.</li>
+<li>The tool scans the VOB from start to finish, maps every cell, video
+title set (VTS), and audio track, and writes fresh
+<code>VTS_01_0.IFO</code> and <code>VTS_01_0.BUP</code> files.</li>
+</ol></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/repair-corrupted-vob-file-headers-without-ifo';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

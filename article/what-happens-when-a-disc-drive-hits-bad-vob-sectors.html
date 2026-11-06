@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What Happens When a Disc Drive Hits Bad VOB Sectors - vob</title>
+    <meta name="description" content="When an optical disc drive encounters unreadable physical sectors inside a VOB (Video Object) file, it initiates a series of automated hardware recovery attempts before passing the failure up to the operating system and the software reading the disc. If t">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/what-happens-when-a-disc-drive-hits-bad-vob-sectors">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="What Happens When a Disc Drive Hits Bad VOB Sectors - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/what-happens-when-a-disc-drive-hits-bad-vob-sectors" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="When an optical disc drive encounters unreadable physical sectors inside a VOB (Video Object) file, it initiates a series of automated hardware recovery attempts before passing the failure up to the operating system and the software reading the disc. If t" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="what-happens-when-a-disc-drive-hits-bad-vob-sectors">What
+Happens When a Disc Drive Hits Bad VOB Sectors</h1>
+<p>When an optical disc drive encounters unreadable physical sectors
+inside a VOB (Video Object) file, it initiates a series of automated
+hardware recovery attempts before passing the failure up to the
+operating system and the software reading the disc. If the underlying
+error correction codes cannot reconstruct the missing data, the outcome
+depends on the software accessing the file: file transfer operations
+will halt entirely with a system error, whereas specialized media
+players will drop corrupted video frames, display macroblocking, or skip
+ahead to the next readable data block.</p>
+<h2 id="hardware-level-error-recovery">Hardware-Level Error
+Recovery</h2>
+<p>When the optical pickup unit (the laser) passes over physical damage
+such as a scratch, disc rot, or manufacturing defect, the reflected
+light fails to form a coherent signal. The drive immediately triggers
+its internal error handling procedures:</p>
+<ol type="1">
+<li><strong>Read Retries:</strong> The drive repositions the optical
+pickup and attempts to read the target sector multiple times.</li>
+<li><strong>Speed Reduction:</strong> If repeated attempts fail, the
+drive lowers its rotational speed (e.g., dropping from 16x down to 4x or
+1x). Spinning the disc slower gives the tracking servo and laser more
+time to stabilize over the pit-and-land tracks.</li>
+<li><strong>Focus and Gain Adjustments:</strong> The drive adjusts the
+laser power and focal point slightly to read beneath surface scratches
+or compensate for disc warping.</li>
+</ol>
+<h2 id="parity-and-error-correction-decoding">Parity and Error
+Correction Decoding</h2>
+<p>DVDs use an interleaved error correction scheme known as Reed-Solomon
+Product Code (RS-PC), consisting of Parity Inner (PI) and Parity Outer
+(PO) layers.</p>
+<ul>
+<li><strong>Correctable Errors:</strong> If the damage is minor, the
+drive uses PI/PO parity data to reconstruct the missing bits on the fly.
+The reading software receives the complete, clean stream without knowing
+an error occurred.</li>
+<li><strong>Uncorrectable Errors:</strong> If the physical damage spans
+across too many consecutive sectors, it exceeds the mathematical limits
+of the RS-PC matrix. The drive marks the sector as an uncorrectable read
+error and stops trying after reaching its internal timeout limit.</li>
+</ul>
+<h2 id="operating-system-response">Operating System Response</h2>
+<p>Once the drive exhausts its hardware retries, it sends an ATAPI/SCSI
+error code to the operating system (typically "Check Condition" with a
+sense key of "Medium Error - Unrecovered Read Error").</p>
+<p>The operating system handles this based on how the file was
+accessed:</p>
+<ul>
+<li><strong>File System Level (Copying/Moving):</strong> If a user
+attempts to copy the VOB file using a standard file manager (like
+Windows File Explorer or macOS Finder), the OS halts the transfer and
+displays an error message, such as "Cyclic Redundancy Check (CRC) Error"
+or "The request could not be performed because of an I/O device error."
+Because file systems prioritize data integrity, the operation aborts,
+leaving an incomplete file.</li>
+</ul>
+<h2 id="media-player-and-stream-behavior">Media Player and Stream
+Behavior</h2>
+<p>A VOB file is fundamentally an MPEG-2 Program Stream wrapped with
+private data streams (such as AC-3 or DTS audio and subtitle packets).
+MPEG streams are designed to be relatively fault-tolerant during
+transmission:</p>
+<ul>
+<li><strong>Video Artifacts (Macroblocking):</strong> If the damaged
+sector falls within an MPEG-2 video packet, the decoder loses part of
+the compressed image. This results in heavy pixelation, green or gray
+blocks across the screen, or corrupted color palettes.</li>
+<li><strong>Audio Drops:</strong> If the sector contains audio packets,
+the decoder cuts the audio briefly to prevent loud pops or digital
+screeching.</li>
+<li><strong>Frame Skipping:</strong> DVD video relies on Groups of
+Pictures (GOPs) anchored by keyframes (I-frames). If an I-frame sector
+is unreadable, subsequent predicted frames (P-frames and B-frames)
+cannot be decoded. The player typically freezes for a fraction of a
+second and skips ahead to the next valid I-frame.</li>
+<li><strong>Navigation Failures:</strong> VOB files contain Navigation
+Packs (NV_PCK) at the start of every Video Object Unit (VOBU), which
+contain timing and sector address information. If an NV_PCK is
+destroyed, older DVD players or strict decoders may lose
+synchronization, drop out to the DVD menu, or stop playback
+entirely.</li>
+</ul>
+<h2 id="ripping-and-recovery-software-handling">Ripping and Recovery
+Software Handling</h2>
+<p>Dedicated DVD ripping tools handle bad VOB sectors differently than
+standard operating system copy commands. Advanced utilities often
+implement one of two strategies:</p>
+<ol type="1">
+<li><strong>Sector Skipping:</strong> The software instructs the drive
+to skip the bad block immediately rather than waiting for extended
+hardware retry cycles.</li>
+<li><strong>Null Padding:</strong> To keep the internal MPEG timecodes
+intact, the recovery software replaces the unreadable sectors with
+zeroed bytes (null padding). This preserves the overall container
+structure, allowing downstream video players to simply skip the
+corrupted frames without crashing or falling out of audio/video
+sync.</li>
+</ol></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/what-happens-when-a-disc-drive-hits-bad-vob-sectors';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

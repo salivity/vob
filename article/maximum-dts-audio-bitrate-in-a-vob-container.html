@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maximum DTS Audio Bitrate in a VOB Container - vob</title>
+    <meta name="description" content="This article outlines the bitrate constraints for Digital Theater Systems (DTS) audio tracks housed within the DVD-Video VOB (Video Object) container. Under official DVD-Video specifications, the maximum allowable bitrate for a DTS audio stream inside a V">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/maximum-dts-audio-bitrate-in-a-vob-container">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Maximum DTS Audio Bitrate in a VOB Container - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/maximum-dts-audio-bitrate-in-a-vob-container" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article outlines the bitrate constraints for Digital Theater Systems (DTS) audio tracks housed within the DVD-Video VOB (Video Object) container. Under official DVD-Video specifications, the maximum allowable bitrate for a DTS audio stream inside a V" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="maximum-dts-audio-bitrate-in-a-vob-container">Maximum DTS Audio
+Bitrate in a VOB Container</h1>
+<p>This article outlines the bitrate constraints for Digital Theater
+Systems (DTS) audio tracks housed within the DVD-Video VOB (Video
+Object) container. Under official DVD-Video specifications, the maximum
+allowable bitrate for a DTS audio stream inside a VOB file is 1,509.75
+kbps—commonly referred to as the full-rate 1,536 kbps DTS stream.</p>
+<h3 id="dts-bitrate-tiers-in-vob-containers">DTS Bitrate Tiers in VOB
+Containers</h3>
+<p>The DVD-Video standard specifies two distinct bitrate tiers for
+coherent DTS audio streams:</p>
+<ul>
+<li><strong>Full Bitrate (Maximum):</strong> 1,509.75 kbps (often
+identified as 1.5 Mbps or nominal 1,536 kbps).</li>
+<li><strong>Half Bitrate:</strong> 754.5 kbps (nominal 768 kbps).</li>
+</ul>
+<p>While the standard core DTS protocol outside of DVD can theoretically
+handle variations, any DTS audio stream authored into a compliant
+DVD-Video VOB file must strictly conform to one of these two operational
+rates.</p>
+<h3 id="buffer-and-multiplexing-limits">Buffer and Multiplexing
+Limits</h3>
+<p>A VOB container functions as an MPEG-2 Program Stream with
+specialized private streams designated for DTS packets (Private Stream
+1, substream 0x88 to 0x8F). When multiplexing a full-bitrate DTS track
+into a VOB container, the total bit budget must adhere to the overall
+DVD constraints:</p>
+<ul>
+<li><strong>Maximum Total Bitrate:</strong> The combined bitstream for
+all video, audio, and subtitle streams cannot exceed 10.08 Mbps.</li>
+<li><strong>Maximum Video Bitrate:</strong> Typically throttled to
+around 8.0 to 8.5 Mbps when using a 1,509.75 kbps DTS track to prevent
+buffer underruns in hardware decoders.</li>
+</ul>
+<p>Because a full-bitrate DTS track consumes roughly 15% of the entire
+allowable multiplex capacity, many commercial DVD releases opted for the
+half-bitrate (754.5 kbps) format to preserve bandwidth for higher video
+quality.</p>
+<h3 id="sampling-and-channel-specifications">Sampling and Channel
+Specifications</h3>
+<p>For a DTS track to remain valid at the maximum bitrate in a VOB file,
+it must also meet the standard DVD audio structural parameters:</p>
+<ul>
+<li><strong>Sampling Rate:</strong> Strictly 48 kHz.</li>
+<li><strong>Channel Configurations:</strong> Up to 5.1 discrete surround
+sound channels (5 main channels plus 1 Low-Frequency Effects
+channel).</li>
+<li><strong>Word Length:</strong> 16-bit to 24-bit source material
+encoded via the DTS Coherent Acoustics core algorithm.</li>
+</ul></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/maximum-dts-audio-bitrate-in-a-vob-container';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

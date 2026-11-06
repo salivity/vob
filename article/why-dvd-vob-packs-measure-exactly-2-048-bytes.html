@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why DVD VOB Packs Measure Exactly 2,048 Bytes - vob</title>
+    <meta name="description" content="In the DVD-Video standard, every Video Object (VOB) file is composed of individual units called packs, each strictly fixed at 2,048 bytes. This exact size is not arbitrary; it directly mirrors the physical data sector size of optical DVD media, optimizes">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/why-dvd-vob-packs-measure-exactly-2-048-bytes">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why DVD VOB Packs Measure Exactly 2,048 Bytes - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/why-dvd-vob-packs-measure-exactly-2-048-bytes" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="In the DVD-Video standard, every Video Object (VOB) file is composed of individual units called packs, each strictly fixed at 2,048 bytes. This exact size is not arbitrary; it directly mirrors the physical data sector size of optical DVD media, optimizes" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-dvd-vob-packs-measure-exactly-2048-bytes">Why DVD VOB Packs
+Measure Exactly 2,048 Bytes</h1>
+<p>In the DVD-Video standard, every Video Object (VOB) file is composed
+of individual units called packs, each strictly fixed at 2,048 bytes.
+This exact size is not arbitrary; it directly mirrors the physical data
+sector size of optical DVD media, optimizes hardware reading
+performance, and fulfills the rigid synchronization requirements of the
+MPEG-2 Program Stream format adapted for DVD playback.</p>
+<h3 id="11-mapping-to-physical-dvd-sectors">1:1 Mapping to Physical DVD
+Sectors</h3>
+<p>The fundamental reason for the 2,048-byte pack size is hardware
+alignment. A standard DVD-ROM disc formats its physical tracks into
+sectors that contain exactly 2,048 bytes (2 KB) of usable user data,
+alongside error correction and detection codes (ECC/EDC). By designing
+each VOB pack to measure precisely 2,048 bytes, the DVD-Video
+specification establishes a direct one-to-one mapping between a logical
+stream pack and a physical disc sector. One read operation from the
+optical pickup delivers exactly one pack to the system buffer,
+eliminating overhead.</p>
+<h3 id="low-memory-hardware-optimization">Low-Memory Hardware
+Optimization</h3>
+<p>When the DVD specification was drafted in the mid-1990s, standalone
+DVD players relied on low-power, cost-effective microcontrollers with
+extremely limited RAM. A fixed 2,048-byte pack size allowed optical
+drives to stream data directly into decoder memory using Direct Memory
+Access (DMA). If packs were variable in length or crossed sector
+boundaries, the hardware would have required complex intermediate memory
+buffers, software-level byte reassembly, and additional processor cycles
+to split or combine sectors before decoding.</p>
+<h3 id="mpeg-2-program-stream-compliance">MPEG-2 Program Stream
+Compliance</h3>
+<p>VOB files are based on the MPEG-2 Program Stream (ISO/IEC 13818-1)
+standard, which interleaves audio, video, sub-picture, and private
+navigation data. The DVD specification (governed by the DVD Forum)
+heavily modified this standard into a restricted subset. While the
+generic MPEG-2 standard allows variable-length packs, the DVD format
+strictly mandates that every pack begin with a 14-byte Pack Header,
+followed by a Packetized Elementary Stream (PES) packet, and terminate
+precisely at the 2,048-byte boundary.</p>
+<h3 id="padding-and-precise-synchronization">Padding and Precise
+Synchronization</h3>
+<p>Because actual compressed audio, video, or navigation data rarely
+fills exactly 2,048 bytes on its own, the multiplexer inserts MPEG
+padding packets to absorb any remaining space. Maintaining this exact
+boundary ensures consistent timing:</p>
+<ul>
+<li><strong>System Clock Reference (SCR):</strong> Every pack header
+carries an SCR timestamp indicating when that pack must arrive at the
+decoder. Because data rates and sector sizes are locked, players can
+reliably calculate reading speed and buffer fill levels.</li>
+<li><strong>Seamless Navigation:</strong> DVD navigation structures
+(stored in IFO files and NV_PCK packs) rely on logical block addressing
+(LBA). Because every pack is one sector, navigation pointers can
+reference exact video locations purely by sector number, enabling
+instant fast-forwarding, rewinding, and multi-angle switching without
+parsing arbitrary byte offsets.</li>
+</ul></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/why-dvd-vob-packs-measure-exactly-2-048-bytes';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>
