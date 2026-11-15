@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Causes of Audio Delay in DVD IFO Files - vob</title>
+    <meta name="description" content="An audio delay value recorded in an IFO (Information) file relative to a VOB (Video Object) stream is an intentional synchronization offset generated during the DVD authoring process. This value exists to correct timing disparities between the elementary">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/causes-of-audio-delay-in-dvd-ifo-files">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Causes of Audio Delay in DVD IFO Files - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/causes-of-audio-delay-in-dvd-ifo-files" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="An audio delay value recorded in an IFO (Information) file relative to a VOB (Video Object) stream is an intentional synchronization offset generated during the DVD authoring process. This value exists to correct timing disparities between the elementary" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="causes-of-audio-delay-in-dvd-ifo-files">Causes of Audio Delay in
+DVD IFO Files</h1>
+<p>An audio delay value recorded in an IFO (Information) file relative
+to a VOB (Video Object) stream is an intentional synchronization offset
+generated during the DVD authoring process. This value exists to correct
+timing disparities between the elementary video and audio streams,
+ensuring that sound and picture remain synchronized during playback. The
+primary factors that cause this delay to be logged in the IFO file
+include discrepancies in initial Presentation Time Stamps (PTS), audio
+frame boundary misalignment, encoder-induced latency, and stream
+trimming during authoring.</p>
+<h3 id="presentation-time-stamp-pts-discrepancies">Presentation Time
+Stamp (PTS) Discrepancies</h3>
+<p>When elementary video and audio streams are multiplexed into a
+Program Stream (VOB container), each data packet is tagged with a
+Presentation Time Stamp (PTS) to indicate precisely when it should be
+decoded and displayed. In a perfect scenario, the first video frame and
+the first audio frame would share an identical PTS starting at zero.
+However, elementary streams rarely start at the exact same millisecond.
+If the audio stream's initial PTS is slightly ahead of or behind the
+video's initial PTS, the DVD authoring software writes the difference
+into the IFO file as an offset value so the playback hardware or
+software knows how much to delay or advance the audio track.</p>
+<h3 id="frame-boundary-misalignments">Frame Boundary Misalignments</h3>
+<p>Video and audio streams operate on fundamentally different frame
+durations. For example:</p>
+<ul>
+<li>NTSC video runs at roughly 29.97 frames per second (~33.37 ms per
+frame).</li>
+<li>PAL video runs at 25 frames per second (40 ms per frame).</li>
+<li>AC-3 (Dolby Digital) audio typically operates in blocks of 1,536
+samples, which at a 48 kHz sample rate equals exactly 32 ms per
+frame.</li>
+</ul>
+<p>Because 32 ms rarely divides evenly into 33.37 ms or 40 ms intervals,
+the start of an audio frame almost never lines up perfectly with the
+start of a video frame. To avoid cutting an audio packet in half,
+authoring tools align packets to the nearest complete frame and register
+the remaining fractional-frame offset in the IFO file to maintain lip
+sync.</p>
+<h3 id="audio-encoder-latency-and-priming-samples">Audio Encoder Latency
+and Priming Samples</h3>
+<p>Digital audio encoders (such as AC-3, DTS, or MPEG-1 Audio Layer II)
+naturally introduce a brief delay due to internal lookahead buffers,
+filter banks, and algorithmic requirements. This is known as encoder
+latency or priming samples. When an uncompressed audio source is
+encoded, the resulting bitstream often contains silent padding at the
+very beginning. If the video stream does not possess an identical
+front-end buffer, a timing gap is created. Authoring systems detect this
+discrepancy when reading the elementary stream headers and write a
+corresponding delay parameter into the IFO tables (such as the
+VTS_PGCITI structure).</p>
+<h3 id="edits-cuts-and-splicing">Edits, Cuts, and Splicing</h3>
+<p>When video sources are cut or appended without fully re-encoding the
+audio and video—such as removing commercials, cutting out a scene, or
+merging separate segments—video edits typically occur at an Intra-coded
+frame (I-frame) to preserve video structure. Audio streams cut at the
+same temporal point rarely land on a clean audio frame boundary. The
+multiplexer keeps the nearest whole audio frame, which can push the
+audio out of sync by a few milliseconds. Rather than rewriting and
+re-encoding the compressed audio data, the authoring software
+recalculates the offset and updates the IFO file's delay parameter to
+compensate during playback.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/causes-of-audio-delay-in-dvd-ifo-files';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How VOB Format Enables Interactive DVD Menus - vob</title>
+    <meta name="description" content="The VOB (Video Object) format supports interactive menus on commercial movie discs by multiplexing video, audio, subpicture overlays, and navigation control data into a single, cohesive MPEG-2 Program Stream. Rather than relying on external software code">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/how-vob-format-enables-interactive-dvd-menus">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How VOB Format Enables Interactive DVD Menus - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/how-vob-format-enables-interactive-dvd-menus" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The VOB (Video Object) format supports interactive menus on commercial movie discs by multiplexing video, audio, subpicture overlays, and navigation control data into a single, cohesive MPEG-2 Program Stream. Rather than relying on external software code" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-vob-format-enables-interactive-dvd-menus">How VOB Format
+Enables Interactive DVD Menus</h1>
+<p>The VOB (Video Object) format supports interactive menus on
+commercial movie discs by multiplexing video, audio, subpicture
+overlays, and navigation control data into a single, cohesive MPEG-2
+Program Stream. Rather than relying on external software code to render
+menus, a DVD player reads specialized data packets embedded directly
+inside the VOB files. By combining visual background streams with 2-bit
+graphical overlay maps and precise button-highlight coordinates, the VOB
+container allows users to navigate scenes, select audio tracks, and
+launch special features seamlessly using a standard remote control.</p>
+<h3 id="the-multiplexed-structure-of-vob">The Multiplexed Structure of
+VOB</h3>
+<p>At its technical core, a VOB file is based on the MPEG-2 Program
+Stream specification, modified specifically for the DVD-Video standard.
+A single VOB file can carry multiple interleaved data streams divided
+into standard 2,048-byte packs. For interactive menus, these packs
+include:</p>
+<ul>
+<li><strong>Video Packs (V_PCK):</strong> Carry the visual background of
+the menu, which can either be a static frame (an MPEG-2 I-frame) or a
+looping motion video sequence.</li>
+<li><strong>Audio Packs (A_PCK):</strong> Supply background music or
+sound effects in formats such as AC-3 (Dolby Digital), DTS, or
+LPCM.</li>
+<li><strong>Subpicture Packs (SP_PCK):</strong> Deliver run-length
+encoded 2-bit bitmap overlays that display the visual states of buttons
+(normal, selected, and activated).</li>
+<li><strong>Navigation Packs (NV_PCK):</strong> Contain the interactive
+instructions and metadata required to control menu logic.</li>
+</ul>
+<h3 id="the-role-of-navigation-packs-nv_pck">The Role of Navigation
+Packs (NV_PCK)</h3>
+<p>Interactivity is driven by Navigation Packs placed at the beginning
+of every Video Object Unit (VOBU) within the VOB stream, occurring
+roughly every 0.4 to 1.0 seconds of playback. The NV_PCK contains two
+essential data structures: Data Search Information (DSI) and
+Presentation Control Information (PCI).</p>
+<p>The PCI packet is the primary engine for menu interactivity because
+it holds the Highlight Information (HLI) table. The HLI defines:</p>
+<ul>
+<li><strong>Button Coordinates:</strong> The exact rectangular pixel
+boundaries <span class="math inline">\((X, Y)\)</span> for up to 36
+buttons on a standard 4:3 menu or 18 buttons on a 16:9 widescreen
+menu.</li>
+<li><strong>Navigational Linking:</strong> Instructions that tell the
+player which button to highlight when a user presses the Up, Down, Left,
+or Right arrow keys on a remote.</li>
+<li><strong>Color and Contrast Palettes:</strong> Transparency and color
+mapping rules that dictate how the subpicture overlay changes color when
+a button transitions from an unselected state to a "selected" or
+"activated" state.</li>
+</ul>
+<h3 id="subpicture-overlays-and-button-states">Subpicture Overlays and
+Button States</h3>
+<p>Interactive menus do not redraw an entire screen when a user browses
+options. Instead, the background video plays continuously while the DVD
+player projects a subpicture overlay directly on top of it.</p>
+<p>The subpicture is an indexed 4-color image (2 bits per pixel) where
+colors are typically assigned to button outlines, highlights, or icons.
+The HLI inside the VOB’s PCI packet alters the palette settings for the
+designated rectangular area of a button in real time. When a user
+navigates to an option, the player changes the color and opacity of that
+specific area instantly without reloading the underlying video stream,
+providing immediate visual feedback.</p>
+<h3 id="execution-of-dvd-virtual-machine-commands">Execution of DVD
+Virtual Machine Commands</h3>
+<p>Embedded within the Highlight Information of each button are
+pre-scripted Virtual Machine (VM) instructions. When a viewer presses
+the "Enter" or "Play" button, the DVD player executes the command tied
+to that button's active state.</p>
+<p>These commands can modify internal player registers (GPRMs and SPRMs)
+to change audio streams or subtitle tracks, or they can instruct the
+laser pickup to jump to a different Chapter, Title, or Program Chain
+(PGC) referenced in the disc's accompanying <code>.IFO</code>
+configuration files. Through this continuous synchronization of video
+frames, subpicture graphics, and PCI highlight packets, the VOB format
+achieves full standalone interactivity directly within the physical
+constraints of optical disc hardware.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/how-vob-format-enables-interactive-dvd-menus';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

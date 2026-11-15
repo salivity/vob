@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Convert VOB Subtitles to WebVTT or ASS Files - vob</title>
+    <meta name="description" content="VOB subtitles found on DVDs are not text-based; they are multiplexed bitmap images known as subpictures (VobSub). Because they are graphical overlays rather than encoded text, converting them into modern, scalable formats like WebVTT (.vtt) or Advanced Su">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/convert-vob-subtitles-to-web-vtt-or-ass-files">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Convert VOB Subtitles to WebVTT or ASS Files - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/convert-vob-subtitles-to-web-vtt-or-ass-files" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="VOB subtitles found on DVDs are not text-based; they are multiplexed bitmap images known as subpictures (VobSub). Because they are graphical overlays rather than encoded text, converting them into modern, scalable formats like WebVTT (.vtt) or Advanced Su" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="convert-vob-subtitles-to-webvtt-or-ass-files">Convert VOB
+Subtitles to WebVTT or ASS Files</h1>
+<p>VOB subtitles found on DVDs are not text-based; they are multiplexed
+bitmap images known as subpictures (VobSub). Because they are graphical
+overlays rather than encoded text, converting them into modern, scalable
+formats like WebVTT (<code>.vtt</code>) or Advanced SubStation Alpha
+(<code>.ass</code>) requires software equipped with Optical Character
+Recognition (OCR). This article covers the primary software tools and
+workflows available to extract these bitmap streams, run them through an
+OCR engine, and export them as WebVTT or ASS subtitle files.</p>
+<h3 id="1-subtitle-edit">1. Subtitle Edit</h3>
+<p>Subtitle Edit is the industry standard open-source desktop tool for
+converting bitmap subtitles to text formats. It natively opens
+<code>.vob</code> files, <code>.ifo</code> files, and extracted
+<code>.sub</code>/<code>.idx</code> (VobSub) streams.</p>
+<ul>
+<li><strong>How it works:</strong> Subtitle Edit uses either an internal
+OCR engine (based on character image comparison) or Tesseract OCR to
+read the bitmaps and convert them into editable text.</li>
+<li><strong>Output Capabilities:</strong> Once the OCR process is
+complete and spelling errors are reviewed, you can directly choose
+WebVTT or Advanced SubStation Alpha from the "Save as" format dropdown.
+It automatically calculates the precise start, end, and duration
+timestamps derived from the DVD stream.</li>
+</ul>
+<h3 id="2-ffmpeg-and-vobsub2srt-cli-workflow">2. FFmpeg and VobSub2SRT
+(CLI Workflow)</h3>
+<p>For headless systems, Linux environments, or batch processing,
+command-line utilities provide automated conversion pathways.</p>
+<ul>
+<li><strong>Demuxing with FFmpeg:</strong> FFmpeg can extract the raw
+VobSub stream from a VOB or MKV file without re-encoding:
+<code>ffmpeg -i input.vob -map 0:s:0 -c:s copy output.idx</code> This
+generates an <code>.idx</code> index file and a <code>.sub</code> bitmap
+package.</li>
+<li><strong>VobSub2SRT:</strong> This is a command-line tool that
+leverages Tesseract to scan the <code>.sub</code>/<code>.idx</code>
+files and generate plain text subtitles.</li>
+<li><strong>Final Conversion to WebVTT or ASS:</strong> After generating
+the intermediate text file with VobSub2SRT, FFmpeg can instantly
+repackage it into your desired format:
+<ul>
+<li>For WebVTT: <code>ffmpeg -i output.srt output.vtt</code></li>
+<li>For ASS: <code>ffmpeg -i output.srt output.ass</code></li>
+</ul></li>
+</ul>
+<h3 id="3-bdsup2sub--aegisub">3. BDSup2Sub + Aegisub</h3>
+<p>If you need highly customized, styled ASS subtitles (often used for
+complex styling, positioning, and animation), a specialized multi-tool
+workflow is ideal.</p>
+<ul>
+<li><strong>BDSup2Sub:</strong> This Java-based utility processes DVD
+VobSub streams and allows you to inspect, repair time codes, and export
+the bitmaps to formats like BD-SUP (Blu-ray format) or individual PNG
+frames with accompanying XML timing data.</li>
+<li><strong>Aegisub:</strong> Once the text has been extracted via an
+OCR tool like Subtitle Edit, Aegisub is the premier editor for
+formatting the output into the ASS specification. It allows fine control
+over font styles, margins, z-indexing, and karaoke effects that standard
+WebVTT files cannot replicate.</li>
+</ul>
+<h3 id="4-ccextractor">4. CCExtractor</h3>
+<p>While primarily engineered for extracting closed captions
+(CEA-608/708), CCExtractor also includes functionality to detect and
+process DVD bitmap tracks on video inputs. It includes built-in OCR
+capabilities that can decode subpicture frames directly from raw VOB
+transport streams into standard text outputs without requiring
+third-party GUI software.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/convert-vob-subtitles-to-web-vtt-or-ass-files';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

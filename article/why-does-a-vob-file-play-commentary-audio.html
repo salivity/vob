@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why Does a VOB File Play Commentary Audio? - vob</title>
+    <meta name="description" content="When you play an isolated VOB (Video Object) file directly, your media player frequently defaults to a commentary or secondary audio track instead of the main movie audio. This occurs because standalone VOB files lack the navigational instructions and str">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/why-does-a-vob-file-play-commentary-audio">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why Does a VOB File Play Commentary Audio? - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/why-does-a-vob-file-play-commentary-audio" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="When you play an isolated VOB (Video Object) file directly, your media player frequently defaults to a commentary or secondary audio track instead of the main movie audio. This occurs because standalone VOB files lack the navigational instructions and str" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-does-a-vob-file-play-commentary-audio">Why Does a VOB File
+Play Commentary Audio?</h1>
+<p>When you play an isolated VOB (Video Object) file directly, your
+media player frequently defaults to a commentary or secondary audio
+track instead of the main movie audio. This occurs because standalone
+VOB files lack the navigational instructions and stream assignments
+stored in the DVD's companion IFO (Information) files. Without these
+instructions, media players fall back on default behavior—typically
+playing the very first audio stream mapped inside the file, which DVD
+authors often used for alternate, stereo, or commentary audio
+tracks.</p>
+<h3 id="the-role-of-ifo-and-vob-files">The Role of IFO and VOB
+Files</h3>
+<p>A standard DVD-Video structure separates multimedia content from
+playback instructions:</p>
+<ul>
+<li><strong>VOB Files:</strong> Contain the actual multiplexed data,
+including video, multiple audio streams (such as 5.1 surround sound,
+stereo, director's commentary, and foreign languages), and
+subtitles.</li>
+<li><strong>IFO Files:</strong> Act as the DVD’s brain. They contain the
+menu structure, chapter points, and crucial control commands that tell a
+DVD player which specific audio stream to activate upon starting the
+feature.</li>
+</ul>
+<p>When you open a full DVD folder or disc, the player reads
+<code>VIDEO_TS.IFO</code> or <code>VTS_01_0.IFO</code>. These files tell
+the player to select the primary audio track (for example, the Dolby
+Digital 5.1 mix) and bypass the secondary tracks until the user selects
+them via a menu.</p>
+<h3 id="why-stream-order-causes-issues">Why Stream Order Causes
+Issues</h3>
+<p>Inside a VOB container, audio streams are assigned specific IDs (such
+as Stream 0, Stream 1, or hex values like <code>0x80</code>,
+<code>0x81</code>).</p>
+<p>During DVD authoring, audio streams were not always arranged in order
+of importance:</p>
+<ol type="1">
+<li><strong>Audio Track 1 (Stream 0):</strong> Often used for a standard
+2-channel stereo track or a director's commentary because it required
+less bandwidth or served as a legacy fallback.</li>
+<li><strong>Audio Track 2 (Stream 1):</strong> Often assigned to the
+high-bitrate 5.1 surround sound main mix.</li>
+</ol>
+<p>The authoring studio relied on the IFO file to explicitly instruct
+the DVD player: <em>"When the movie starts, play Stream 1."</em></p>
+<p>When a VOB file is played in isolation, the media player cannot
+access the IFO instructions. Lacking any roadmap, most media players
+instinctively play the very first track they encounter—Stream 0. If
+Stream 0 is the director's commentary, that is what you hear.</p>
+<h3 id="player-fallback-logic">Player Fallback Logic</h3>
+<p>Media players like VLC, MPC-HC, or MPV try to guess user preference
+based on system language, but raw VOB files rarely contain rich language
+or track-type metadata embedded directly in the stream headers. To the
+player, both tracks simply look like valid audio streams. With no
+metadata specifying "Main Feature" versus "Commentary," the player
+defaults to the first indexed track.</p>
+<h3 id="how-to-resolve-the-issue">How to Resolve the Issue</h3>
+<ul>
+<li><strong>Switch the Audio Track Manually:</strong> Use your media
+player’s audio menu (typically under <code>Audio</code> &gt;
+<code>Audio Track</code>) to toggle to the second or third stream.</li>
+<li><strong>Open the Entire Folder:</strong> Instead of opening the
+<code>.VOB</code> file directly, open the containing
+<code>VIDEO_TS</code> folder in your media player. This allows the
+software to parse the <code>.IFO</code> file and respect original DVD
+track defaults.</li>
+<li><strong>Remux the File:</strong> Use modern container tools like
+MKVToolNix or HandBrake to convert the VOB files into an MKV or MP4
+container. During this process, you can delete unwanted commentary
+tracks or reorder the streams so the main feature audio sits permanently
+as Track 1 with the "Default" flag enabled.</li>
+</ul></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/why-does-a-vob-file-play-commentary-audio';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How Standalone DVD Players Recognize DVD-Video Discs - vob</title>
+    <meta name="description" content="For a standalone DVD player to treat a burned disc as a genuine DVD-Video rather than an unreadable data disc, the media must strictly adhere to physical, filesystem, and structural standards. Firmware does not simply search for MPEG-2 video or .vob conta">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/how-standalone-dvd-players-recognize-dvd-video-discs">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How Standalone DVD Players Recognize DVD-Video Discs - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/how-standalone-dvd-players-recognize-dvd-video-discs" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="For a standalone DVD player to treat a burned disc as a genuine DVD-Video rather than an unreadable data disc, the media must strictly adhere to physical, filesystem, and structural standards. Firmware does not simply search for MPEG-2 video or .vob conta" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-standalone-dvd-players-recognize-dvd-video-discs">How
+Standalone DVD Players Recognize DVD-Video Discs</h1>
+<p>For a standalone DVD player to treat a burned disc as a genuine
+DVD-Video rather than an unreadable data disc, the media must strictly
+adhere to physical, filesystem, and structural standards. Firmware does
+not simply search for MPEG-2 video or <code>.vob</code> containers; it
+follows a rigid sequence of checks involving the disc file system,
+folder hierarchy, navigational metadata files (<code>.ifo</code>), and
+precise sector addressing. If any link in this structural chain is
+missing or incorrectly formatted, the player will fail to initialize the
+disc.</p>
+<h3 id="1-the-file-system-udf-102">1. The File System: UDF 1.02</h3>
+<p>Standard computer operating systems read discs formatted in modern
+file systems such as ISO 9660, Joliet, or newer UDF revisions (like UDF
+2.0 or 2.5). However, the firmware in standalone DVD players
+specifically searches for the <strong>UDF 1.02</strong> specification
+(often authored as a UDF/ISO 9660 Bridge).</p>
+<p>During initial read cycles, the player's optical pickup reads the
+Volume Recognition Sequence. If the disc is formatted strictly in pure
+ISO 9660 or a modern UDF revision intended for Blu-ray or data storage,
+the firmware will either display a "Disc Error" or treat the disc as a
+generic data drive, ignoring DVD playback logic completely.</p>
+<h3 id="2-strict-directory-hierarchy">2. Strict Directory Hierarchy</h3>
+<p>Once the file system is parsed, the firmware scans the root directory
+for a mandatory folder named <strong><code>VIDEO_TS</code></strong>.</p>
+<ul>
+<li>The directory name must be fully capitalized. Modern operating
+systems are case-insensitive, but older or specialized player firmware
+is case-sensitive.</li>
+<li>The folder must reside directly in the root directory
+(<code>/VIDEO_TS</code>). Nested folders will be ignored.</li>
+<li>While not strictly required for video playback, many players also
+expect an empty, uppercase <code>AUDIO_TS</code> folder alongside
+<code>VIDEO_TS</code> to fully conform to the standard DVD
+specification.</li>
+</ul>
+<h3 id="3-the-role-of-ifo-files">3. The Role of IFO Files</h3>
+<p>VOB (Video Object) files contain the multiplexed audio, video, and
+subtitle streams, but standalone firmware cannot play a DVD-Video disc
+using VOB files alone. Firmware relies entirely on <strong>IFO
+(Information)</strong> files to interpret the disc.</p>
+<p>When reading the <code>VIDEO_TS</code> directory, the player looks
+for:</p>
+<ul>
+<li><strong><code>VIDEO_TS.IFO</code></strong>: The Video Manager (VMG).
+This is the master index file that tells the player the region code,
+parental controls, video standard (NTSC or PAL), aspect ratio, audio
+track allocation, and where the main menu or initial playback title
+starts.</li>
+<li><strong><code>VTS_xx_0.IFO</code></strong>: Video Title Set
+Information. Each title set contains an IFO file defining the chapters,
+cell boundaries, and audio streams for that specific set of VOB
+files.</li>
+<li><strong><code>*.BUP</code> Files</strong>: Backup copies of the IFO
+files. If an IFO sector suffers a physical read error, the firmware
+immediately attempts to read the corresponding <code>.bup</code>
+file.</li>
+</ul>
+<p>If a disc contains valid <code>.vob</code> files but lacks the
+corresponding <code>.ifo</code> structure, the firmware cannot map the
+disc layout and will not enter DVD-Video mode.</p>
+<h3 id="4-logical-block-addressing-lba-and-sector-offsets">4. Logical
+Block Addressing (LBA) and Sector Offsets</h3>
+<p>Unlike a PC media player that dynamically reads and buffers video
+files by filename, standalone DVD firmware relies heavily on absolute
+physical sector pointers (Logical Block Addressing, or LBA).</p>
+<p>The pointers stored inside <code>VIDEO_TS.IFO</code> and
+<code>VTS_xx_0.IFO</code> explicitly state the physical disc sector
+where a specific cell, chapter, or VOB starts. If a disc is burned using
+standard file-copy utilities, the files may not be placed in the precise
+physical sector sequence the IFO expects. Dedicated DVD-authoring and
+burning tools (such as ImgBurn) sort and align files so that:</p>
+<ol type="1">
+<li><code>VIDEO_TS.IFO</code> is written first.</li>
+<li>VOB files follow sequentially without fragmentation.</li>
+<li>The internal LBA tables in the IFO files match the physical
+placement of the sectors on the disc.</li>
+</ol>
+<h3 id="5-media-compatibility-and-book-type">5. Media Compatibility and
+Book Type</h3>
+<p>At the physical layer, the firmware checks the physical lead-in area
+of the disc. Factory-pressed DVDs are stamped as
+<strong>DVD-ROM</strong>. Recordable media use pre-grooves and identify
+as DVD-R or DVD+R.</p>
+<p>Some older standalone players reject recordable media profiles
+outright. Burners capable of "bitsetting" change the Book Type of a
+burned DVD+R to identify as DVD-ROM in the lead-in sector. This tricks
+the firmware's optical pickup calibration routines into treating the
+burned media with the high-compatibility profiles reserved for
+commercial, pressed discs.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/how-standalone-dvd-players-recognize-dvd-video-discs';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

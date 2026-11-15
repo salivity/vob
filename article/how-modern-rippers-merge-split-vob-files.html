@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How Modern Rippers Merge Split VOB Files - vob</title>
+    <meta name="description" content="DVDs store video in split VOB (Video Object) files capped at 1GB due to legacy filesystem constraints, often cutting movie sequences right down the middle of a frame or audio packet. Modern DVD ripping software does not simply append these files together">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/how-modern-rippers-merge-split-vob-files">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How Modern Rippers Merge Split VOB Files - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/how-modern-rippers-merge-split-vob-files" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="DVDs store video in split VOB (Video Object) files capped at 1GB due to legacy filesystem constraints, often cutting movie sequences right down the middle of a frame or audio packet. Modern DVD ripping software does not simply append these files together" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-modern-rippers-merge-split-vob-files">How Modern Rippers
+Merge Split VOB Files</h1>
+<p>DVDs store video in split VOB (Video Object) files capped at 1GB due
+to legacy filesystem constraints, often cutting movie sequences right
+down the middle of a frame or audio packet. Modern DVD ripping software
+does not simply append these files together sequentially; instead, it
+parses DVD navigation data, resolves broken elementary data streams at
+split boundaries, normalizes presentation timestamps, and remuxes the
+data into a single continuous container like MKV or MP4. This article
+explains the technical pipeline modern rippers use to convert segmented
+VOB files into one seamless video track without loss of audio/video
+synchronization.</p>
+<h3 id="parsing-dvd-structure-via-ifo-files">Parsing DVD Structure via
+IFO Files</h3>
+<p>A standard DVD directory (<code>VIDEO_TS</code>) breaks a single film
+into multiple files named <code>VTS_01_1.VOB</code>,
+<code>VTS_01_2.VOB</code>, and so forth. Crucially, modern rippers do
+not rely on file names or filesystem order to assemble the stream.</p>
+<p>Instead, rippers read the accompanying <code>.IFO</code>
+(Information) files, such as <code>VTS_01_0.IFO</code>. The IFO file
+contains the playback control program chains (PGCs), cell IDs, and
+chapter pointers. It tells the ripper:</p>
+<ul>
+<li>The exact playback sequence of audio, video, and subtitle
+streams.</li>
+<li>Which audio tracks correspond to specific languages and codecs
+(e.g., AC-3, DTS, LPCM).</li>
+<li>Which VOB sectors contain actual feature film content, allowing the
+ripper to ignore duplicate angles, unreferenced trailers, or studio
+intro loops.</li>
+</ul>
+<h3 id="packet-demultiplexing-across-file-boundaries">Packet
+Demultiplexing Across File Boundaries</h3>
+<p>VOB files are formatted as MPEG-2 Program Streams (MPEG-PS). Within
+an MPEG-PS container, video, audio, and subtitle data are divided into
+2048-byte packets, each tagged with a stream ID.</p>
+<p>Because the 1GB file boundary split is strictly physical rather than
+logical, a single Packetized Elementary Stream (PES) packet is
+frequently sliced in half across two adjacent files (for example, the
+end of <code>VTS_01_1.VOB</code> and the beginning of
+<code>VTS_01_2.VOB</code>). Modern rippers maintain a continuous
+low-level stream buffer:</p>
+<ol type="1">
+<li>They treat the entire VOB set mapped by the IFO as a single
+continuous byte stream.</li>
+<li>They feed data into a demultiplexer (demuxer) that assembles
+fragmented PES headers and payloads across the 1GB boundary.</li>
+<li>The demuxer separates the raw elementary streams—MPEG-2 video
+frames, AC-3/DTS audio frames, and RLE subtitle bitmaps—into their own
+distinct buffers.</li>
+</ol>
+<h3 id="timestamp-correction-and-audio-sync-preservation">Timestamp
+Correction and Audio Sync Preservation</h3>
+<p>The most complex hurdle in joining split VOBs is timestamp
+management. VOB packs embed Presentation Time Stamps (PTS) and Decoding
+Time Stamps (DTS) that dictate when a frame should be decoded and
+rendered.</p>
+<p>On physical DVDs, these timestamps frequently suffer from:</p>
+<ul>
+<li><strong>Discontinuities:</strong> Clock resets at chapter marks,
+layer breaks, or commercial inserts.</li>
+<li><strong>Non-Zero Start Offsets:</strong> Audio tracks often start a
+few milliseconds before or after the video stream.</li>
+</ul>
+<p>If files were concatenated naively via raw binary joining (such as
+using a terminal copy command), the media player would lose
+synchronization as soon as a timestamp discontinuity or layer break
+occurred.</p>
+<p>Modern rippers detect these time gaps or overlaps. When parsing the
+elementary streams, the software rebuilds a unified, monotonically
+increasing timeline starting precisely at <code>00:00:00.000</code>. If
+an audio stream drops or pauses across a layer change, the ripper
+inserts silent frames or adjusts the audio delay tags relative to the
+video PTS to maintain lip-sync.</p>
+<h3 id="remuxing-to-a-unified-container">Remuxing to a Unified
+Container</h3>
+<p>Once the elementary video, audio, and subtitle streams are parsed,
+validated, and retimed, the ripper feeds them into a modern container
+multiplexer (such as an MKV or MP4 muxer).</p>
+<p>During a "lossless" rip or passthrough mode (such as MakeMKV), no
+re-encoding occurs:</p>
+<ul>
+<li>The raw MPEG-2 video frames are wrapped directly into native
+container packets.</li>
+<li>The original Dolby Digital (AC-3) or DTS bitstreams are copied
+bit-for-bit.</li>
+<li>VobSub graphic subtitles are extracted along with their original
+timing codes and index palettes.</li>
+</ul>
+<p>If the ripper is set to compress the video (such as HandBrake
+converting to H.264 or AV1), the unified elementary stream is passed
+directly to the video decoder and encoder pipeline, ensuring the encoder
+treats the multi-file source as one continuous, uninterrupted video
+clip.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/how-modern-rippers-merge-split-vob-files';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

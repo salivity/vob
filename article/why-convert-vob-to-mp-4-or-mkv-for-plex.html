@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why Convert VOB to MP4 or MKV for Plex - vob</title>
+    <meta name="description" content="Plex Media Server officially recommends converting DVD VOB files to modern containers like MP4 or MKV to prevent playback errors, excessive server load, and library matching failures. While VOB files were the standard for physical DVD media, they lack the">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/why-convert-vob-to-mp-4-or-mkv-for-plex">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why Convert VOB to MP4 or MKV for Plex - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/why-convert-vob-to-mp-4-or-mkv-for-plex" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Plex Media Server officially recommends converting DVD VOB files to modern containers like MP4 or MKV to prevent playback errors, excessive server load, and library matching failures. While VOB files were the standard for physical DVD media, they lack the" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-convert-vob-to-mp4-or-mkv-for-plex">Why Convert VOB to MP4
+or MKV for Plex</h1>
+<p>Plex Media Server officially recommends converting DVD VOB files to
+modern containers like MP4 or MKV to prevent playback errors, excessive
+server load, and library matching failures. While VOB files were the
+standard for physical DVD media, they lack the structural design
+required for smooth network streaming. Remuxing or transcoding these
+files into MP4 or MKV ensures universal device compatibility, accurate
+metadata matching, seamless multi-track audio and subtitle support, and
+optimal Direct Play performance without buffering.</p>
+<h3 id="structural-incompatibility-with-network-streaming">Structural
+Incompatibility with Network Streaming</h3>
+<p>VOB (Video Object) files are not standalone media files designed for
+streaming; they are components of a strict DVD-Video file structure. On
+a standard DVD, a single feature film is segmented into multiple 1GB
+chunks (such as VTS_01_1.VOB, VTS_01_2.VOB) and relies on accompanying
+IFO files to dictate playback order, chapter stops, aspect ratios, and
+subtitle mapping.</p>
+<p>When Plex attempts to play a standalone VOB file without the
+governing IFO structure, it often fails to read the correct duration,
+calculate accurate timestamps, or scrub forward and backward. Converting
+the files merges these split segments into a single, continuous MP4 or
+MKV file with proper internal index tables required for timeline
+scrubbing.</p>
+<h3 id="severe-server-transcoding-overhead">Severe Server Transcoding
+Overhead</h3>
+<p>Modern streaming clients—such as Apple TV, Roku, Amazon Fire TV,
+smart TVs, and mobile devices—do not natively support the VOB container.
+When a client device cannot natively read a file container or the legacy
+MPEG-2 video codec inside it, Plex must perform real-time
+transcoding.</p>
+<p>Transcoding legacy MPEG-2 video from a VOB file into an H.264 or
+H.265 stream places a heavy processing burden on your server's CPU or
+GPU. In contrast, MP4 and MKV containers are widely recognized across
+modern platforms. Converting to MP4 maximizes the likelihood of Direct
+Play on web browsers and mobile devices, while MKV enables Direct Play
+on devices like the Nvidia Shield, drastically reducing server hardware
+utilization.</p>
+<h3 id="broken-subtitles-and-audio-sync">Broken Subtitles and Audio
+Sync</h3>
+<p>DVD audio and subtitles are uniquely multiplexed within VOB files.
+Subtitles on DVDs exist as bitmap images (VOBSUB), and audio streams
+often utilize legacy formats. Streaming raw VOB files through Plex
+frequently leads to out-of-sync audio tracks, dropped audio channels, or
+completely missing subtitles because the server cannot parse the
+demuxing instructions without the DVD's original IFO file. MKV and MP4
+formats package audio tracks (like AC3, AAC, and DTS) and subtitles
+(such as SRT or PGS) cleanly into standardized tracks that Plex can
+reliably extract and stream.</p>
+<h3 id="library-matching-and-metadata-issues">Library Matching and
+Metadata Issues</h3>
+<p>Plex organizes media using strict naming conventions mapped to online
+databases like The Movie Database (TMDb) and TheTVDB. Because a single
+movie on a DVD is split across multiple numbered VOB files, Plex often
+misidentifies each individual file as a separate movie or episode,
+cluttering your server dashboard. Converting the DVD data into a single,
+properly named MP4 or MKV file allows Plex’s automated scanners to
+instantly identify the content, fetch posters, populate cast lists, and
+retrieve plot summaries accurately.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/why-convert-vob-to-mp-4-or-mkv-for-plex';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

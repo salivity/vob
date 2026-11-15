@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Core Data Streams Multiplexed in a VOB Container - vob</title>
+    <meta name="description" content="A VOB (Video Object) file is the core container format used in DVD-Video media, derived from the MPEG-2 Program Stream specification. It allows distinct multimedia components—including digital video, multi-channel audio tracks, sub-picture overlays, and n">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/core-data-streams-multiplexed-in-a-vob-container">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Core Data Streams Multiplexed in a VOB Container - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/core-data-streams-multiplexed-in-a-vob-container" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="A VOB (Video Object) file is the core container format used in DVD-Video media, derived from the MPEG-2 Program Stream specification. It allows distinct multimedia components—including digital video, multi-channel audio tracks, sub-picture overlays, and n" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="core-data-streams-multiplexed-in-a-vob-container">Core Data
+Streams Multiplexed in a VOB Container</h1>
+<p>A VOB (Video Object) file is the core container format used in
+DVD-Video media, derived from the MPEG-2 Program Stream specification.
+It allows distinct multimedia components—including digital video,
+multi-channel audio tracks, sub-picture overlays, and navigational
+metadata—to be interleaved into a single, time-synchronized file. This
+article details the specific core data streams that can be multiplexed
+simultaneously within a standard VOB container.</p>
+<h3 id="1-primary-video-stream">1. Primary Video Stream</h3>
+<p>A VOB container supports exactly one primary video stream. This
+stream is encoded using either standard MPEG-2 (ISO/IEC 13818-2) or
+legacy MPEG-1 (ISO/IEC 11172-2). In DVD authoring, MPEG-2 is almost
+universally used, supporting both Constant Bitrate (CBR) and Variable
+Bitrate (VBR) profiles to balance visual quality and storage
+limitations.</p>
+<h3 id="2-audio-streams">2. Audio Streams</h3>
+<p>A single VOB file can simultaneously carry up to eight separate audio
+streams. These independent tracks enable alternate languages, director
+commentaries, and audio descriptions. The container multiplexes audio
+encoded in several standardized formats:</p>
+<ul>
+<li><strong>Dolby Digital (AC-3):</strong> The most common standard,
+supporting mono up to 5.1 surround sound.</li>
+<li><strong>Linear PCM (LPCM):</strong> Uncompressed audio offering high
+fidelity, typically in 16-bit or 24-bit stereo.</li>
+<li><strong>DTS (Digital Theater Systems):</strong> An optional
+multichannel surround sound format offering higher bitrates than
+AC-3.</li>
+<li><strong>MPEG-1 Audio Layer II / MPEG-2 Audio:</strong> Used
+primarily in PAL territories as an alternative stereo or multichannel
+standard.</li>
+</ul>
+<h3 id="3-sub-picture-streams">3. Sub-picture Streams</h3>
+<p>A VOB container can multiplex up to 32 distinct sub-picture streams.
+Unlike plain text subtitles, DVD sub-pictures are run-length encoded
+2-bit bitmap graphics with 4-color palettes. These streams serve several
+simultaneous purposes:</p>
+<ul>
+<li>Multilingual subtitles and closed captioning.</li>
+<li>Interactive menu button highlights and states (normal, selected,
+activated).</li>
+<li>Visual cues, such as karaoke lyrics.</li>
+</ul>
+<h3 id="4-navigation-and-control-data">4. Navigation and Control
+Data</h3>
+<p>To facilitate user interaction and DVD playback features, a VOB
+stream multiplexes critical control packets alongside media data:</p>
+<ul>
+<li><strong>Presentation Control Information (PCI):</strong> Contains
+data controlling real-time presentation, such as menu button
+coordinates, angle-switching triggers, and non-seamless branch
+timing.</li>
+<li><strong>Data Search Information (DSI):</strong> Contains
+navigational pointers, forward and backward jump addresses, and
+timecodes that allow seamless playback, fast-forwarding, rewinding, and
+audio/video synchronization across the disc sectors.</li>
+</ul></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/core-data-streams-multiplexed-in-a-vob-container';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

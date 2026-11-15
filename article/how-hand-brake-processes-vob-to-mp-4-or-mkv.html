@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How HandBrake Processes VOB to MP4 or MKV - vob</title>
+    <meta name="description" content="This article explains the technical pipeline HandBrake uses to transform raw DVD VOB (Video Object) files into space-efficient, modern MP4 or MKV containers. Converting these legacy files involves parsing complex container structures, demultiplexing inter">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/how-hand-brake-processes-vob-to-mp-4-or-mkv">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How HandBrake Processes VOB to MP4 or MKV - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/how-hand-brake-processes-vob-to-mp-4-or-mkv" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains the technical pipeline HandBrake uses to transform raw DVD VOB (Video Object) files into space-efficient, modern MP4 or MKV containers. Converting these legacy files involves parsing complex container structures, demultiplexing inter" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-handbrake-processes-vob-to-mp4-or-mkv">How HandBrake
+Processes VOB to MP4 or MKV</h1>
+<p>This article explains the technical pipeline HandBrake uses to
+transform raw DVD VOB (Video Object) files into space-efficient, modern
+MP4 or MKV containers. Converting these legacy files involves parsing
+complex container structures, demultiplexing interleaved streams,
+decoding MPEG-2 video and legacy audio, applying video filters like
+deinterlacing, and re-encoding the data using high-efficiency modern
+codecs before final packaging.</p>
+<h3 id="1-ingestion-and-stream-demultiplexing">1. Ingestion and Stream
+Demultiplexing</h3>
+<p>VOB files are based on the MPEG-2 Program Stream format, multiplexing
+video, audio, navigation menus, and subtitle streams into a single file.
+When a user loads a VOB file or a DVD folder (VIDEO_TS) into HandBrake,
+the software utilizes <code>libavformat</code> (from the FFmpeg library)
+to inspect the container. HandBrake reads the timestamps and stream
+headers to separate (demux) the interleaved data into isolated
+elementary streams:</p>
+<ul>
+<li>An MPEG-2 video stream.</li>
+<li>One or more audio tracks (typically AC-3, DTS, or LPCM).</li>
+<li>Subpicture streams containing bitmap-based DVD subtitles
+(VobSub).</li>
+</ul>
+<p>If an entire DVD structure is provided, HandBrake references the
+accompanying <code>.IFO</code> files to stitch split VOB files together
+seamlessly, ensuring continuous playback without audio-video
+desynchronization.</p>
+<h3 id="2-decoding-the-legacy-content">2. Decoding the Legacy
+Content</h3>
+<p>Once demuxed, the elementary streams are sent to software
+decoders:</p>
+<ul>
+<li><strong>Video:</strong> The MPEG-2 bitstream is decoded into
+uncompressed raw video frames, usually in the YUV 4:2:0 planar pixel
+format.</li>
+<li><strong>Audio:</strong> Formats like Dolby Digital (AC-3) are
+decoded into uncompressed PCM (Pulse Code Modulation) audio
+samples.</li>
+<li><strong>Subtitles:</strong> The bitmap overlays are held in memory
+for processing, either to be burned directly into the image or converted
+into a compatible modern subtitle track.</li>
+</ul>
+<h3 id="3-video-filtering-and-pre-processing">3. Video Filtering and
+Pre-Processing</h3>
+<p>DVD video stored in VOB files frequently suffers from interlacing
+artifacts, incorrect aspect ratios, and black borders. HandBrake routes
+the raw, uncompressed frames through a pipeline of user-defined
+filters:</p>
+<ul>
+<li><strong>Decomb and Deinterlacing:</strong> Converts interlaced
+frames (common in standard-definition TV broadcasts and DVDs) into
+progressive frames, eliminating comb-like edge artifacts. HandBrake’s
+"Decomb" filter dynamically checks for motion to avoid softening static
+areas.</li>
+<li><strong>Cropping:</strong> Automatically detects and removes black
+bars (letterboxing or pillarboxing) to save encoding bits.</li>
+<li><strong>Scaling and Anamorphic Adjustment:</strong> Corrects the
+non-square pixels native to DVDs (such as 720x480 for NTSC or 720x576
+for PAL) to ensure the proper display aspect ratio (4:3 or 16:9) on
+modern progressive screens.</li>
+</ul>
+<h3 id="4-re-encoding-compression">4. Re-encoding (Compression)</h3>
+<p>After processing, the uncompressed data is passed to target
+encoders:</p>
+<ul>
+<li><strong>Video Encoding:</strong> The raw frames are processed by
+modern video encoders such as <code>x264</code> (H.264/AVC),
+<code>x265</code> (H.265/HEVC), or SVT-AV1. The encoder analyzes spatial
+and temporal redundancies across frames (using I, P, and B frames) to
+drastically reduce the file size while preserving visual quality based
+on the selected Constant Rate Factor (CRF) or bitrate.</li>
+<li><strong>Audio Encoding:</strong> Uncompressed PCM audio is typically
+encoded into AAC, Opus, or MP3 for broad compatibility and smaller size.
+Alternatively, HandBrake can perform an "audio passthrough," copying the
+original AC-3 or DTS stream directly without re-encoding to preserve
+bit-for-bit fidelity.</li>
+</ul>
+<h3 id="5-final-multiplexing-muxing">5. Final Multiplexing (Muxing)</h3>
+<p>The final stage is packaging the new elementary streams into the
+user's chosen modern container—either MP4 or MKV:</p>
+<ul>
+<li><strong>MP4:</strong> HandBrake interleaves the H.264/H.265 video,
+AAC audio, and compatible timed-text subtitles. It writes the
+<code>moov</code> atom (metadata index), optionally placing it at the
+beginning of the file (via the "Web Optimized" setting) for faster
+playback over networks.</li>
+<li><strong>MKV:</strong> The Matroska container accepts a wider range
+of codecs and formats without strict limitations, easily accommodating
+variable frame rates, multiple audio formats, and bitmap DVD subtitle
+tracks without requiring them to be permanently burned into the
+video.</li>
+</ul>
+<p>Once muxing is complete, the resulting file is a modern, standalone
+media file that is significantly smaller than the original VOB and
+compatible with contemporary hardware and media players.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/how-hand-brake-processes-vob-to-mp-4-or-mkv';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

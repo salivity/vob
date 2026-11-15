@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sequence End Codes in VOB Video Explained - vob</title>
+    <meta name="description" content="This article explores the specific function of Sequence End Codes (SECs) within DVD Video Object (VOB) files, examining how they act as critical markers for terminating MPEG-2 video streams. You will learn the technical definition of a sequence end code,">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/sequence-end-codes-in-vob-video-explained">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Sequence End Codes in VOB Video Explained - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/sequence-end-codes-in-vob-video-explained" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explores the specific function of Sequence End Codes (SECs) within DVD Video Object (VOB) files, examining how they act as critical markers for terminating MPEG-2 video streams. You will learn the technical definition of a sequence end code," />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="sequence-end-codes-in-vob-video-explained">Sequence End Codes in
+VOB Video Explained</h1>
+<p>This article explores the specific function of Sequence End Codes
+(SECs) within DVD Video Object (VOB) files, examining how they act as
+critical markers for terminating MPEG-2 video streams. You will learn
+the technical definition of a sequence end code, how it instructs
+hardware and software decoders to handle buffer flushing, its
+significance in managing DVD cell and chapter transitions, and the
+playback anomalies that occur when these markers are corrupted or
+omitted.</p>
+<h3 id="what-is-a-sequence-end-code">What Is a Sequence End Code?</h3>
+<p>In the MPEG-2 video standard (ISO/IEC 13818-2), which forms the video
+core of DVD VOB containers, a Sequence End Code is a 32-bit start code
+represented in hexadecimal as <code>00 00 01 B7</code>. It serves as an
+explicit syntactic delimiter signaling that the current video sequence
+has concluded and that no subsequent pictures belong to that specific
+sequence header context.</p>
+<h3 id="signaling-stream-termination">Signaling Stream Termination</h3>
+<p>Inside a VOB file, video data is organized into cells, programs, and
+Video Object Units (VOBUs). When a video segment—such as an angle,
+chapter, menu loop, or entire title—comes to an end, the MPEG-2 video
+elementary stream must be formally closed. The sequence end code
+explicitly informs the video parser that the bitstream for that segment
+is complete, preventing the parser from searching for additional slice
+data or picture headers where none exist.</p>
+<h3 id="decoder-buffer-management">Decoder Buffer Management</h3>
+<p>One of the primary roles of the sequence end code is managing the
+Video Buffer Verifier (VBV). During playback, decoders maintain a strict
+buffer state to prevent underflows and overflows:</p>
+<ul>
+<li><strong>Buffer Flushing:</strong> When the decoder encounters
+<code>00 00 01 B7</code>, it knows to decode and output any remaining
+frames currently held in the reordering buffer (such as
+backward-predicted B-frames or reference P-frames).</li>
+<li><strong>State Reset:</strong> It resets the internal registers and
+parsing parameters of the decoder, returning it to an idle or initial
+state in preparation for the next sequence header
+(<code>00 00 01 B3</code>).</li>
+</ul>
+<h3 id="facilitating-cell-and-chapter-transitions">Facilitating Cell and
+Chapter Transitions</h3>
+<p>DVD playback relies on dynamic branching, multi-angle selections, and
+non-linear navigation between cells. Sequence end codes dictate how
+transitions between these segments behave:</p>
+<ul>
+<li><strong>Non-Seamless Branching:</strong> In standard cuts, chapter
+stops, or jumps between different VOB IDs, a sequence end code
+terminates the segment. This ensures that changes in video attributes
+(such as an aspect ratio shift from 4:3 to 16:9 or a change in bitrate)
+can take place cleanly without video distortion.</li>
+<li><strong>Distinction from Seamless Playback:</strong> For seamless
+multi-angle scenes or seamless branching, sequence end codes are
+deliberately omitted at intermediate cell boundaries. This prevents the
+decoder from resetting its clock reference (SCR/PTS) and buffers,
+ensuring an uninterrupted picture. Conversely, their inclusion marks a
+mandatory break where playback parameters can be re-evaluated.</li>
+</ul>
+<h3 id="consequences-of-missing-sequence-end-codes">Consequences of
+Missing Sequence End Codes</h3>
+<p>If a non-seamless VOB segment lacks a proper sequence end code at its
+termination point, playback failures commonly follow:</p>
+<ul>
+<li><strong>Decoder Freezes:</strong> The decoder may hang while waiting
+for terminating data packets that do not exist.</li>
+<li><strong>Visual Artifacts:</strong> Decoders may attempt to decode
+residual buffer data against the incoming sequence, resulting in brief
+macroblocking, green frames, or picture tearing.</li>
+<li><strong>Audio/Video Desynchronization:</strong> Without an explicit
+end code to finalize the presentation timestamps (PTS) of the segment,
+the multiplexer and audio decoders may lose synchronization across
+subsequent navigation points.</li>
+</ul></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/sequence-end-codes-in-vob-video-explained';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

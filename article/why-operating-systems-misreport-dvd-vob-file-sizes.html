@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why Operating Systems Misreport DVD VOB File Sizes - vob</title>
+    <meta name="description" content="When opening a video DVD on a modern operating system, file managers often report confusing, inconsistent, or mathematically impossible byte sizes for Video Object (VOB) files. Users frequently notice that individual VOB files appear to share identical si">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/why-operating-systems-misreport-dvd-vob-file-sizes">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why Operating Systems Misreport DVD VOB File Sizes - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/why-operating-systems-misreport-dvd-vob-file-sizes" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="When opening a video DVD on a modern operating system, file managers often report confusing, inconsistent, or mathematically impossible byte sizes for Video Object (VOB) files. Users frequently notice that individual VOB files appear to share identical si" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-operating-systems-misreport-dvd-vob-file-sizes">Why
+Operating Systems Misreport DVD VOB File Sizes</h1>
+<p>When opening a video DVD on a modern operating system, file managers
+often report confusing, inconsistent, or mathematically impossible byte
+sizes for Video Object (VOB) files. Users frequently notice that
+individual VOB files appear to share identical sizes down to the exact
+byte, or the total size of all VOB files combined far exceeds the
+physical storage capacity of the disc itself. This anomaly is not a
+defect in the media or the drive; rather, it is caused by the hybrid
+filesystem architecture of the DVD-Video specification, the way
+operating systems handle shared optical sectors, and intentional
+mastering techniques such as copy protection.</p>
+<h3 id="the-udfiso-9660-bridge-architecture">The UDF/ISO 9660 Bridge
+Architecture</h3>
+<p>Standard DVD-Video discs utilize a hybrid filesystem known as the
+UDF/ISO 9660 Bridge. To ensure compatibility with both modern and legacy
+hardware, discs contain two distinct file allocation structures:
+Universal Disk Format (UDF) and ISO 9660.</p>
+<p>Operating systems differ in how they parse this dual-format media.
+While modern platforms prioritize UDF (typically UDF 1.02 for standard
+video DVDs), fallback mechanisms or specific drive drivers may read from
+the ISO 9660 directory structure instead. Because ISO 9660 has strict
+limits on file sizes and path architectures, systems attempting to
+reconcile differences between the two tables may display truncated,
+rounded, or inaccurate byte counts for the stream data.</p>
+<h3 id="sector-cross-referencing-and-overlapping">Sector
+Cross-Referencing and Overlapping</h3>
+<p>The most common reason for VOB files exceeding the physical capacity
+of a disc (such as showing 8 GB or more on a single-layer 4.7 GB DVD) is
+sector sharing. In the DVD-Video format, the underlying media is
+addressed by Logical Block Addresses (LBAs).</p>
+<p>Multiple file entries in the directory structure can point to the
+exact same physical sectors on the disc. This is standard practice
+for:</p>
+<ul>
+<li><strong>Multi-Angle or Seamless Branching:</strong> Different
+versions of a film (e.g., a theatrical cut versus a director's cut)
+reuse common scenes without storing duplicate video files.</li>
+<li><strong>Menu and Transition Loops:</strong> Short video sequences
+may be mapped across multiple virtual titlesets.</li>
+</ul>
+<p>Standard operating system file explorers do not check whether files
+share physical storage locations. Instead, they read each file
+allocation table entry independently and calculate size based on the
+start and end LBAs reported for that file. When two or more VOB files
+point to overlapping sectors, the operating system tallies the same
+physical blocks multiple times, dramatically inflating the reported
+size.</p>
+<h3 id="the-1-gib-specification-limit">The 1 GiB Specification
+Limit</h3>
+<p>The DVD-Video specification strictly limits individual VOB files to a
+maximum size of 1 GiB (specifically, 1,048,576 KB or 524,288 sectors of
+2,048 bytes each). This limit was established to ensure playback
+stability on older systems with 32-bit integer limits and filesystems
+that could not handle files larger than 1 GB or 2 GB, such as early FAT
+implementations.</p>
+<p>Because video streams almost always exceed this boundary, the DVD
+mastering process splits continuous video tracks into sequential files
+(<code>VTS_01_1.VOB</code>, <code>VTS_01_2.VOB</code>, etc.). File
+systems often display these split files with identical byte sizes
+because authoring tools pad the blocks up to the maximum allowable
+boundary until the final segment of the title is reached.</p>
+<h3 id="copy-protection-schemes">Copy Protection Schemes</h3>
+<p>Commercial DVDs often employ structural copy protection mechanisms,
+such as Sony ARccOS or Macrovision RipGuard. These systems intentionally
+insert bad sectors, bogus directory entries, and circular sector loops
+into the disc’s filesystem tables.</p>
+<p>While a dedicated DVD player relies on the navigation instructions in
+<code>.IFO</code> files to skip these traps, an operating system's
+standard file explorer attempts to parse every entry linearly. When an
+OS reads an intentionally corrupted file table, it may misinterpret
+dummy VOB files as being dozens of gigabytes in size or fail to read the
+file lengths entirely, displaying zero bytes or arbitrarily high
+numbers.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/why-operating-systems-misreport-dvd-vob-file-sizes';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

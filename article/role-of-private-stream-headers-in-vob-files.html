@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Role of Private Stream Headers in VOB Files - vob</title>
+    <meta name="description" content="In DVD-Video architecture, Video Object (VOB) files rely on the MPEG-2 Program Stream format to multiplex video, audio, and control data into a single, cohesive file. This article examines the critical function of private stream headers within VOB multipl">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/role-of-private-stream-headers-in-vob-files">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Role of Private Stream Headers in VOB Files - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/role-of-private-stream-headers-in-vob-files" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="In DVD-Video architecture, Video Object (VOB) files rely on the MPEG-2 Program Stream format to multiplex video, audio, and control data into a single, cohesive file. This article examines the critical function of private stream headers within VOB multipl" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="role-of-private-stream-headers-in-vob-files">Role of Private
+Stream Headers in VOB Files</h1>
+<p>In DVD-Video architecture, Video Object (VOB) files rely on the
+MPEG-2 Program Stream format to multiplex video, audio, and control data
+into a single, cohesive file. This article examines the critical
+function of private stream headers within VOB multiplexing, explaining
+how they enable decoders to identify, separate, and synchronize
+supplementary content—such as Dolby Digital (AC-3), DTS, LPCM audio, and
+subpicture subtitles—that standard MPEG-2 specifications do not natively
+handle.</p>
+<h3 id="the-mpeg-2-foundation-and-the-need-for-private-streams">The
+MPEG-2 Foundation and the Need for Private Streams</h3>
+<p>A standard MPEG-2 Program Stream assigns unique stream IDs to
+differentiate between elementary video streams and native MPEG audio
+streams. However, DVD technology required support for formats beyond
+original MPEG standards, including multi-channel AC-3, DTS, uncompressed
+LPCM audio, and run-length encoded subtitle overlays (subpictures).</p>
+<p>Because the base MPEG-2 specification lacked stream identifiers for
+these non-native formats, the DVD specification routes this data through
+generic containers known as Private Stream 1 (identifier
+<code>0xBD</code>) and Private Stream 2 (identifier
+<code>0xBF</code>).</p>
+<h3 id="sub-stream-identification">Sub-Stream Identification</h3>
+<p>The primary function of the private stream header is sub-stream
+identification. Within a VOB file, Private Stream 1 carries multiple
+competing data types simultaneously. Without additional signaling, a
+demultiplexer cannot determine whether an incoming packet belongs to an
+AC-3 audio track, a DTS stream, or a subtitle track.</p>
+<p>To resolve this ambiguity, DVD authoring inserts a private stream
+header at the beginning of the Packetized Elementary Stream (PES)
+payload. This header includes a sub-stream ID that explicitly
+categorizes the payload:</p>
+<ul>
+<li><strong>Sub-stream IDs <code>0x20</code> to
+<code>0x3F</code>:</strong> Reserved for DVD subpicture streams
+(subtitles and menu highlights).</li>
+<li><strong>Sub-stream IDs <code>0x80</code> to
+<code>0x87</code>:</strong> Allocated to AC-3 (Dolby Digital) audio
+tracks.</li>
+<li><strong>Sub-stream IDs <code>0x88</code> to
+<code>0x8F</code>:</strong> Allocated to DTS audio tracks.</li>
+<li><strong>Sub-stream IDs <code>0xA0</code> to
+<code>0xA7</code>:</strong> Allocated to linear PCM (LPCM) audio
+tracks.</li>
+</ul>
+<p>By reading this one-byte identifier, the demultiplexer immediately
+knows which internal decoding pipeline must receive the packet.</p>
+<h3 id="delivering-synchronization-and-frame-metadata">Delivering
+Synchronization and Frame Metadata</h3>
+<p>Beyond routing, private stream headers provide essential playback
+parameters. For audio streams, the header frequently details the number
+of audio frames present within the PES packet and specifies the starting
+offset of the first audio frame.</p>
+<p>This mechanism allows the player to correctly align the audio payload
+with the Presentation Time Stamp (PTS) found in the outer PES header. If
+an audio frame spans across packet boundaries, the private header
+provides the exact byte offset where the next complete frame begins,
+preventing audio glitching or desynchronization during playback.</p>
+<h3 id="navigation-and-timing-via-private-stream-2">Navigation and
+Timing via Private Stream 2</h3>
+<p>While Private Stream 1 handles media delivery, Private Stream 2
+(<code>0xBF</code>) uses private headers to deliver Navigation Packs
+(NV_PCK). These packs contain Presentation Control Information (PCI) and
+Data Search Information (DSI).</p>
+<p>The headers inside these packs tell the DVD player how to handle
+seamless branching, multi-angle scenes, user-interaction menus, and
+high-speed fast-forward or rewind operations. They provide the sector
+addresses of adjacent video frames, allowing the drive mechanism to skip
+through the disc without decoding the entire stream.</p>
+<h3 id="the-demultiplexing-workflow">The Demultiplexing Workflow</h3>
+<p>When a media player or software demuxer processes a multiplexed VOB
+file, the private stream headers guide the demuxing sequence:</p>
+<ol type="1">
+<li>The demuxer reads the outer MPEG-2 pack and PES headers to identify
+a private stream (<code>0xBD</code> or <code>0xBF</code>).</li>
+<li>It parses the private stream header immediately following the
+standard PES header.</li>
+<li>It extracts the sub-stream ID, frame offsets, and track
+numbers.</li>
+<li>It strips the transport overhead and routes the clean elementary
+stream to the designated decoder (such as an AC-3 decoder or subtitle
+renderer).</li>
+</ol>
+<p>Without private stream headers, multiplexed VOB files would be
+limited strictly to basic MPEG video and MPEG-1 Layer II audio,
+rendering the advanced multi-track audio and interactive subtitle
+features of the DVD standard impossible to decode.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/role-of-private-stream-headers-in-vob-files';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

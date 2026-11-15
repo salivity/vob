@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio-Only VOBU in Interactive Menu VOBs Explained - vob</title>
+    <meta name="description" content="An audio-only Video Object Unit (VOBU) within an interactive menu Video Object (VOB) delivers continuous background sound while preserving a static visual display and maintaining active menu navigation. Instead of streaming continuous video frames, this s">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/audio-only-vobu-in-interactive-menu-vo-bs-explained">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Audio-Only VOBU in Interactive Menu VOBs Explained - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/audio-only-vobu-in-interactive-menu-vo-bs-explained" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="An audio-only Video Object Unit (VOBU) within an interactive menu Video Object (VOB) delivers continuous background sound while preserving a static visual display and maintaining active menu navigation. Instead of streaming continuous video frames, this s" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="audio-only-vobu-in-interactive-menu-vobs-explained">Audio-Only
+VOBU in Interactive Menu VOBs Explained</h1>
+<p>An audio-only Video Object Unit (VOBU) within an interactive menu
+Video Object (VOB) delivers continuous background sound while preserving
+a static visual display and maintaining active menu navigation. Instead
+of streaming continuous video frames, this specialized VOBU relies on a
+sequence of audio packets coupled with DVD navigation data to update the
+audio buffer, leave the video decoder frame intact, and keep interactive
+button overlays fully responsive.</p>
+<h3 id="the-role-of-the-navigation-pack-nv_pck">The Role of the
+Navigation Pack (NV_PCK)</h3>
+<p>Every VOBU, regardless of content, must begin with a Navigation Pack
+(NV_PCK). In an audio-only menu VOBU, the NV_PCK carries two critical
+sub-structures:</p>
+<ul>
+<li><strong>Presentation Control Information (PCI):</strong> Contains
+the Highlight Information (HLI). The HLI defines the coordinates, color
+palettes, states (normal, selected, activated), and execution commands
+for the interactive buttons visible on the screen.</li>
+<li><strong>Data Search Information (DSI):</strong> Manages timing,
+playback continuity, and address offsets to ensure seamless navigation
+across the menu structure.</li>
+</ul>
+<p>Because the NV_PCK is processed at the start of each VOBU (typically
+every 0.4 to 1.0 seconds), the player continually refreshes navigation
+states and user-input readiness even when no new video is supplied.</p>
+<h3 id="video-buffer-persistence">Video Buffer Persistence</h3>
+<p>In standard VOBUs, Video Packs (V_PCKs) feed compressed MPEG-2 frames
+to the video decoder. An audio-only VOBU contains zero V_PCKs.</p>
+<p>When the DVD player encounters a VOBU without video data, the video
+decoder does not clear its output. Instead, it holds the last decoded
+I-frame (intra-coded picture) in its frame buffer. This mechanism allows
+a single background image to remain visible on the display without
+consuming the bit rate or storage space required to re-transmit
+identical frames.</p>
+<h3 id="audio-stream-delivery-a_pck">Audio Stream Delivery (A_PCK)</h3>
+<p>Following the NV_PCK, the remainder of the VOBU payload consists of
+Audio Packs (A_PCKs), formatted in AC-3, LPCM, or DTS. These packets are
+continuously delivered to the audio buffer.</p>
+<ul>
+<li><strong>System Clock Synchronization:</strong> The System Clock
+Reference (SCR) and Presentation Time Stamps (PTS) ensure that audio
+plays back without interruption or buffer underflows.</li>
+<li><strong>Continuous Playback:</strong> While the visual state remains
+stationary, the audio stream proceeds sequentially across successive
+audio-only VOBUs, creating continuous background music or dialogue for
+the menu.</li>
+</ul>
+<h3 id="sub-picture-and-interactive-highlight-management">Sub-Picture
+and Interactive Highlight Management</h3>
+<p>Interactive menus overlay sub-pictures (SP_PCKs) on top of the
+background image to show button states. In an audio-only VOBU
+sequence:</p>
+<ul>
+<li>If button highlights are static, the sub-picture decoder maintains
+the existing overlay generated by preceding units.</li>
+<li>If a button changes state (via user remote interaction), the PCI
+within the current VOBU’s NV_PCK dynamically alters the display
+properties of the highlight area without interrupting the audio
+stream.</li>
+</ul>
+<h3 id="looping-and-playback-termination">Looping and Playback
+Termination</h3>
+<p>Audio-only menu VOBUs are organized inside a Program Chain (PGC).
+Once the final VOBU in the audio stream finishes playing:</p>
+<ol type="1">
+<li>The end of the cell is reached.</li>
+<li>The player executes cell or post-commands defined in the IFO
+file.</li>
+<li>The command typically loops playback back to the first VOBU of the
+menu cell to restart the background audio, or automatically executes a
+default action if a timer expires.</li>
+</ol></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/audio-only-vobu-in-interactive-menu-vo-bs-explained';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

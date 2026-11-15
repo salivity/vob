@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How DVD Players Play Split VOB Files Seamlessly - vob</title>
+    <meta name="description" content="DVD players achieve uninterrupted playback across split VOB (Video Object) file boundaries by decoupling playback logic from the physical file system. Instead of treating each split VOB file as an independent video, the player uses navigation data stored">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/how-dvd-players-play-split-vob-files-seamlessly">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How DVD Players Play Split VOB Files Seamlessly - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/how-dvd-players-play-split-vob-files-seamlessly" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="DVD players achieve uninterrupted playback across split VOB (Video Object) file boundaries by decoupling playback logic from the physical file system. Instead of treating each split VOB file as an independent video, the player uses navigation data stored" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-dvd-players-play-split-vob-files-seamlessly">How DVD Players
+Play Split VOB Files Seamlessly</h1>
+<p>DVD players achieve uninterrupted playback across split VOB (Video
+Object) file boundaries by decoupling playback logic from the physical
+file system. Instead of treating each split VOB file as an independent
+video, the player uses navigation data stored in accompanying IFO files,
+continuous MPEG-2 timestamp references, and read-ahead memory buffers to
+decode the divided segments as one single, continuous bitstream.</p>
+<h3 id="the-1-gb-split-constraint">The 1 GB Split Constraint</h3>
+<p>DVD-Video specifications adhere to the UDF (Universal Disk Format)
+and ISO 9660 micro-UDF formats, which require standard video files to be
+no larger than 1 gigabyte (1,048,576 KB). To store a full-length feature
+film, MPEG-2 multiplexed streams must be divided into sequential files
+named <code>VTS_xx_1.VOB</code>, <code>VTS_xx_2.VOB</code>, and so
+forth. While the operating system views these as distinct files, the DVD
+player treats them as contiguous sectors on the disc.</p>
+<h3 id="ifo-navigation-and-logical-block-addressing">IFO Navigation and
+Logical Block Addressing</h3>
+<p>A DVD player never plays VOB files by opening them one by one through
+file-system calls. Instead, the player reads <code>.IFO</code>
+(Information) files located in the <code>VIDEO_TS</code> directory.</p>
+<p>The IFO file contains the Program Chain (PGC) tables, which organize
+playback into Titles, Programs, and Cells. Cells are the fundamental
+playback units and are addressed using Logical Block Addressing
+(LBA)—physical sector locations on the optical disc. The IFO file
+provides exact start and end sector addresses for every cell. Because
+LBA coordinates span across the 1 GB split boundaries without
+interruption, the player's optical pickup reads through the end of one
+VOB file and into the next simply by following sector numbers, ignoring
+file-level boundaries entirely.</p>
+<h3 id="mpeg-2-timestamp-continuity">MPEG-2 Timestamp Continuity</h3>
+<p>VOB files are specialized MPEG-2 Program Streams consisting of
+2,048-byte packs. When a VOB is divided at the 1 GB boundary:</p>
+<ul>
+<li><strong>System Clock Reference (SCR):</strong> The timing baseline
+across packs remains continuous.</li>
+<li><strong>Presentation Time Stamps (PTS) and Decode Time Stamps
+(DTS):</strong> Video and audio frames carry presentation timestamps
+that proceed linearly across the file split.</li>
+<li><strong>Closed GOPs Not Required:</strong> Because the split is
+purely physical rather than logical, an MPEG Group of Pictures (GOP) can
+span across the boundary between two files without breaking the decoder
+state.</li>
+</ul>
+<p>Because the underlying elementary streams for audio, video, and
+subtitles maintain uninterrupted timing data, the hardware decoders
+process incoming packets without resetting their internal clocks.</p>
+<h3 id="hardware-track-buffering">Hardware Track Buffering</h3>
+<p>Optical disc drives read data intermittently at speeds faster than
+the required playback bitrate (for example, reading at 2x to 5x drive
+speeds while playing at 1x). The read data flows into a hardware FIFO
+(First-In, First-Out) memory cache known as the Track Buffer.</p>
+<p>As the optical drive finishes reading the last sector of one VOB file
+and transitions to the start sector of the next, the video and audio
+decoders continue pulling frames directly from the Track Buffer. This
+read-ahead mechanism eliminates latency caused by file system pointers,
+layer shifts, or optical pickup micro-adjustments, ensuring that the
+visual and acoustic output remains completely uninterrupted.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/how-dvd-players-play-split-vob-files-seamlessly';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

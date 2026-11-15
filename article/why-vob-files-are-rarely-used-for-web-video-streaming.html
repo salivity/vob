@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why VOB Files Are Rarely Used for Web Video Streaming - vob</title>
+    <meta name="description" content="VOB (Video Object) files are virtually absent from modern web video streaming because they were engineered specifically for physical DVD media rather than internet distribution. As a result, they lack native browser support, use outdated and inefficient c">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/why-vob-files-are-rarely-used-for-web-video-streaming">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why VOB Files Are Rarely Used for Web Video Streaming - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/why-vob-files-are-rarely-used-for-web-video-streaming" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="VOB (Video Object) files are virtually absent from modern web video streaming because they were engineered specifically for physical DVD media rather than internet distribution. As a result, they lack native browser support, use outdated and inefficient c" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-vob-files-are-rarely-used-for-web-video-streaming">Why VOB
+Files Are Rarely Used for Web Video Streaming</h1>
+<p>VOB (Video Object) files are virtually absent from modern web video
+streaming because they were engineered specifically for physical DVD
+media rather than internet distribution. As a result, they lack native
+browser support, use outdated and inefficient compression, generate
+excessively large file sizes, and cannot interface with modern adaptive
+streaming protocols. Consequently, contemporary web video relies almost
+universally on optimized containers like MP4 and WebM paired with
+efficient codecs like H.264, H.265, or AV1.</p>
+<h3 id="lack-of-native-browser-support">Lack of Native Browser
+Support</h3>
+<p>Modern web video relies on the HTML5 <code>&lt;video&gt;</code>
+standard, which requires browsers to decode and play media natively
+without external plugins. Web browsers universally support container
+formats like MP4 and WebM, but none provide native playback support for
+VOB containers. Attempting to load a raw VOB file in a web browser
+typically forces the browser to prompt a file download rather than
+initiating playback.</p>
+<h3 id="inefficient-mpeg-2-compression">Inefficient MPEG-2
+Compression</h3>
+<p>VOB files encapsulate video encoded with the legacy MPEG-2 codec.
+Compared to modern standards like H.264 (AVC), H.265 (HEVC), or AV1,
+MPEG-2 has extremely poor compression efficiency. Achieving acceptable
+visual quality with MPEG-2 requires substantially higher bitrates,
+creating massive files that consume unsustainable amounts of server
+bandwidth and result in long buffering times for end users.</p>
+<h3 id="incompatibility-with-adaptive-streaming">Incompatibility with
+Adaptive Streaming</h3>
+<p>Modern video delivery depends on HTTP Adaptive Bitrate (ABR)
+streaming protocols, such as HLS (HTTP Live Streaming) and MPEG-DASH.
+These technologies dynamically alter video resolution and bitrate based
+on the viewer’s network stability. VOB files are structured as
+monolithic or sequential physical disc segments that do not integrate
+with manifest files or chunk-based delivery, making smooth, real-time
+quality adjustments impossible.</p>
+<h3 id="complex-multiplexing-and-dvd-metadata">Complex Multiplexing and
+DVD Metadata</h3>
+<p>A VOB file is an MPEG-2 Program Stream designed to support physical
+disc features, including interactive DVD menus, multiple interleaved
+audio tracks (such as AC3 or DTS), and subpicture subtitle tracks. This
+interleaved structure adds unnecessary data overhead and introduces
+playback complexity that web video decoders are not designed to process.
+Modern web media separates or cleanly standardizes these components into
+lightweight, web-optimized metadata formats.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/why-vob-files-are-rarely-used-for-web-video-streaming';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

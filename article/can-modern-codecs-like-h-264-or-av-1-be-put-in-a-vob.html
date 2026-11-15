@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Can Modern Codecs Like H.264 or AV1 Be Put in a VOB? - vob</title>
+    <meta name="description" content="Modern video codecs like H.264 and AV1 cannot be placed inside a traditional VOB (Video Object) container while maintaining standard compliance and playability. The VOB format is fundamentally bound to the DVD-Video specifications established in the 1990s">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/can-modern-codecs-like-h-264-or-av-1-be-put-in-a-vob">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Can Modern Codecs Like H.264 or AV1 Be Put in a VOB? - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/can-modern-codecs-like-h-264-or-av-1-be-put-in-a-vob" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Modern video codecs like H.264 and AV1 cannot be placed inside a traditional VOB (Video Object) container while maintaining standard compliance and playability. The VOB format is fundamentally bound to the DVD-Video specifications established in the 1990s" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="can-modern-codecs-like-h264-or-av1-be-put-in-a-vob">Can Modern
+Codecs Like H.264 or AV1 Be Put in a VOB?</h1>
+<p>Modern video codecs like H.264 and AV1 cannot be placed inside a
+traditional VOB (Video Object) container while maintaining standard
+compliance and playability. The VOB format is fundamentally bound to the
+DVD-Video specifications established in the 1990s, which strictly
+dictate the types of audio and video streams allowed. This article
+explores the architecture of the VOB container, the technical
+constraints preventing modern codecs from functioning within it, and the
+proper containers to use instead.</p>
+<h3 id="understanding-the-vob-container">Understanding the VOB
+Container</h3>
+<p>A VOB file is a container format based on the MPEG-2 Program Stream
+(MPEG-PS) specification (ISO/IEC 13818-1). It was engineered
+specifically for DVD-Video media. In a standard DVD-Video structure, a
+VOB file multiplexes digital video, digital audio, subtitles, DVD menus,
+and navigation contents into a single stream.</p>
+<p>Because VOB is tied directly to the physical DVD-Video format, its
+specifications are rigidly defined. DVD standards dictate that the
+primary video stream inside a VOB file must be encoded in either MPEG-2
+(Part 2) or, in rare low-resolution cases, MPEG-1 (Part 2).</p>
+<h3 id="the-incompatibility-with-h264-avc">The Incompatibility with
+H.264 (AVC)</h3>
+<p>H.264, also known as AVC (Advanced Video Coding), is far more
+advanced than MPEG-2. While the MPEG-2 <em>Transport Stream</em>
+(MPEG-TS) format was updated over time to support H.264 for digital
+broadcast and Blu-ray discs, the MPEG-2 <em>Program Stream</em> profile
+used by VOB was never officially updated by the DVD Forum to include
+H.264.</p>
+<p>Some non-standard software multiplexers can technically force an
+H.264 elementary stream into an MPEG-PS envelope, but this creates a
+non-compliant file. Even if renamed with a <code>.vob</code>
+extension:</p>
+<ul>
+<li>Standard DVD players and home theater systems will reject the file
+because their hardware decoders only look for MPEG-1 and MPEG-2 stream
+IDs.</li>
+<li>Media software expecting a legitimate VOB will encounter stream
+parsing errors.</li>
+<li>DVD authoring software will refuse to compile the assets into a
+playable DVD.</li>
+</ul>
+<h3 id="the-incompatibility-with-av1">The Incompatibility with AV1</h3>
+<p>AV1 (AOMedia Video 1) is an open, royalty-free video coding format
+developed decades after the DVD standard was finalized. There is no
+official specification, packetization standard, or stream ID mapping for
+AV1 within MPEG-2 Program Streams or VOB containers.</p>
+<p>Standard muxing tools (such as FFmpeg or MP4Box) do not provide a
+mechanism to pack AV1 into a VOB container. Attempting to force an AV1
+stream into a VOB structure is unsupported across all standard media
+toolchains.</p>
+<h3 id="modern-alternatives-to-vob">Modern Alternatives to VOB</h3>
+<p>Containers are responsible for interleaving audio and video,
+providing timing synchronization, and organizing metadata. Modern codecs
+rely on container architectures designed to support their specific
+compression mechanics, such as complex frame references and
+high-dynamic-range (HDR) metadata.</p>
+<p>For H.264 and AV1, the industry standard containers are:</p>
+<ul>
+<li><strong>MP4 (ISO Base Media File Format):</strong> The universal
+standard for web streaming, mobile devices, and consumer playback. It
+fully supports H.264 and AV1.</li>
+<li><strong>MKV (Matroska):</strong> A flexible, open-source container
+that supports virtually any video and audio codec, including legacy
+MPEG-2, H.264, and AV1, along with complex subtitle tracks.</li>
+<li><strong>WebM:</strong> A subset of Matroska specifically tailored
+for modern web delivery, commonly used for VP9 and AV1.</li>
+</ul>
+<p>A traditional VOB container cannot be used for modern video codecs
+like H.264 or AV1. VOB remains a legacy format locked to MPEG-2 and
+DVD-Video constraints.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/can-modern-codecs-like-h-264-or-av-1-be-put-in-a-vob';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Can VOB Files Have Stereo and 5.1 Surround Audio? - vob</title>
+    <meta name="description" content="Yes, a VOB (Video Object) file can contain both stereo and 5.1 surround sound tracks for the same feature. VOB files are container formats based on the MPEG-2 Program Stream specification, which natively supports multiplexing multiple, independent audio s">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/can-vob-files-have-stereo-and-5-1-surround-audio">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Can VOB Files Have Stereo and 5.1 Surround Audio? - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/can-vob-files-have-stereo-and-5-1-surround-audio" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Yes, a VOB (Video Object) file can contain both stereo and 5.1 surround sound tracks for the same feature. VOB files are container formats based on the MPEG-2 Program Stream specification, which natively supports multiplexing multiple, independent audio s" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="can-vob-files-have-stereo-and-51-surround-audio">Can VOB Files
+Have Stereo and 5.1 Surround Audio?</h1>
+<p>Yes, a VOB (Video Object) file can contain both stereo and 5.1
+surround sound tracks for the same feature. VOB files are container
+formats based on the MPEG-2 Program Stream specification, which natively
+supports multiplexing multiple, independent audio streams alongside a
+single video stream. This article explains how the VOB container handles
+dual audio tracks, the technical standards governing them, and how
+playback devices process the different audio channels.</p>
+<h3 id="dvd-specifications-and-audio-stream-capacity">DVD Specifications
+and Audio Stream Capacity</h3>
+<p>The standard DVD-Video specification dictates that a VOB container
+can hold up to eight separate audio streams for any given video title.
+These streams are identified by unique stream IDs (ranging from
+<code>0x80</code> to <code>0x87</code> for Dolby Digital / AC-3
+audio).</p>
+<p>Because each stream is completely independent, content creators can
+assign different channel layouts and formats to each ID. For
+instance:</p>
+<ul>
+<li><strong>Audio Stream 1:</strong> Dolby Digital (AC-3) 5.1 surround
+sound</li>
+<li><strong>Audio Stream 2:</strong> Dolby Digital (AC-3) 2.0 stereo or
+uncompressed LPCM stereo</li>
+</ul>
+<p>This architecture is standard practice for commercial DVD authoring.
+It ensures compatibility across both multichannel home theater setups
+and standard television speakers or headphones.</p>
+<h3 id="supported-formats-within-the-vob-container">Supported Formats
+Within the VOB Container</h3>
+<p>The DVD standard specifies particular audio codecs that can be
+multiplexed into a VOB file:</p>
+<ul>
+<li><strong>Dolby Digital (AC-3):</strong> Commonly used for both 5.1
+multichannel and 2.0 stereo.</li>
+<li><strong>Linear PCM (LPCM):</strong> Uncompressed audio, typically
+restricted to stereo (2.0) due to high bitrate demands.</li>
+<li><strong>DTS (Digital Theater Systems):</strong> Often used for
+high-bitrate 5.1 surround sound.</li>
+<li><strong>MPEG-1 Audio Layer II (MP2):</strong> Standard stereo option
+primarily found in PAL-region discs.</li>
+</ul>
+<p>Because AC-3 supports channel configurations from 1.0 (mono) to 5.1
+(multichannel), a common arrangement in a VOB file is an AC-3 5.1 stream
+at 448 kbps paired with an AC-3 2.0 stream at 192 kbps.</p>
+<h3 id="how-playback-switching-works">How Playback Switching Works</h3>
+<p>When a media player or standalone DVD deck processes a VOB file
+containing multiple audio streams:</p>
+<ol type="1">
+<li><strong>Multiplexed Packets:</strong> The player demultiplexes the
+incoming data stream, separating video packets from audio packets based
+on their stream IDs.</li>
+<li><strong>Track Selection:</strong> Only one audio stream is decoded
+at a time. The active track can be set by the DVD's navigational
+structure (IFO files), chosen by the user via the audio language/track
+selection menu, or switched dynamically using a media player's audio
+track selector.</li>
+<li><strong>Downmixing Alternative:</strong> While a true 2.0 stereo
+track can be included in the VOB alongside a 5.1 track, modern decoders
+can also downmix a 5.1 track into stereo on the fly. However, authoring
+a dedicated stereo track ensures a deliberate, mastered stereo mix
+rather than an automated fold-down.</li>
+</ol>
+<p>As long as the total combined bitrate of the video, all audio
+streams, and subtitle data does not exceed the DVD-Video maximum limit
+of 10.08 Mbps, including both a 5.1 surround track and a stereo track
+inside the same VOB file is fully supported and compliant with DVD
+standards.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/can-vob-files-have-stereo-and-5-1-surround-audio';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

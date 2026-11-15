@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why Low-Bitrate VOB Video Uses Padding Packets - vob</title>
+    <meta name="description" content="When multiplexing low-bitrate video into a DVD Video Object (VOB) file, encoders frequently inject padding packets to fill unused data space. This practice ensures compliance with the strict physical and logical constraints of the DVD-Video format, which">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/why-low-bitrate-vob-video-uses-padding-packets">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why Low-Bitrate VOB Video Uses Padding Packets - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/why-low-bitrate-vob-video-uses-padding-packets" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="When multiplexing low-bitrate video into a DVD Video Object (VOB) file, encoders frequently inject padding packets to fill unused data space. This practice ensures compliance with the strict physical and logical constraints of the DVD-Video format, which" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-low-bitrate-vob-video-uses-padding-packets">Why Low-Bitrate
+VOB Video Uses Padding Packets</h1>
+<p>When multiplexing low-bitrate video into a DVD Video Object (VOB)
+file, encoders frequently inject padding packets to fill unused data
+space. This practice ensures compliance with the strict physical and
+logical constraints of the DVD-Video format, which relies on fixed
+2048-byte sector sizes, constant multiplex rates, and rigid buffer
+timing models. Without these dummy packets, low-bitrate streams would
+cause buffer synchronization failures, timing drift, or playback errors
+on standard hardware DVD players.</p>
+<h3 id="dvd-sector-alignment-and-fixed-pack-sizes">DVD Sector Alignment
+and Fixed Pack Sizes</h3>
+<p>A VOB file is based on the MPEG-2 Program Stream specification, but
+it adds rigid physical requirements defined by the DVD-Video standard.
+The data on a DVD is organized into fixed logical sectors of exactly
+2,048 bytes (2 KB).</p>
+<p>Every pack within a VOB file must map directly to a single DVD
+sector:</p>
+<ul>
+<li>Each pack contains a 14-byte pack header, followed by one or more
+PES (Packetized Elementary Stream) packets containing video, audio, or
+subpicture data.</li>
+<li>If a low-bitrate video frame and its accompanying audio do not
+generate enough compressed data to completely fill the 2,048-byte
+boundary, the multiplexer cannot simply write a smaller pack.</li>
+<li>The encoder inserts an MPEG padding packet (assigned stream ID
+<code>0xBE</code>) containing dummy bytes to bring the total pack size
+to exactly 2,048 bytes.</li>
+</ul>
+<h3 id="maintaining-the-target-multiplex-rate">Maintaining the Target
+Multiplex Rate</h3>
+<p>DVD authoring relies on a predefined multiplex rate (mux rate) to
+guarantee consistent delivery of data from the optical disc to the
+decoder. Even when video is encoded with Variable Bitrate (VBR), the
+overall multiplexed stream must never fall below the rate required to
+keep the hardware synchronized, nor can it violate the drive's delivery
+schedule.</p>
+<p>When video complexity drops—such as during static scenes, black
+screens, or end credits—the instantaneous video bitrate plummets. To
+keep the total multiplex rate stable and prevent the data flow from
+dropping below operational thresholds, the multiplexer inserts padding
+packets to artificially elevate the overall stream bitrate to the
+required multiplex baseline.</p>
+<h3 id="decoder-buffer-management-mpeg-2-std-model">Decoder Buffer
+Management (MPEG-2 STD Model)</h3>
+<p>Hardware DVD players use the MPEG-2 System Target Decoder (STD)
+model, which relies on precisely timed hardware buffers:</p>
+<ul>
+<li><strong>Clock Synchronization:</strong> Every pack header contains a
+System Clock Reference (SCR) timestamp that synchronizes the player's
+internal clock with the multiplexer's clock.</li>
+<li><strong>Buffer Underflow Prevention:</strong> Compressed video and
+audio data enter buffers and are removed at specific Presentation Time
+Stamps (PTS) and Decode Time Stamps (DTS). If an encoder simply pauses
+the transmission of packs during low-bitrate sequences, the SCR counter
+will drift relative to the arrival of actual data bytes.</li>
+<li><strong>Controlled Buffer Drain:</strong> Padding packets consume
+data transmission capacity and advance the SCR without adding any data
+to the elementary video or audio buffers. This allows the decoder to
+pull data at a constant schedule without running out of frames or
+experiencing buffer underflow.</li>
+</ul>
+<h3 id="optical-drive-spindle-and-read-consistency">Optical Drive
+Spindle and Read Consistency</h3>
+<p>Physical DVD mechanisms read data sequentially from the disc track at
+speeds determined by the multiplex rate. If low-bitrate sections were
+left without continuous, uniformly distributed data packs, the optical
+drive's tracking mechanism and buffer cache would suffer from
+intermittent read cycles. Consistent data flow—sustained by padding
+packets when actual payload data is minimal—ensures smooth mechanical
+disc tracking and seamless playback transitions.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/why-low-bitrate-vob-video-uses-padding-packets';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

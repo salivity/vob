@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forced Subtitles in DVD VOB Subpictures Explained - vob</title>
+    <meta name="description" content="This article provides an overview of forced subtitles in digital video and details the low-level technical mechanism used to flag them within DVD Video VOB subpicture streams. It covers the functional purpose of forced subtitles, the architecture of the D">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/forced-subtitles-in-dvd-vob-subpictures-explained">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Forced Subtitles in DVD VOB Subpictures Explained - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/forced-subtitles-in-dvd-vob-subpictures-explained" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article provides an overview of forced subtitles in digital video and details the low-level technical mechanism used to flag them within DVD Video VOB subpicture streams. It covers the functional purpose of forced subtitles, the architecture of the D" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="forced-subtitles-in-dvd-vob-subpictures-explained">Forced
+Subtitles in DVD VOB Subpictures Explained</h1>
+<p>This article provides an overview of forced subtitles in digital
+video and details the low-level technical mechanism used to flag them
+within DVD Video VOB subpicture streams. It covers the functional
+purpose of forced subtitles, the architecture of the DVD Subpicture Unit
+(SPU), and the specific display control commands that instruct hardware
+and software players to render dialogue overlays unconditionally.</p>
+<h3 id="what-is-a-forced-subtitle">What Is a Forced Subtitle?</h3>
+<p>A forced subtitle—often referred to as a forced narrative—is a
+subtitle track or single subtitle event designed to display regardless
+of whether the viewer has explicitly enabled subtitles in their media
+player.</p>
+<p>Forced subtitles are used when translation or textual context is
+critical to the narrative for an audience listening to the primary audio
+track. Typical use cases include:</p>
+<ul>
+<li>Translating foreign language dialogue in a film where characters
+primarily speak the viewer's native language.</li>
+<li>Translating fictional or alien languages (e.g., Elvish in <em>The
+Lord of the Rings</em> or Klingon in <em>Star Trek</em>).</li>
+<li>Translating on-screen text, such as signs, location markers,
+letters, or newspaper headlines.</li>
+<li>Clarifying whispered, muffled, or intentionally distorted speech
+essential to the plot.</li>
+</ul>
+<p>Unlike standard subtitles, which transcribe all spoken dialogue for
+the deaf or hard of hearing (SDH) or offer full-length language
+translations, forced subtitles appear only intermittently to preserve
+narrative comprehension.</p>
+<h3 id="the-dvd-vob-subpicture-architecture">The DVD VOB Subpicture
+Architecture</h3>
+<p>In the DVD-Video specification, subtitles are not stored as plain
+text. Instead, they are stored as run-length encoded (RLE) 2-bit
+(4-color) bitmap overlays contained within the MPEG-2 Program Stream
+(<code>.VOB</code> files). These graphic streams are designated as
+Subpicture Streams and occupy Private Stream 1 (sub-stream IDs
+<code>0x20</code> through <code>0x3F</code>).</p>
+<p>Each distinct display event is packaged as a Sub-Picture Unit (SPU).
+An SPU consists of three main components:</p>
+<ol type="1">
+<li><strong>SPU Header:</strong> Contains metadata such as the total
+size of the SPU and the starting address of the control commands.</li>
+<li><strong>Pixel Data:</strong> The compressed bitmap graphic that
+contains the visual rendering of the text or graphics.</li>
+<li><strong>Sub-Picture Display Control Sequence Table
+(SP_DCSQT):</strong> A list of timestamped execution blocks (SP_DCSQ)
+containing command codes that dictate when and how the player must
+render, move, colorize, and stop displaying the pixel data.</li>
+</ol>
+<h3 id="how-forced-subtitles-are-flagged-in-the-spu">How Forced
+Subtitles Are Flagged in the SPU</h3>
+<p>DVD-Video supports two different approaches for handling forced
+subtitles: utilizing a dedicated forced-only subpicture stream, or
+embedding forced items within a standard subpicture stream. When
+embedded within a standard stream containing regular dialogue, the
+player uses a specific byte flag inside the control sequence table to
+distinguish forced elements from standard ones.</p>
+<p>Within each SPU, the display behavior is determined by the control
+commands in the SP_DCSQ block. The activation of the bitmap display
+relies on one of two primary 1-byte command tokens:</p>
+<ul>
+<li><strong><code>0x01</code> (<code>STA_DSP</code> - Start
+Display):</strong> This command instructs the DVD decoder to begin
+rendering the subpicture only if the user has actively enabled subtitles
+for that specific stream. If subtitles are toggled "Off" via the player
+menu or remote control, the SPU is ignored.</li>
+<li><strong><code>0x00</code> (<code>FSTA_DSP</code> - Forced Start
+Display):</strong> This is the <strong>forced flag</strong>. When the
+decoder parses <code>0x00</code>, it instructs the subpicture display
+engine to render the pixel data unconditionally. Even if the user has
+subtitle rendering turned off, the player must display this SPU.</li>
+</ul>
+<p>A standard SP_DCSQ entry contains:</p>
+<ol type="1">
+<li>An execution start time (offset from the SPU start presentation
+timestamp).</li>
+<li>The address offset to the next SP_DCSQ.</li>
+<li>One or more control commands, beginning with the display command
+(<code>0x00</code> or <code>0x01</code>), followed by color mapping
+(<code>0x03</code>), transparency/contrast settings (<code>0x04</code>),
+screen coordinates (<code>0x05</code>), and pixel data offsets
+(<code>0x06</code>), terminated by an end command
+(<code>0xFF</code>).</li>
+</ol>
+<h3 id="player-interpretation-and-behavior">Player Interpretation and
+Behavior</h3>
+<p>When parsing a VOB stream, the playback system reads the SPU's
+<code>SP_DCSQ</code>. If it reads the <code>0x00</code>
+(<code>FSTA_DSP</code>) opcode:</p>
+<ol type="1">
+<li>The player checks its system parameter registers (SPRM),
+specifically SPRM 2 (Subpicture stream number and display state).</li>
+<li>Regardless of whether bit 6 of SPRM 2 (the display flag) is set to
+<code>0</code> (disabled) or <code>1</code> (enabled), the
+<code>FSTA_DSP</code> command forces the decoder to draw the frame into
+the video mixing buffer.</li>
+<li>The display persists until the control table reaches a termination
+command (<code>0x02</code> / <code>STP_DSP</code> - Stop Display) at the
+designated time offset.</li>
+</ol>
+<p>By using the <code>0x00</code> command code directly at the SPU
+level, DVD authors avoid having to create entirely separate streams for
+native and non-native dialogue, allowing standard and forced elements to
+coexist within a single subpicture track.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/forced-subtitles-in-dvd-vob-subpictures-explained';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

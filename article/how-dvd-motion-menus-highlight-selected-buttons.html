@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How DVD Motion Menus Highlight Selected Buttons - vob</title>
+    <meta name="description" content="DVD motion menus highlight active buttons by combining an underlying MPEG-2 motion video with a separate subpicture overlay layer, driven in real time by the DVD player&#39;s navigation engine. Rather than altering the video stream itself, the player reads bu">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/how-dvd-motion-menus-highlight-selected-buttons">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How DVD Motion Menus Highlight Selected Buttons - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/how-dvd-motion-menus-highlight-selected-buttons" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="DVD motion menus highlight active buttons by combining an underlying MPEG-2 motion video with a separate subpicture overlay layer, driven in real time by the DVD player&#39;s navigation engine. Rather than altering the video stream itself, the player reads bu" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-dvd-motion-menus-highlight-selected-buttons">How DVD Motion
+Menus Highlight Selected Buttons</h1>
+<p>DVD motion menus highlight active buttons by combining an underlying
+MPEG-2 motion video with a separate subpicture overlay layer, driven in
+real time by the DVD player's navigation engine. Rather than altering
+the video stream itself, the player reads button coordinates and
+color-mapping rules stored in Presentation Control Information (PCI)
+packets inside the VOB file. When a user selects a button, the player
+dynamically applies specified color and transparency values from a Color
+Look-Up Table (CLUT) to the subpicture layer within that button's
+defined bounding box, rendering the highlight seamlessly over the
+playing video.</p>
+<h3 id="the-multiplexed-streams-in-a-vob">The Multiplexed Streams in a
+VOB</h3>
+<p>A DVD Video Object (VOB) file is an MPEG-2 Program Stream containing
+multiplexed elements: video, audio, subpicture data, and private
+navigation streams. In a motion menu, the visual background and any
+unhighlighted button artwork are typically encoded directly into the
+main MPEG-2 video stream.</p>
+<p>Because re-encoding the video for every possible button state would
+consume excessive disc space, the DVD specification isolates
+interactivity into two additional components:</p>
+<ul>
+<li><strong>The Subpicture Stream:</strong> A 2-bit graphical overlay
+running concurrently with the video.</li>
+<li><strong>Navigation Packs (NAV_PCK):</strong> Specialized data
+packets interleaved throughout the VOB stream roughly every 0.5 seconds
+(the length of a Video Object Unit, or VOBU).</li>
+</ul>
+<h3 id="the-role-of-the-subpicture-overlay">The Role of the Subpicture
+Overlay</h3>
+<p>The subpicture stream contains run-length encoded (RLE) bitmaps with
+a bit depth of only 2 bits per pixel. This allows a subpicture frame to
+store up to four distinct pixel values: typically designated as
+background, pattern, emphasis 1, and emphasis 2.</p>
+<p>In a menu context, these four values represent the shapes,
+underlines, borders, or text masks that constitute the button
+highlights. Under normal circumstances, this subpicture layer is set to
+fully transparent so the moving background video remains completely
+visible.</p>
+<h3 id="button-definitions-via-pci-packets">Button Definitions via PCI
+Packets</h3>
+<p>Inside every NAV pack resides a Presentation Control Information
+(PCI) packet. The PCI packet includes the Presentation Control
+Information Highlight General Information (PCI_HLI) table, which governs
+menu interactivity.</p>
+<p>The PCI_HLI defines:</p>
+<ul>
+<li><strong>Button Bounding Boxes:</strong> The exact pixel coordinates
+(X-start, Y-start, X-end, Y-end) that define the rectangular boundary
+for each button on the screen (supporting up to 36 buttons for 4:3
+menus, or 18 for 16:9 widescreen menus).</li>
+<li><strong>Color and Contrast Sets:</strong> The specific color indices
+and transparency (contrast) levels assigned to each of the three button
+states: <em>Normal</em> (unselected), <em>Selected</em> (navigated
+to/focused), and <em>Activated</em> (pressed/triggered).</li>
+</ul>
+<h3 id="the-color-look-up-table-clut">The Color Look-Up Table
+(CLUT)</h3>
+<p>The colors used for button highlights are not stored as direct RGB or
+YUV values within the subpicture itself. Instead, the disc's IFO file
+defines a 16-color Palette or Color Look-Up Table (CLUT).</p>
+<p>The PCI packet dictates which color from this 16-color palette maps
+to each of the four pixel types in the subpicture bitmap, along with a
+contrast value ranging from 0 (completely transparent) to 15 (fully
+opaque).</p>
+<h3 id="the-real-time-rendering-process">The Real-Time Rendering
+Process</h3>
+<p>When a DVD player loads a motion menu VOBU:</p>
+<ol type="1">
+<li><strong>Decoding:</strong> The player continuously decodes the
+MPEG-2 video stream and routes it to the display buffer, providing the
+moving background.</li>
+<li><strong>Overlay Mapping:</strong> The player aligns the 2-bit
+subpicture bitmap over the video frame.</li>
+<li><strong>State Evaluation:</strong> The player tracks which button
+index currently holds focus. For unselected buttons, contrast levels are
+typically set to 0, leaving those regions invisible.</li>
+<li><strong>Highlight Application:</strong> For the bounding box
+assigned to the <em>Selected</em> button, the hardware graphics chip
+switches the color and contrast mapping of the subpicture pixels to the
+"Selected" state defined in the PCI packet.</li>
+<li><strong>Compositing:</strong> The graphics processor blends the
+subpicture highlight over the running video frame according to the
+defined opacity levels.</li>
+</ol>
+<p>If the user presses an arrow key on the remote, the DVD player
+immediately updates its internal state register, shifts the active
+bounding box to the adjacent button coordinates, and changes the overlay
+rendering in real time without interrupting the continuous playback of
+the background video.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/how-dvd-motion-menus-highlight-selected-buttons';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

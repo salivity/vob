@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Inspect VOB Pack Headers with a Hex Editor - vob</title>
+    <meta name="description" content="This article provides a practical guide on using a hex editor to manually locate, parse, and verify the pack headers of an unencrypted Video Object (VOB) file. VOB files are fundamentally MPEG-2 Program Streams segmented into fixed-size sectors. By naviga">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/how-to-inspect-vob-pack-headers-with-a-hex-editor">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Inspect VOB Pack Headers with a Hex Editor - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/how-to-inspect-vob-pack-headers-with-a-hex-editor" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article provides a practical guide on using a hex editor to manually locate, parse, and verify the pack headers of an unencrypted Video Object (VOB) file. VOB files are fundamentally MPEG-2 Program Streams segmented into fixed-size sectors. By naviga" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-inspect-vob-pack-headers-with-a-hex-editor">How to
+Inspect VOB Pack Headers with a Hex Editor</h1>
+<p>This article provides a practical guide on using a hex editor to
+manually locate, parse, and verify the pack headers of an unencrypted
+Video Object (VOB) file. VOB files are fundamentally MPEG-2 Program
+Streams segmented into fixed-size sectors. By navigating file offsets
+and decoding individual byte fields, you can diagnose synchronization
+issues, check authoring standard compliance, and detect data corruption
+directly at the binary level.</p>
+<h2
+id="understanding-the-vob-sector-and-pack-architecture">Understanding
+the VOB Sector and Pack Architecture</h2>
+<p>Standard DVD-Video VOB files are organized into uniform sectors of
+2,048 bytes (0x800 in hexadecimal). Each sector typically contains a
+single MPEG-2 Program Stream pack, which begins with a 14-byte (or
+larger, if stuffing bytes are present) pack header, followed by a system
+header or a packetized elementary stream (PES) packet.</p>
+<p>Because unencrypted VOB files do not contain Content Scramble System
+(CSS) obfuscation, their payload and headers remain in plaintext binary,
+making them directly accessible via any standard hex editor (such as
+HxD, ImHex, or 010 Editor).</p>
+<h2 id="locating-pack-headers">Locating Pack Headers</h2>
+<ol type="1">
+<li><strong>Open the File:</strong> Load the unencrypted
+<code>.VOB</code> file into your hex editor.</li>
+<li><strong>Align to Sector Boundaries:</strong> Navigate to offset
+<code>0x00000000</code>. Because VOB packs align with physical DVD
+sectors, subsequent packs should appear at exact increments of
+<code>0x800</code> (e.g., <code>0x800</code>, <code>0x1000</code>,
+<code>0x1800</code>, <code>0x2000</code>).</li>
+<li><strong>Identify the Start Code:</strong> Inspect the first four
+bytes of the sector. A valid MPEG-2 pack header always begins with the
+32-bit prefix <code>00 00 01 BA</code>.</li>
+</ol>
+<p>If <code>00 00 01 BA</code> does not align at an offset divisible by
+<code>0x800</code>, the file structure is either non-standard,
+malformed, or preceded by arbitrary container metadata.</p>
+<h2 id="decoding-and-verifying-the-pack-header-bytes">Decoding and
+Verifying the Pack Header Bytes</h2>
+<p>An MPEG-2 pack header consists of a minimum of 14 bytes (offsets
+<code>0x00</code> through <code>0x0D</code> relative to the pack start).
+Inspect each field sequentially:</p>
+<h3 id="1-pack-start-code-bytes-03">1. Pack Start Code (Bytes 0–3)</h3>
+<ul>
+<li><strong>Value:</strong> <code>00 00 01 BA</code></li>
+<li><strong>Verification:</strong> Confirms the boundary of an MPEG-2
+Program Stream pack. Any deviation indicates data corruption or
+misaligned sector padding.</li>
+</ul>
+<h3 id="2-system-clock-reference-scr-and-marker-bits-bytes-49">2. System
+Clock Reference (SCR) and Marker Bits (Bytes 4–9)</h3>
+<p>MPEG-2 packs encode the System Clock Reference across six bytes to
+synchronize audio, video, and sub-picture streams.</p>
+<ul>
+<li><strong>Byte 4:</strong> The two most significant bits must be
+binary <code>01</code> (hexadecimal mask <code>0xC0</code>, value
+<code>0x40</code>). This identifies the header as MPEG-2 rather than
+MPEG-1 (which uses <code>0010</code>).</li>
+<li><strong>SCR Base and Extension:</strong> The remaining bits of Byte
+4 through Byte 9 encode the 33-bit SCR base, marker bits, and the 9-bit
+SCR extension.</li>
+<li><strong>Verification:</strong> Check Byte 4. If the top bits are not
+<code>01</code> (i.e., the byte does not fall within
+<code>0x40</code>–<code>0x7F</code>), the header is invalid or
+improperly formatted. Ensure marker bits interleaved throughout these
+bytes equal <code>1</code> to prevent emulation of start codes.</li>
+</ul>
+<h3 id="3-program-mux-rate-bytes-1012">3. Program Mux Rate (Bytes
+10–12)</h3>
+<ul>
+<li><strong>Bit Allocation:</strong> A 22-bit integer specifying the
+rate at which the stream was multiplexed, measured in units of 50 bytes
+per second.</li>
+<li><strong>Marker Bits:</strong> The two least significant bits of Byte
+12 must both be <code>1</code> (binary <code>xx11</code>).</li>
+<li><strong>Verification:</strong> Inspect Byte 12. The lowest two bits
+must evaluate to <code>0x03</code> when isolated
+(<code>Byte &amp; 0x03 == 0x03</code>).</li>
+</ul>
+<h3 id="4-pack-stuffing-length-byte-13">4. Pack Stuffing Length (Byte
+13)</h3>
+<ul>
+<li><strong>Bit Allocation:</strong> The first five bits are reserved
+(typically set to <code>11111</code>), and the last three bits define
+the <code>pack_stuffing_length</code> (0 to 7 bytes).</li>
+<li><strong>Verification:</strong> Isolate the lowest three bits
+(<code>Byte &amp; 0x07</code>). This reveals how many padding bytes
+follow immediately after Byte 13. For example, if Byte 13 is
+<code>F8</code>, the stuffing length is 0. If it is <code>FD</code>, the
+stuffing length is 5.</li>
+</ul>
+<h3 id="5-stuffing-bytes-byte-14-to-14--n">5. Stuffing Bytes (Byte 14 to
+14 + N)</h3>
+<ul>
+<li>If <code>pack_stuffing_length</code> is greater than 0, check the
+subsequent bytes. Each stuffing byte must be <code>FF</code>.</li>
+<li><strong>Verification:</strong> Ensure that exactly <em>N</em> bytes
+of <code>FF</code> exist before the start of the next header (usually a
+PES packet starting with <code>00 00 01 E0</code> for video or
+<code>00 00 01 BD</code> for private streams like AC-3 audio).</li>
+</ul>
+<h2 id="common-irregularities-to-detect">Common Irregularities to
+Detect</h2>
+<ul>
+<li><strong>Sector Drift:</strong> If searching for
+<code>00 00 01 BA</code> returns offsets not ending in <code>000</code>
+or <code>800</code>, streams within the VOB have lost sector
+synchronization, which can lead to read errors on hardware players.</li>
+<li><strong>MPEG-1 Legacy Headers:</strong> If Byte 4 begins with binary
+<code>0010</code> (<code>0x20</code>–<code>0x2F</code>), the file
+contains MPEG-1 pack headers, which violate DVD-Video
+specifications.</li>
+<li><strong>Non-Monotonic SCR:</strong> While inspectable across
+consecutive packs, the calculated SCR value should generally advance
+smoothly. Jumps backward or massive gaps between adjacent packs point to
+splice defects or dropped sectors.</li>
+</ul></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/how-to-inspect-vob-pack-headers-with-a-hex-editor';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How DVD Authoring Tools Calculate Sector Pointers - vob</title>
+    <meta name="description" content="DVD authoring tools calculate sector pointers through a deterministic pre-mastering process that maps data to fixed 2,048-byte logical blocks before writing to physical media. By simulating the precise disc layout through a two-pass multiplexing and virtu">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/how-dvd-authoring-tools-calculate-sector-pointers">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How DVD Authoring Tools Calculate Sector Pointers - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/how-dvd-authoring-tools-calculate-sector-pointers" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="DVD authoring tools calculate sector pointers through a deterministic pre-mastering process that maps data to fixed 2,048-byte logical blocks before writing to physical media. By simulating the precise disc layout through a two-pass multiplexing and virtu" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-dvd-authoring-tools-calculate-sector-pointers">How DVD
+Authoring Tools Calculate Sector Pointers</h1>
+<p>DVD authoring tools calculate sector pointers through a deterministic
+pre-mastering process that maps data to fixed 2,048-byte logical blocks
+before writing to physical media. By simulating the precise disc layout
+through a two-pass multiplexing and virtual allocation system, the
+software determines the exact Logical Block Addressing (LBA) coordinates
+for all titles, chapters, and navigation packs. This predictive mapping
+ensures that DVD-Video navigation files (<code>.IFO</code>) and internal
+stream pointers within Video Object (<code>.VOB</code>) files seamlessly
+synchronize playback operations prior to the burn phase.</p>
+<h3 id="the-foundation-fixed-size-logical-blocks">The Foundation:
+Fixed-Size Logical Blocks</h3>
+<p>The DVD-Video specification mandates that all disc data is arranged
+in uniform sectors of exactly 2,048 bytes (2 KB). Every asset—including
+the Video Manager (<code>VIDEO_TS.IFO</code>), Video Title Sets
+(<code>VTS_xx_x.IFO</code>), menu VOBs, title VOBs, and backup files
+(<code>.BUP</code>)—must align strictly with these sector boundaries.
+Because sector sizes are strictly fixed, the physical offset of any byte
+sequence on a disc can be converted directly to a sector address:</p>
+<p><span class="math display">\[\text{LBA} = \frac{\text{Byte
+Offset}}{2048}\]</span></p>
+<h3 id="virtual-file-system-layout-pass-1">Virtual File System Layout
+(Pass 1)</h3>
+<p>Before calculating individual stream pointers, the authoring tool
+performs a layout reservation pass. It models the target disc filesystem
+(typically a UDF/ISO 9660 Bridge format) by calculating the space
+requirements for:</p>
+<ol type="1">
+<li><strong>Lead-In and File System Descriptors:</strong> Sector offsets
+for the Primary Volume Descriptor, Volume Recognition Sequence, and UDF
+Anchor Points.</li>
+<li><strong>Video Manager Assets:</strong> <code>VIDEO_TS.IFO</code>,
+its menu VOBs (<code>VIDEO_TS.VOB</code>), and its backup
+(<code>VIDEO_TS.BUP</code>).</li>
+<li><strong>Video Title Set Boundaries:</strong> The exact starting LBA
+for every <code>VTS_xx_0.IFO</code> and its associated title VOB files
+(<code>VTS_xx_1.VOB</code> through <code>VTS_xx_n.VOB</code>).</li>
+</ol>
+<p>Because the sizes of file system descriptors and video streams are
+known during or immediately after the asset multiplexing phase, the
+authoring engine constructs an absolute disc allocation table. This
+table fixes the base starting LBA for every VOB sequence on the
+disc.</p>
+<h3 id="vobu-generation-and-navigation-packs">VOBU Generation and
+Navigation Packs</h3>
+<p>DVD video streams are broken into Video Object Units (VOBUs),
+typically representing 0.4 to 1.0 seconds of playback (corresponding to
+a Group of Pictures, or GOP). Every VOBU must begin with a 2,048-byte
+Navigation Pack (<code>NV_PCK</code>), which contains two critical data
+structures:</p>
+<ul>
+<li><strong>PCI (Presentation Control Information):</strong> Handles
+real-time playback parameters, user operations, and angles.</li>
+<li><strong>DSI (Data Search Information):</strong> Contains forward and
+backward seek pointers across the video stream to support fast-forward,
+rewind, and seamless branching.</li>
+</ul>
+<p>During multiplexing, the authoring tool keeps a running tally of
+generated sectors. Because it creates packets in a continuous 2,048-byte
+stream, it knows the exact relative distance between the current VOBU
+and surrounding VOBUs (such as <span class="math inline">\(+1, +2, +4,
++8\dots\)</span> VOBUs ahead, and <span class="math inline">\(-1, -2,
+-4, -8\dots\)</span> VOBUs behind). By combining the relative offset of
+each VOBU with the VTS file's base LBA determined during the layout
+pass, the tool embeds explicit sector-accurate navigation addresses
+directly into the DSI tables of each <code>NV_PCK</code>.</p>
+<h3 id="synchronizing-ifo-tables-and-cells">Synchronizing IFO Tables and
+Cells</h3>
+<p>Once the VOB assets are multiplexed and the final sector counts are
+locked, the authoring tool writes the metadata to the <code>.IFO</code>
+files. The <code>.IFO</code> files store the primary entry points used
+by the DVD player's optical pickup, including:</p>
+<ul>
+<li><strong>VTS_PTT_SRPT (Part-of-Title Search Table):</strong> The
+sector offsets corresponding to chapter markers.</li>
+<li><strong>VTS_PGCI (Program Chain Information):</strong>
+Sector-accurate start and end addresses for Cells and Programs.</li>
+<li><strong>VTS_VOBU_ADMAP (VOBU Address Map):</strong> An explicit list
+of starting sector offsets for every single VOBU inside the title set's
+VOB files.</li>
+</ul>
+<p>Because <code>.IFO</code> files must contain the final sector
+addresses of the <code>.VOB</code> files, and <code>.BUP</code> files
+must mirror <code>.IFO</code> files while being placed at distinct
+sector locations (to prevent simultaneous read corruption), the
+authoring engine updates all pointer references in memory first.</p>
+<h3 id="final-verification-and-image-assembly">Final Verification and
+Image Assembly</h3>
+<p>With all sector offsets established:</p>
+<ol type="1">
+<li>The authoring tool writes out the finalized <code>NV_PCK</code>
+headers inside the VOB files.</li>
+<li>It generates the finalized <code>.IFO</code> files containing the
+absolute LBA maps.</li>
+<li>It places the <code>.BUP</code> files at an offset that meets
+specification requirements—usually ensuring a minimum distance from the
+corresponding <code>.IFO</code> (often at least one ECC block, or 16
+sectors, away) to provide hardware redundancy.</li>
+<li>For dual-layer (DVD-9) media, the tool ensures that the Layer Break
+falls on a valid Cell boundary aligned to an Error Correction Code (ECC)
+block boundary (a multiple of 16 sectors), adjusting dummy sectors or
+padding if necessary.</li>
+</ol>
+<p>Once every table contains verified, non-conflicting LBA coordinates,
+the multiplexed sectors are written sequentially to an ISO image or
+burned directly to the optical disc.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/how-dvd-authoring-tools-calculate-sector-pointers';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

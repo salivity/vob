@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How VTSI Sector Address Tables Map to Split VOBs - vob</title>
+    <meta name="description" content="This article examines how DVD-Video players resolve physical file boundaries when reading Video Title Set Information (VTSI). It details how the sector address tables inside the IFO files represent data as a continuous logical stream and explains the math">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/how-vtsi-sector-address-tables-map-to-split-vo-bs">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How VTSI Sector Address Tables Map to Split VOBs - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/how-vtsi-sector-address-tables-map-to-split-vo-bs" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article examines how DVD-Video players resolve physical file boundaries when reading Video Title Set Information (VTSI). It details how the sector address tables inside the IFO files represent data as a continuous logical stream and explains the math" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-vtsi-sector-address-tables-map-to-split-vobs">How VTSI
+Sector Address Tables Map to Split VOBs</h1>
+<p>This article examines how DVD-Video players resolve physical file
+boundaries when reading Video Title Set Information (VTSI). It details
+how the sector address tables inside the IFO files represent data as a
+continuous logical stream and explains the mathematical translation
+players use to locate sectors across multiple, split 1 GB VOB files.</p>
+<h3 id="the-contiguous-logical-sector-model">The Contiguous Logical
+Sector Model</h3>
+<p>The DVD-Video specification limits individual VOB (Video Object)
+files to a maximum size of 1 GB (1,073,741,824 bytes, or 524,288 sectors
+of 2,048 bytes each) to maintain compatibility with older operating
+systems and file systems like FAT32 and UDF 1.02. To store long-form
+video, titles are split sequentially across multiple files named
+<code>VTS_xx_1.VOB</code>, <code>VTS_xx_2.VOB</code>, up to
+<code>VTS_xx_9.VOB</code>.</p>
+<p>Despite this physical fragmentation on the disc, the VTSI tables
+within <code>VTS_xx_0.IFO</code> do not contain distinct file pointers
+or direct file-path references for each split segment. Instead, the VTSI
+treats the collection of split files as a single, contiguous address
+space.</p>
+<h3 id="key-vtsi-address-tables">Key VTSI Address Tables</h3>
+<p>Two primary tables within the VTSI define sector locations for
+playback navigation:</p>
+<ol type="1">
+<li><strong>VTS_VOBU_ADMAP (VOBU Address Map):</strong> Lists the start
+addresses of every Video Object Unit (VOBU) relative to the beginning of
+the title set's presentation space.</li>
+<li><strong>VTS_C_ADT (Cell Address Table):</strong> Defines the start
+and end sector addresses for every cell (chapter or scene component)
+within the title set.</li>
+</ol>
+<p>Both tables store addresses as relative sector numbers (RLBA), where
+sector <code>0</code> corresponds to the very first sector of
+<code>VTS_xx_1.VOB</code>.</p>
+<h3 id="mapping-logical-sectors-to-split-files">Mapping Logical Sectors
+to Split Files</h3>
+<p>When a DVD navigation engine queries the VTSI for a target sector, it
+maps the global sector offset to a physical file and an internal file
+offset.</p>
+<p>To determine the correct file:</p>
+<ol type="1">
+<li>The player reads the file system directory to get the exact sector
+count and starting disc Logical Block Address (LBA) of each sequential
+split file (<code>VTS_xx_1.VOB</code>, <code>VTS_xx_2.VOB</code>,
+etc.).</li>
+<li>The player maintains a cumulative running total of sectors across
+these files.</li>
+<li>If the target sector address <span class="math inline">\(S\)</span>
+is smaller than the capacity of <code>VTS_xx_1.VOB</code>, the target
+resides in <code>VTS_xx_1.VOB</code> at sector <span
+class="math inline">\(S\)</span>.</li>
+<li>If <span class="math inline">\(S\)</span> exceeds the capacity of
+<code>VTS_xx_1.VOB</code>, the player subtracts the sector lengths of
+preceding files until the relative offset falls within the sector range
+of a subsequent file:</li>
+</ol>
+<p><span class="math display">\[\text{Local Sector Offset} = S -
+\sum_{i=1}^{k-1} \text{Size}(\text{VTS\_xx\_}i\text{.VOB})\]</span></p>
+<p>Where <span class="math inline">\(k\)</span> is the target file index
+in the sequence.</p>
+<h3 id="boundary-alignment-and-seamless-traversal">Boundary Alignment
+and Seamless Traversal</h3>
+<p>Because sector offsets in the VTSI are completely agnostic of file
+splits, authoring systems ensure that split points do not interrupt
+essential data structures:</p>
+<ul>
+<li><strong>VOBU Alignment:</strong> Splits occur strictly on sector
+boundaries, and well-authored discs align the 1 GB split to complete
+Video Object Units (VOBUs) to avoid cutting an audio or video packet in
+half.</li>
+<li><strong>Seamless Buffering:</strong> During linear playback, the
+player reads through the final sector of <code>VTS_xx_k.VOB</code> and
+immediately issues a read command to the starting LBA of
+<code>VTS_xx_(k+1).VOB</code>. Since the disc track layout places
+sequential split VOBs contiguously on the physical spiral whenever
+possible, the optical pickup moves seamlessly without dropping frames,
+matching the continuous logical structure dictated by the VTSI
+tables.</li>
+</ul></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/how-vtsi-sector-address-tables-map-to-split-vo-bs';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

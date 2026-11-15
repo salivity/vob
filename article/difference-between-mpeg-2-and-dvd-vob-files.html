@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Difference Between MPEG-2 and DVD VOB Files - vob</title>
+    <meta name="description" content="While a Video Object (VOB) file is fundamentally based on the MPEG-2 Program Stream format, it is not merely a generic MPEG-2 file with a changed file extension. Standard MPEG-2 is a broad compression standard and container format used widely across digit">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/difference-between-mpeg-2-and-dvd-vob-files">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Difference Between MPEG-2 and DVD VOB Files - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/difference-between-mpeg-2-and-dvd-vob-files" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="While a Video Object (VOB) file is fundamentally based on the MPEG-2 Program Stream format, it is not merely a generic MPEG-2 file with a changed file extension. Standard MPEG-2 is a broad compression standard and container format used widely across digit" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="difference-between-mpeg-2-and-dvd-vob-files">Difference Between
+MPEG-2 and DVD VOB Files</h1>
+<p>While a Video Object (VOB) file is fundamentally based on the MPEG-2
+Program Stream format, it is not merely a generic MPEG-2 file with a
+changed file extension. Standard MPEG-2 is a broad compression standard
+and container format used widely across digital broadcasting and
+storage. In contrast, a DVD-compliant VOB file is a strictly regulated
+container designed specifically for the physical DVD-Video format,
+incorporating proprietary navigation data, specialized subtitle streams,
+strict bitrate limits, and multi-audio support.</p>
+<h2 id="the-container-program-stream-vs-specialized-vob">The Container:
+Program Stream vs. Specialized VOB</h2>
+<p>A generic MPEG-2 file (typically using extensions like
+<code>.mpg</code>, <code>.mpeg</code>, or <code>.m2v</code>) is an
+MPEG-2 Program Stream (PS) or Elementary Stream (ES). It holds
+multiplexed audio and video data intended for straightforward playback
+on computers or digital media players.</p>
+<p>A VOB file is also based on the MPEG-2 Program Stream specification,
+but it is heavily customized according to the DVD Forum's DVD-Video
+standard. A VOB file cannot exist in isolation on a compliant DVD; it
+functions alongside Information (<code>.IFO</code>) and Backup
+(<code>.BUP</code>) files, which tell the DVD player how to interpret
+the chapters, menus, and track layouts held within the VOB.</p>
+<h2 id="embedded-navigation-data-nv_pck">Embedded Navigation Data
+(NV_PCK)</h2>
+<p>The single biggest technical differentiator between standard MPEG-2
+and a VOB file is the presence of Navigation Packs
+(<code>NV_PCK</code>).</p>
+<p>Within a VOB file, video and audio data are sliced into sectors of
+precisely 2,048 bytes. At the start of every Video Object Unit
+(VOBU)—typically representing 0.4 to 1.0 second of video—the VOB embeds
+a navigation packet containing two distinct data blocks:</p>
+<ul>
+<li><strong>Presentation Control Information (PCI):</strong> Manages
+user interactions, highlights on-screen menu buttons, and coordinates
+seamless angle switching.</li>
+<li><strong>Data Search Information (DSI):</strong> Stores exact sector
+offsets for trick play (fast-forward, rewind) and provides
+jump-addresses for playback engines.</li>
+</ul>
+<p>A standard MPEG-2 file completely lacks these navigation packs. If a
+generic MPEG-2 file is burned directly to a disc without authoring,
+standard standalone DVD players cannot process chapter points,
+interactive menus, or precise fast-forward seeking.</p>
+<h2 id="subtitles-and-multi-stream-audio">Subtitles and Multi-Stream
+Audio</h2>
+<p>Standard MPEG-2 files generally carry basic audio tracks (such as
+MP2, PCM, or AAC) and sometimes broadcast teletext or closed-caption
+data.</p>
+<p>A DVD-compliant VOB file supports complex, synchronized multiplexing
+of:</p>
+<ul>
+<li><strong>Up to 8 concurrent audio streams:</strong> Supporting Dolby
+Digital (AC-3), DTS, Linear PCM, or MPEG-1 Audio Layer II.</li>
+<li><strong>Up to 32 subpicture streams:</strong> Unlike text-based
+subtitles found in other media formats, DVD subtitles in a VOB are
+run-length encoded 2-bit bitmaps overlaid on the video frame. These
+subpictures are also used to generate the interactive highlights for DVD
+menus.</li>
+</ul>
+<h2 id="strict-resolution-and-bitrate-constraints">Strict Resolution and
+Bitrate Constraints</h2>
+<p>MPEG-2 as a codec allows for a wide range of resolutions, aspect
+ratios, and bitrates, including High Definition formats (such as 1080i
+in ATSC broadcasts) and bitrates exceeding 40 Mbps.</p>
+<p>A DVD-compliant VOB file enforces strict technical limits to ensure
+playback compatibility on hardware decoders:</p>
+<ul>
+<li><strong>Resolution:</strong> Strictly Standard Definition. For NTSC,
+it requires 720×480, 704×480, 352×480, or 352×240. For PAL, it requires
+720×576, 704×576, 352×576, or 352×288.</li>
+<li><strong>Maximum Bitrate:</strong> The video stream alone cannot
+exceed 9.8 Mbps. The total combined bitrate—encompassing all audio
+tracks, video, subpictures, and navigation overhead—must never exceed
+10.08 Mbps.</li>
+<li><strong>GOP Structure:</strong> Group of Pictures (GOP) lengths are
+restricted (typically a maximum of 18 frames for NTSC and 15 frames for
+PAL) to guarantee responsive seeking.</li>
+</ul>
+<h2 id="file-segmentation-limits">File Segmentation Limits</h2>
+<p>Operating systems and generic media formats can support files of
+virtually unlimited size. In contrast, the DVD specification mandates
+that no single VOB file can exceed 1 GB (specifically 1,048,576 KB).
+This limitation ensures compatibility across the UDF (Universal Disk
+Format) 1.02 and ISO 9660 file systems used on DVD-Video discs. Longer
+titles must be split across sequential files (e.g.,
+<code>VTS_01_1.VOB</code>, <code>VTS_01_2.VOB</code>) that play
+continuously as a single seamless stream.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/difference-between-mpeg-2-and-dvd-vob-files';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

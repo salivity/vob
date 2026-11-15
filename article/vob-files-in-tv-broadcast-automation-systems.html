@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VOB Files in TV Broadcast Automation Systems - vob</title>
+    <meta name="description" content="VOB (Video Object) files cannot be used directly in modern television broadcast automation systems without transcoding. While VOB files rely on standard MPEG-2 video compression, their container structure is proprietary to the DVD-Video specification and">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/vob-files-in-tv-broadcast-automation-systems">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="VOB Files in TV Broadcast Automation Systems - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/vob-files-in-tv-broadcast-automation-systems" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="VOB (Video Object) files cannot be used directly in modern television broadcast automation systems without transcoding. While VOB files rely on standard MPEG-2 video compression, their container structure is proprietary to the DVD-Video specification and" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="vob-files-in-tv-broadcast-automation-systems">VOB Files in TV
+Broadcast Automation Systems</h1>
+<p>VOB (Video Object) files cannot be used directly in modern television
+broadcast automation systems without transcoding. While VOB files rely
+on standard MPEG-2 video compression, their container structure is
+proprietary to the DVD-Video specification and lacks the metadata,
+timing synchronization, and structural standards required by
+professional playout servers. To maintain transmission reliability and
+broadcast compliance, these files must be converted or re-wrapped into
+standard broadcast interchange formats before ingestion.</p>
+<h3 id="the-incompatibility-of-the-vob-container">The Incompatibility of
+the VOB Container</h3>
+<p>A VOB file is fundamentally an MPEG-2 Program Stream (PS)
+specifically packaged for DVD optical media. Broadcast automation
+environments, by contrast, rely almost exclusively on MPEG-2 Transport
+Streams (TS) or MXF (Material Exchange Format) wrappers, typically MXF
+OP1a.</p>
+<p>Program Streams are designed for error-free environments such as
+local disc playback and combine video, audio, and navigation data into a
+single continuous stream. Broadcast automation systems require container
+formats that support packetized transport, robust error correction,
+discrete multi-channel audio tracks, and broadcast-specific frame rates.
+Most professional video servers (such as those from Harmonic, Grass
+Valley, or Imagine Communications) will either reject a
+<code>.vob</code> extension outright or fail during playback due to
+unreadable navigation packets (PCI and DSI) embedded within the
+stream.</p>
+<h3 id="audio-and-timecode-deficiencies">Audio and Timecode
+Deficiencies</h3>
+<p>Broadcast television relies on rigid standards for audio channel
+mapping and timecode tracks, areas where VOB files fail to meet
+requirements:</p>
+<ul>
+<li><strong>Audio Tracks:</strong> VOB files often contain compressed
+Dolby Digital (AC-3), DTS, or consumer LPCM audio paired in stereo or
+consumer 5.1 layouts. Playout servers generally require uncompressed
+24-bit discrete PCM audio tracks mapped to specific channels for
+dialogue, secondary audio programming (SAP), and descriptive video
+services.</li>
+<li><strong>Timecode:</strong> Broadcast automation requires linear
+timecode (LTC) or vertical interval timecode (VITC) tracks embedded
+according to SMPTE standards to execute frame-accurate cuts, commercial
+insertions, and graphics triggers. VOB files use simple Presentation
+Time Stamps (PTS) designed for media navigation rather than
+frame-accurate SMPTE timecode.</li>
+</ul>
+<h3 id="closed-captioning-and-ancillary-data">Closed Captioning and
+Ancillary Data</h3>
+<p>Television stations must comply with regulatory mandates regarding
+closed captioning, such as CEA-608 and CEA-708 standards. In VOB files,
+subtitles are stored as bitmapped sub-picture streams rather than
+standardized text streams or SMPTE 436M ancillary data tracks. Playout
+automation cannot extract or broadcast these DVD-specific bitmap
+graphics as compliant closed captions.</p>
+<h3 id="the-workflow-solution">The Workflow Solution</h3>
+<p>Attempting to force direct playback of VOB files risks automation
+freezes, audio-video sync drift, and black-to-air incidents. Facilities
+handling archive material or legacy assets originally stored on DVD must
+implement a mandatory pre-ingest workflow:</p>
+<ol type="1">
+<li><strong>Re-wrapping (Muxing):</strong> If the internal video stream
+matches native broadcast parameters (such as standard-definition MPEG-2
+at 50i or 59.94i), the elemental streams can sometimes be extracted and
+re-wrapped into an MXF or standard MPEG-2 TS container without quality
+loss.</li>
+<li><strong>Transcoding:</strong> The safer and industry-standard
+approach is to transcode the VOB asset using an automated transcode
+engine into the facility's native mezzanine format—such as XDCAM HD422,
+Apple ProRes, or Avid DNxHD—with standardized PCM audio channel mapping
+and generated SMPTE timecode.</li>
+</ol></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/vob-files-in-tv-broadcast-automation-systems';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

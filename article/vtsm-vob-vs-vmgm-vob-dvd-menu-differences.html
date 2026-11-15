@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VTSM VOB vs VMGM VOB: DVD Menu Differences - vob</title>
+    <meta name="description" content="In standard DVD-Video architecture, interactive menus are handled by two distinct types of Video Object (VOB) files: the Video Manager Menu (VMGM) VOB and the Video Title Set Menu (VTSM) VOB. While both contain multiplexed video, audio, and subpicture str">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/vtsm-vob-vs-vmgm-vob-dvd-menu-differences">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="VTSM VOB vs VMGM VOB: DVD Menu Differences - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/vtsm-vob-vs-vmgm-vob-dvd-menu-differences" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="In standard DVD-Video architecture, interactive menus are handled by two distinct types of Video Object (VOB) files: the Video Manager Menu (VMGM) VOB and the Video Title Set Menu (VTSM) VOB. While both contain multiplexed video, audio, and subpicture str" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="vtsm-vob-vs-vmgm-vob-dvd-menu-differences">VTSM VOB vs VMGM VOB:
+DVD Menu Differences</h1>
+<p>In standard DVD-Video architecture, interactive menus are handled by
+two distinct types of Video Object (VOB) files: the Video Manager Menu
+(VMGM) VOB and the Video Title Set Menu (VTSM) VOB. While both contain
+multiplexed video, audio, and subpicture streams used to render
+interactive buttons and backgrounds, they occupy different levels in the
+DVD hierarchy. This article outlines the key technical and structural
+differences between VMGM and VTSM VOB files, including disc scope,
+remote control mappings, and file organization.</p>
+<h3 id="hierarchical-scope-disc-level-vs-title-level">Hierarchical
+Scope: Disc-Level vs. Title-Level</h3>
+<p>The primary difference lies in their operational scope within the DVD
+structure:</p>
+<ul>
+<li><strong>VMGM VOB (Video Manager Menu):</strong> Functions at the
+global disc level. It acts as the master control hub for the entire DVD,
+meaning it can direct playback to any Title or Video Title Set (VTS) on
+the disc. It is typically used for disc-wide setup screens, language
+selection, or initial main menus.</li>
+<li><strong>VTSM VOB (Video Title Set Menu):</strong> Functions strictly
+within the boundaries of a single Video Title Set. Its scope is
+localized, designed to control content exclusively within that specific
+VTS, such as scene selections (chapters), title-specific audio setups,
+or extras tied directly to that feature.</li>
+</ul>
+<h3 id="file-naming-and-disc-location">File Naming and Disc
+Location</h3>
+<p>Each menu type uses a specific naming convention in the DVD's
+<code>VIDEO_TS</code> directory:</p>
+<ul>
+<li><strong>VMGM VOB:</strong> Stored as <code>VIDEO_TS.VOB</code>. It
+is governed by <code>VIDEO_TS.IFO</code>, which provides the navigation
+instructions for the disc manager. A DVD can only have one VMGM VOB file
+(split into 1 GB segments if necessary).</li>
+<li><strong>VTSM VOB:</strong> Stored as <code>VTS_xx_0.VOB</code>,
+where <code>xx</code> represents the two-digit VTS number (e.g.,
+<code>VTS_01_0.VOB</code>). It is governed by its corresponding
+<code>VTS_xx_0.IFO</code> file. Each VTS on the disc can have its own
+dedicated VTSM VOB.</li>
+</ul>
+<h3 id="remote-control-button-mapping">Remote Control Button
+Mapping</h3>
+<p>Standard DVD players handle the physical buttons on the remote
+control differently depending on whether the command targets the VMGM or
+VTSM domain:</p>
+<ul>
+<li><strong>Title Menu (Top Menu):</strong> Typically calls the VMGM
+domain. Pressing this button prompts the player to branch out of the
+current title and jump directly to the disc-level menu in
+<code>VIDEO_TS.VOB</code>.</li>
+<li><strong>Root Menu (Menu):</strong> Typically calls the VTSM domain.
+Pressing this button jumps to the root menu within the currently playing
+title set (<code>VTS_xx_0.VOB</code>). While authors can remap this
+behavior using navigation commands, the specification standardizes Root
+Menus within the VTS domain.</li>
+</ul>
+<h3 id="navigation-and-linking-capabilities">Navigation and Linking
+Capabilities</h3>
+<p>The DVD specification enforces strict navigation rules between these
+domains:</p>
+<ul>
+<li><strong>VMGM Navigation:</strong> A VMGM VOB can issue commands that
+jump directly to any title in any VTS across the disc. However, it
+cannot directly address individual cells or chapters inside a title
+without first entering the corresponding VTS domain.</li>
+<li><strong>VTSM Navigation:</strong> A VTSM VOB can navigate freely
+within its own VTS (such as jumping to specific chapters or audio
+streams of its associated title). However, a VTSM cannot link directly
+to another VTS. To access a different title set, the navigation command
+must first exit to the VMGM, which then routes playback to the desired
+target.</li>
+</ul>
+<h3 id="structural-sub-menus">Structural Sub-Menus</h3>
+<p>The DVD specification reserves specific menu types within each
+domain:</p>
+<ul>
+<li><strong>VMGM Sub-Menus:</strong> Can include the Title Menu, as well
+as general setup menus applicable to the entire disc.</li>
+<li><strong>VTSM Sub-Menus:</strong> Can be divided into standardized
+menu types within the title set, including Root, Subpicture, Audio,
+Angle, and Chapter (Part of Title) menus.</li>
+</ul></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/vtsm-vob-vs-vmgm-vob-dvd-menu-differences';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

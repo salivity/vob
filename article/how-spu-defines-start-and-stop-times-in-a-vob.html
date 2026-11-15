@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How SPU Defines Start and Stop Times in a VOB - vob</title>
+    <meta name="description" content="A Subpicture Unit (SPU) inside a DVD Video Object (VOB) file manages its presentation timing through a two-tier synchronization mechanism. While the overarching MPEG-2 Packetized Elementary Stream (PES) header supplies the baseline Presentation Time Stamp">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/how-spu-defines-start-and-stop-times-in-a-vob">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How SPU Defines Start and Stop Times in a VOB - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/how-spu-defines-start-and-stop-times-in-a-vob" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="A Subpicture Unit (SPU) inside a DVD Video Object (VOB) file manages its presentation timing through a two-tier synchronization mechanism. While the overarching MPEG-2 Packetized Elementary Stream (PES) header supplies the baseline Presentation Time Stamp" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-spu-defines-start-and-stop-times-in-a-vob">How SPU Defines
+Start and Stop Times in a VOB</h1>
+<p>A Subpicture Unit (SPU) inside a DVD Video Object (VOB) file manages
+its presentation timing through a two-tier synchronization mechanism.
+While the overarching MPEG-2 Packetized Elementary Stream (PES) header
+supplies the baseline Presentation Time Stamp (PTS) to lock the
+subpicture to the global audio and video streams, internal structures
+known as Display Control Sequence Tables (SP_DCSQT) calculate relative
+execution offsets. Together, these elements determine the exact field or
+frame when a subtitle or graphic overlay becomes visible and when it
+disappears from the screen.</p>
+<h3 id="the-baseline-timing-mpeg-2-pes-pts">The Baseline Timing: MPEG-2
+PES PTS</h3>
+<p>At the container level, subpicture streams are multiplexed within
+standard MPEG-2 Program Stream packets. When an SPU begins, its first
+PES packet contains a 33-bit Presentation Time Stamp (PTS) clocked at 90
+kHz.</p>
+<p>This PTS acts as the master reference point (<span
+class="math inline">\(T_0\)</span>) for the entire SPU. It informs the
+DVD player's subpicture decoder precisely when the SPU data should be
+loaded into the buffer and made ready for processing relative to the
+accompanying audio and video packets.</p>
+<h3 id="internal-sequencing-the-sp_dcsqt">Internal Sequencing: The
+SP_DCSQT</h3>
+<p>While the PTS establishes the baseline start reference, the SPU
+itself contains an internal control block called the Subpicture Display
+Control Sequence Table (<code>SP_DCSQT</code>). This table resides at
+the end of the SPU and contains one or more Display Control Sequences
+(<code>SP_DCSQ</code>).</p>
+<p>Each <code>SP_DCSQ</code> contains:</p>
+<ul>
+<li><strong><code>SP_DCSQ_STM</code> (Start Time):</strong> A 16-bit
+relative execution offset measured in video field intervals (typically
+1/50th of a second for PAL or 1/59.94th of a second for NTSC, or derived
+from a 90 kHz/1024 clock multiplier). This offset is added to the
+initial PES PTS to define the exact execution moment of the commands
+within that sequence.</li>
+<li><strong><code>SP_NXT_DCSQ_SA</code> (Next Sequence
+Address):</strong> A pointer directing the decoder to the next control
+sequence, allowing chained display modifications over time.</li>
+<li><strong>Display Control Commands (<code>SP_DCC_MD</code>):</strong>
+Operational opcodes that modify the display state.</li>
+</ul>
+<h3 id="defining-the-start-time">Defining the Start Time</h3>
+<p>The display start time is triggered by the <code>STA_DSP</code>
+(Start Display) command (opcode <code>0x01</code>). In practical
+scenarios:</p>
+<ol type="1">
+<li>The first control sequence (<code>SP_DCSQ 0</code>) usually features
+an <code>SP_DCSQ_STM</code> value of <code>0x0000</code>.</li>
+<li>When the system clock matches the PES PTS, execution begins
+immediately.</li>
+<li>The decoder processes the <code>STA_DSP</code> command alongside
+color lookup, contrast, and coordinate mapping commands
+(<code>SET_COLOR</code>, <code>SET_CONTR</code>,
+<code>SET_DAREA</code>).</li>
+<li>The decoded pixel buffer becomes visible on the video output at that
+exact field.</li>
+</ol>
+<p>If a delay is required between SPU arrival and display,
+<code>SP_DCSQ_STM</code> is set to a non-zero value, postponing the
+execution of <code>STA_DSP</code> until that relative duration has
+elapsed.</p>
+<h3 id="defining-the-stop-time">Defining the Stop Time</h3>
+<p>The visibility of an SPU terminates when the decoder executes the
+<code>STP_DSP</code> (Stop Display) command (opcode <code>0x02</code>).
+This is typically scheduled through a chained control sequence:</p>
+<ol type="1">
+<li>The initial sequence points to a second sequence
+(<code>SP_DCSQ 1</code>) via <code>SP_NXT_DCSQ_SA</code>.</li>
+<li>The second sequence defines an <code>SP_DCSQ_STM</code> representing
+the total visible duration of the subtitle, measured from the base
+PTS.</li>
+<li>When the playback time reaches <code>Base PTS + SP_DCSQ_STM</code>,
+the decoder executes the <code>STP_DSP</code> command found in this
+second sequence.</li>
+<li>The display generator stops blending the subpicture buffer with the
+background video, removing the subtitle.</li>
+</ol>
+<h3 id="implicit-termination-conditions">Implicit Termination
+Conditions</h3>
+<p>If a subpicture lacks an explicit <code>STP_DSP</code> command,
+display termination is handled by external stream events:</p>
+<ul>
+<li><strong>Arrival of a New SPU:</strong> Subpicture channels operate
+sequentially; loading and activating a subsequent SPU on the same
+sub-stream will overwrite or reset the active display buffer.</li>
+<li><strong>Cell or VOB Boundaries:</strong> Reaching the end of a DVD
+Cell, Program Chain (PGC), or VOB unit forces the subpicture decoder to
+flush its current display buffers, automatically terminating any
+lingering SPU overlays.</li>
+</ul></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/how-spu-defines-start-and-stop-times-in-a-vob';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

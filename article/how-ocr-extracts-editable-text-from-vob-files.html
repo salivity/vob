@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How OCR Extracts Editable Text From VOB Files - vob</title>
+    <meta name="description" content="Extracting editable text from a VOB (Video Object) file involves converting hardcoded or bitmap-based subtitles stored within DVD video streams into machine-readable characters. Because VOB files store subtitles as graphical image overlays rather than cod">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/how-ocr-extracts-editable-text-from-vob-files">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How OCR Extracts Editable Text From VOB Files - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/how-ocr-extracts-editable-text-from-vob-files" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Extracting editable text from a VOB (Video Object) file involves converting hardcoded or bitmap-based subtitles stored within DVD video streams into machine-readable characters. Because VOB files store subtitles as graphical image overlays rather than cod" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-ocr-extracts-editable-text-from-vob-files">How OCR Extracts
+Editable Text From VOB Files</h1>
+<p>Extracting editable text from a VOB (Video Object) file involves
+converting hardcoded or bitmap-based subtitles stored within DVD video
+streams into machine-readable characters. Because VOB files store
+subtitles as graphical image overlays rather than coded digital text,
+standard text-extraction tools cannot read them directly. Optical
+Character Recognition (OCR) software solves this problem by
+demultiplexing the file to isolate the subtitle images, preprocessing
+those graphics for clarity, analyzing the visual character patterns, and
+outputting the final text into editable subtitle formats like SRT.</p>
+<h3 id="1-demultiplexing-the-vob-container">1. Demultiplexing the VOB
+Container</h3>
+<p>A VOB file is a container format used on standard DVD-Video media. It
+multiplexes multiple streams together, including MPEG-2 video, audio
+tracks (such as AC-3 or DTS), DVD menus, and subpicture streams.</p>
+<p>To process subtitles, OCR tools first demultiplex (demux) the VOB
+container. The software parses the data stream to separate the
+subpicture data from the video and audio tracks. In DVDs, these
+subpicture streams consist of runs of small, indexed bitmap images
+rather than plain text strings.</p>
+<h3 id="2-extracting-and-isolating-the-subpicture-bitmaps">2. Extracting
+and Isolating the Subpicture Bitmaps</h3>
+<p>Once the subpicture stream is isolated, the software extracts the
+individual graphical frames along with their synchronization timecodes.
+DVD subtitles are typically stored in a 2-bit or 4-bit format, limited
+to four colors: a background color, a pattern (text) color, and two
+outline/emphasis colors. The software extracts each subtitle frame
+sequentially, noting the exact start and end timestamps so that timing
+remains accurate in the final text document.</p>
+<h3 id="3-image-preprocessing">3. Image Preprocessing</h3>
+<p>Before running character recognition, the tool preprocesses the raw
+bitmap frames to maximize OCR accuracy:</p>
+<ul>
+<li><strong>Binarization and Thresholding:</strong> The image is
+converted into high-contrast black and white. The software eliminates
+transparency and removes background elements, leaving only the dark
+outline or solid fill of the characters.</li>
+<li><strong>Cropping and Scaling:</strong> The bounding box around the
+text is cropped to remove empty margins, and the image may be upscaled
+to help the recognition algorithm identify fine curves and letter
+details.</li>
+<li><strong>Noise Reduction:</strong> Speckles or artifacts resulting
+from DVD compression are smoothed out.</li>
+</ul>
+<h3 id="4-optical-character-recognition-ocr-analysis">4. Optical
+Character Recognition (OCR) Analysis</h3>
+<p>The preprocessed bitmap is then sent through the OCR engine. Modern
+tools use either matrix matching or feature-extraction neural networks
+(such as the Tesseract OCR engine) to decode the image:</p>
+<ul>
+<li><strong>Matrix Matching:</strong> Compares the extracted glyph
+pixel-by-pixel against an internal database of known fonts. This is
+common in legacy tools like SubRip, where the user can manually train
+the software on unfamiliar DVD fonts.</li>
+<li><strong>Feature Extraction:</strong> Analyzes glyph characteristics
+such as lines, intersections, loops, and angles, which allows the
+software to recognize varying fonts and character weights
+automatically.</li>
+</ul>
+<p>During this stage, the software translates visual shapes into
+standard Unicode or ASCII character codes.</p>
+<h3 id="5-formatting-and-exporting-editable-text">5. Formatting and
+Exporting Editable Text</h3>
+<p>After the OCR engine identifies the characters in each frame, the
+software performs basic post-processing to fix common character
+confusions (such as mistaking the uppercase letter "I" for the lowercase
+letter "l" or the digit "1").</p>
+<p>Finally, the recognized text is paired with the original timestamps
+saved during the demuxing step. The software compiles this data into an
+editable subtitle file (such as SubRip <code>.srt</code>, WebVTT
+<code>.vtt</code>, or a plain text document), allowing users to edit,
+translate, or restyle the content as needed.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/how-ocr-extracts-editable-text-from-vob-files';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

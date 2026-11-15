@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCR Reset Without Navigation Update in VOB Playback - vob</title>
+    <meta name="description" content="During DVD-Video VOB playback, the System Clock Reference (SCR) synchronizes the decoder&#39;s System Time Clock (STC) with incoming audio, video, and subpicture streams. This article explains the technical consequences that occur when an SCR reset takes plac">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/scr-reset-without-navigation-update-in-vob-playback">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="SCR Reset Without Navigation Update in VOB Playback - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/scr-reset-without-navigation-update-in-vob-playback" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="During DVD-Video VOB playback, the System Clock Reference (SCR) synchronizes the decoder&#39;s System Time Clock (STC) with incoming audio, video, and subpicture streams. This article explains the technical consequences that occur when an SCR reset takes plac" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="scr-reset-without-navigation-update-in-vob-playback">SCR Reset
+Without Navigation Update in VOB Playback</h1>
+<p>During DVD-Video VOB playback, the System Clock Reference (SCR)
+synchronizes the decoder's System Time Clock (STC) with incoming audio,
+video, and subpicture streams. This article explains the technical
+consequences that occur when an SCR reset takes place within a VOB file
+without an accompanying DVD navigation update, detailing the resulting
+timeline desynchronization, buffer management failures, playback
+stutter, and potential decoder crashes.</p>
+<h3 id="the-role-of-scr-and-dvd-navigation">The Role of SCR and DVD
+Navigation</h3>
+<p>In the DVD-Video specification, VOB files are structured as modified
+MPEG-2 Program Streams. The SCR is embedded within pack headers to
+establish a continuous reference time, allowing Presentation Time Stamps
+(PTS) and Decode Time Stamps (DTS) to schedule frame decoding and
+presentation accurately. When a transition occurs—such as a layer break,
+angle change, or cell transition—the authoring specification requires a
+navigation pack (NV_PCK) or cell-level flags in the IFO files to signal
+a discontinuity. This signals the decoder to reset or reload its
+internal STC seamlessly.</p>
+<h3 id="buffer-underflows-and-presentation-freezes">Buffer Underflows
+and Presentation Freezes</h3>
+<p>If the SCR drops to zero or jumps significantly without a navigation
+command signaling a discontinuity, the player's STC loses its timing
+baseline. The decoder calculates whether to display, drop, or hold
+frames by comparing incoming PTS values directly to the running STC. If
+an unannounced SCR reset sets the STC to a value far behind the stream's
+current PTS, the decoder assumes the target frames belong far in the
+future. Consequently, video playback freezes on the last decoded frame
+while the decoder waits for the STC to catch up. Conversely, if the
+reset causes the STC to exceed upcoming PTS values, the decoder treats
+frames as late and aggressively drops them, leading to visual
+skipping.</p>
+<h3 id="audiovideo-desynchronization">Audio/Video Desynchronization</h3>
+<p>Audio and video decoders maintain separate Elementary Stream buffers,
+both referencing the master STC. Because audio data requires continuous
+playback without gaps, unexpected clock mismatches cause audio buffers
+to either underflow or overflow. The audio engine may mute to protect
+the output hardware, stutter rapidly as it starves for data, or continue
+playing unanchored while the video remains frozen. Once the master clock
+is decoupled from the actual presentation stamps, the synchronization
+between audio dialogue and video lip movement is permanently lost for
+the remainder of the cell or segment.</p>
+<h3 id="decoder-buffer-management-failures">Decoder Buffer Management
+Failures</h3>
+<p>The MPEG-2 System Target Decoder (STD) relies on precise mathematical
+buffer fullness models based on continuous SCR progression. An
+unannounced clock reset invalidates the buffer occupancy calculations.
+If the decoder misinterprets stream velocity due to an inconsistent SCR,
+it can cause the Video Buffer Verifier (VBV) buffer to overflow,
+overwriting uncompressed frames, or underflow, causing playback
+starvation.</p>
+<h3 id="player-dependent-behavior">Player-Dependent Behavior</h3>
+<p>The severity of the issue depends largely on the playback
+environment:</p>
+<ul>
+<li><strong>Standalone Hardware Players:</strong> Strict compliance with
+DVD-Video standards makes legacy consumer hardware particularly
+vulnerable. When confronted with an unnotified SCR reset, many
+standalone players cannot recover, resulting in hard freezes,
+unresolvable buffer errors, or an automatic abort that skips to the next
+title or stops the disc entirely.</li>
+<li><strong>Modern Software Decoders:</strong> Software media players
+often employ heuristics to detect broken timestamps. Many software
+decoders will discard broken SCR values entirely, falling back on
+internal system clocks and relative delta times between successive PTS
+values. While this may salvage playback, it often manifests as a
+momentary macroblocking glitch, an audio pop, or a brief frame hitch at
+the point of the reset.</li>
+</ul></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/scr-reset-without-navigation-update-in-vob-playback';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

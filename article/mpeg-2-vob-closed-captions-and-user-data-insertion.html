@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-2 VOB Closed Captions and User Data Insertion - vob</title>
+    <meta name="description" content="User data insertion is the critical mechanism used to embed CEA-608 and CEA-708 closed captioning directly into an MPEG-2 elementary video stream packaged within a DVD Video Object (VOB) file. Rather than altering visual pixels or relying solely on separa">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/mpeg-2-vob-closed-captions-and-user-data-insertion">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-2 VOB Closed Captions and User Data Insertion - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/mpeg-2-vob-closed-captions-and-user-data-insertion" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="User data insertion is the critical mechanism used to embed CEA-608 and CEA-708 closed captioning directly into an MPEG-2 elementary video stream packaged within a DVD Video Object (VOB) file. Rather than altering visual pixels or relying solely on separa" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="mpeg-2-vob-closed-captions-and-user-data-insertion">MPEG-2 VOB
+Closed Captions and User Data Insertion</h1>
+<p>User data insertion is the critical mechanism used to embed CEA-608
+and CEA-708 closed captioning directly into an MPEG-2 elementary video
+stream packaged within a DVD Video Object (VOB) file. Rather than
+altering visual pixels or relying solely on separate subtitle streams,
+closed captions are injected as supplemental metadata directly into the
+video stream structure. This overview examines how user data insertion
+functions, its role in frame-accurate synchronization, and how hardware
+and software decoders extract these packets to display Line 21 closed
+captions during DVD playback.</p>
+<h3 id="the-mechanism-of-user-data-insertion">The Mechanism of User Data
+Insertion</h3>
+<p>In MPEG-2 video streams (ISO/IEC 13818-2), the syntax allows for
+arbitrary data insertion using designated extension blocks, specifically
+through the <code>user_data()</code> start code
+(<code>0x000001B2</code>). When authoring video for DVD-Video VOB
+containers, encoders insert closed caption bytes into this user data
+space, typically located directly following a picture header or Group of
+Pictures (GOP) header.</p>
+<p>In standard DVD-Video implementations, this user data follows
+formatting rules defined by standards like ATSC A/53 or DVD Forum
+specifications. A specific identifier or header (often a 4-byte
+identifier like <code>CC\x01\xf5</code> or ATSC format identifiers)
+signals to the demultiplexer that the succeeding payload contains
+encoded EIA-608 (Line 21) or CEA-708 caption packets rather than
+arbitrary proprietary metadata.</p>
+<h3 id="maintaining-temporal-synchronization">Maintaining Temporal
+Synchronization</h3>
+<p>The primary role of embedding captions as picture-level user data is
+ensuring exact synchronization between text and video:</p>
+<ul>
+<li><strong>Per-Frame Timing:</strong> By attaching caption bytes
+directly to a specific picture header, the caption payload is
+intrinsically linked to that exact video frame. This avoids timing drift
+that can occur when multiplexing text into separate container-level
+streams.</li>
+<li><strong>Field-Level Assignment:</strong> Line 21 data is naturally
+divided into Field 1 and Field 2. Picture user data structures
+accommodate this by carrying flags that dictate whether a pair of
+caption bytes corresponds to the top or bottom field of the frame,
+ensuring proper display cadence for interlaced video.</li>
+</ul>
+<h3 id="bandwidth-and-processing-efficiency">Bandwidth and Processing
+Efficiency</h3>
+<p>Inserting closed captions via user data preserves encoding efficiency
+and image fidelity:</p>
+<ul>
+<li><strong>Zero Impact on Visual Compression:</strong> Because captions
+are carried as metadata, the active video area remains untouched. There
+is no need for "burned-in" open captions that consume bit budget and
+degrade compression performance.</li>
+<li><strong>Low Overhead:</strong> Caption data operates at a very low
+bitrate (typically around 9600 bps for standard EIA-608). Embedding this
+directly into the MPEG-2 video elementary stream introduces negligible
+overhead compared to the multi-megabit video payload.</li>
+</ul>
+<h3 id="playback-and-decoding-pipeline">Playback and Decoding
+Pipeline</h3>
+<p>When a DVD player or media playback engine reads a VOB file, it
+parses the MPEG-2 stream:</p>
+<ol type="1">
+<li><strong>Extraction:</strong> The video decoder recognizes the
+<code>user_data()</code> start code (<code>0x000001B2</code>) and checks
+the data prefix.</li>
+<li><strong>Routing:</strong> If recognized as caption data, the player
+strips the caption payload out of the elementary stream before decoding
+the macroblocks.</li>
+<li><strong>Reconstruction:</strong> For analog playback (e.g., standard
+definition via composite or S-Video), the hardware converts the data
+back into an analog VBI (Vertical Blanking Interval) Line 21 waveform so
+television sets can decode it. For digital output (such as HDMI) or
+software media players, the player renders the characters internally as
+an On-Screen Display (OSD) overlay.</li>
+</ol></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/mpeg-2-vob-closed-captions-and-user-data-insertion';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

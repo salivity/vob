@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Which VOB Packets Are Encrypted Under CSS? - vob</title>
+    <meta name="description" content="Under the Content Scramble System (CSS) specification, encryption is applied exclusively to the payload of MPEG-2 video packets within a DVD Video Object (VOB) file. Audio streams, subtitle data, navigation packs, and all stream headers remain completely">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/which-vob-packets-are-encrypted-under-css">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Which VOB Packets Are Encrypted Under CSS? - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/which-vob-packets-are-encrypted-under-css" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Under the Content Scramble System (CSS) specification, encryption is applied exclusively to the payload of MPEG-2 video packets within a DVD Video Object (VOB) file. Audio streams, subtitle data, navigation packs, and all stream headers remain completely" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="which-vob-packets-are-encrypted-under-css">Which VOB Packets Are
+Encrypted Under CSS?</h1>
+<p>Under the Content Scramble System (CSS) specification, encryption is
+applied exclusively to the payload of MPEG-2 video packets within a DVD
+Video Object (VOB) file. Audio streams, subtitle data, navigation packs,
+and all stream headers remain completely unencrypted to allow DVD
+players to demux, synchronize, and navigate the disc without needing to
+decrypt the entire data stream.</p>
+<h3 id="the-structure-of-a-vob-file">The Structure of a VOB File</h3>
+<p>A VOB file is based on the MPEG-2 Program Stream format, organized
+into discrete 2,048-byte blocks that match the physical sector size of a
+DVD-Video disc. Each 2,048-byte sector represents a "Pack"
+containing:</p>
+<ul>
+<li>A <strong>Pack Header</strong> (14 bytes)</li>
+<li>An optional <strong>System Header</strong></li>
+<li>One or more <strong>PES (Packetized Elementary Stream)
+Packets</strong></li>
+</ul>
+<p>Each PES packet includes a PES header followed by the actual
+elementary stream payload (video, audio, or private data).</p>
+<h3 id="specifically-encrypted-packets-video-only">Specifically
+Encrypted Packets: Video Only</h3>
+<p>CSS targets only <strong>video PES packets</strong>. In an MPEG-2
+stream, video elementary streams are identified by the Stream ID range
+<code>0xE0</code> through <code>0xEF</code> (DVD-Video almost
+universally uses Stream ID <code>0xE0</code>).</p>
+<p>Within these designated video sectors, CSS does <strong>not</strong>
+encrypt the entire sector:</p>
+<ul>
+<li><strong>Pack Headers and PES Headers are unencrypted:</strong> The
+14-byte pack header, presentation timestamps (PTS), decode timestamps
+(DTS), and PES header flags remain in plain text.</li>
+<li><strong>The PES Payload is encrypted:</strong> Only the compressed
+MPEG-2 video elementary stream data contained within the PES packet
+payload is scrambled using the 40-bit CSS stream cipher.</li>
+</ul>
+<h3 id="unencrypted-packets-within-the-vob">Unencrypted Packets Within
+the VOB</h3>
+<p>All non-video packets within the VOB container remain unencrypted
+under CSS specifications:</p>
+<ul>
+<li><strong>Navigation Packs (NV_PCK):</strong> Sectors containing
+Presentation Control Information (PCI) and Data Search Information (DSI)
+use Stream ID <code>0xBF</code> (Private Stream 2). These control
+playback branches, angles, and menu highlights, and must be readable by
+the drive and player firmware without decryption keys.</li>
+<li><strong>Audio Packs (A_PCK):</strong> Linear PCM, Dolby Digital
+(AC-3), DTS, and MPEG audio packets are left unencrypted. AC-3 and DTS
+reside under Stream ID <code>0xBD</code> (Private Stream 1) with
+specific sub-stream IDs, while MPEG audio uses Stream IDs
+<code>0xC0</code> through <code>0xDF</code>.</li>
+<li><strong>Sub-picture Packs (SP_PCK):</strong> Subtitles and menu
+overlays (also mapped under Private Stream 1, Stream ID
+<code>0xBD</code>) are not scrambled by CSS.</li>
+</ul>
+<h3 id="how-encryption-is-flagged">How Encryption is Flagged</h3>
+<p>A player determines whether a sector contains encrypted video through
+two indicators:</p>
+<ol type="1">
+<li><strong>Sector Copyright Management Information (CPR_MAI):</strong>
+The physical DVD sector header contains a copyright management field
+where specific bits indicate whether the sector payload is scrambled and
+which CSS key generation applies.</li>
+<li><strong>PES Scrambling Control Bits:</strong> The MPEG-2 PES header
+contains a 2-bit field (<code>PES_scrambling_control</code>). In
+unencrypted packets, this field is set to <code>00</code>. In
+CSS-encrypted video packets, this field is set to a non-zero value
+(typically <code>01</code> or <code>10</code>), indicating that the
+payload requires descrambling before being sent to the MPEG-2 video
+decoder.</li>
+</ol></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/which-vob-packets-are-encrypted-under-css';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

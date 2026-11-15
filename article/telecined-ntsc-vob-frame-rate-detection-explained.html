@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telecined NTSC VOB Frame Rate Detection Explained - vob</title>
+    <meta name="description" content="When playing a telecined NTSC VOB file, a software video player determines the correct playback frame rate by analyzing MPEG-2 stream metadata, evaluating pulldown flags within the picture headers, inspecting Presentation Time Stamps (PTS), or performing">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/telecined-ntsc-vob-frame-rate-detection-explained">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Telecined NTSC VOB Frame Rate Detection Explained - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/telecined-ntsc-vob-frame-rate-detection-explained" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="When playing a telecined NTSC VOB file, a software video player determines the correct playback frame rate by analyzing MPEG-2 stream metadata, evaluating pulldown flags within the picture headers, inspecting Presentation Time Stamps (PTS), or performing" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="telecined-ntsc-vob-frame-rate-detection-explained">Telecined
+NTSC VOB Frame Rate Detection Explained</h1>
+<p>When playing a telecined NTSC VOB file, a software video player
+determines the correct playback frame rate by analyzing MPEG-2 stream
+metadata, evaluating pulldown flags within the picture headers,
+inspecting Presentation Time Stamps (PTS), or performing real-time
+cadence analysis on the video fields. This process allows the player to
+distinguish between native 29.97 interlaced frames, soft-telecined
+23.976 frames flagged for pulldown, and hard-telecined content baked
+directly into the video stream.</p>
+<h3 id="1-sequence-header-inspection">1. Sequence Header Inspection</h3>
+<p>The detection process begins at the MPEG-2 video elementary stream
+level. The player parses the Sequence Header and the Sequence Display
+Extension to read the nominal frame rate code. For standard NTSC DVDs,
+this value is almost universally declared as 29.97 frames per second
+(fps). However, this declared value only defines the container's
+transmission standard, not necessarily the native frame rate of the
+underlying visual content.</p>
+<h3 id="2-reading-soft-telecine-flags-rff-and-tff">2. Reading Soft
+Telecine Flags (RFF and TFF)</h3>
+<p>Most commercial Hollywood DVDs utilize "soft telecine," where
+progressive 23.976 fps film frames are stored directly on the disc to
+save bitrate, alongside metadata instructions that tell the decoder how
+to display them at 29.97 fps (59.94 fields per second).</p>
+<p>The software player checks each frame's Picture Coding Extension for
+two critical 1-bit flags:</p>
+<ul>
+<li><strong>Repeat First Field (RFF):</strong> Instructs the decoder to
+display the first decoded field twice, extending a frame from two fields
+to three fields.</li>
+<li><strong>Top Field First (TFF):</strong> Dictates whether the top or
+bottom field displays first to maintain proper temporal order.</li>
+</ul>
+<p>In a standard 3:2 pulldown sequence, the flags toggle in a
+predictable pattern across progressive frames (e.g., RFF alternates
+between 1 and 0). If the player detects active RFF flags, it knows the
+true underlying content is progressive 23.976 fps.</p>
+<p>Depending on user settings and display capabilities, the player
+either:</p>
+<ul>
+<li><strong>Honors the flags:</strong> Reconstructs the 59.94 fields/s
+stream for display on traditional interlaced or 60 Hz displays.</li>
+<li><strong>Ignores the flags (Force Film / Inverse Telecine):</strong>
+Drops the redundant field repeats and outputs the raw frames at their
+native 23.976 fps rate, which is ideal for modern progressive
+displays.</li>
+</ul>
+<h3 id="3-packetized-elementary-stream-pes-timestamps">3. Packetized
+Elementary Stream (PES) Timestamps</h3>
+<p>VOB files bundle video, audio, and subtitle streams into Packetized
+Elementary Stream (PES) packets containing Presentation Time Stamps
+(PTS). A PTS value indicates the exact moment a decoded picture must be
+rendered to the screen relative to the system clock.</p>
+<p>The software player monitors the delta between consecutive PTS
+values:</p>
+<ul>
+<li>For native 29.97 fps interlaced video, the PTS increments by roughly
+3,003 clock ticks (based on the standard 90 kHz MPEG clock).</li>
+<li>For 23.976 fps content without active pulldown synthesis, the PTS
+intervals widen to approximately 3,753 clock ticks.</li>
+</ul>
+<p>By comparing the PTS progression against the decoded frame count, the
+player confirms whether frames should be presented at 23.976 fps or
+29.97 fps to maintain audio-video synchronization.</p>
+<h3 id="4-cadence-analysis-for-hard-telecine">4. Cadence Analysis for
+Hard Telecine</h3>
+<p>When content is "hard telecined," the 3:2 pulldown was baked into the
+video frames prior to MPEG-2 compression. In this scenario, the stream
+lacks RFF flags, and every frame is flagged as standard 29.97 fps
+interlaced video.</p>
+<p>To detect the true frame rate of hard-telecined material, advanced
+software players (or deinterlacing filters like IVTC/Yadif) perform
+spatial and temporal cadence detection:</p>
+<ol type="1">
+<li>The player analyzes field differences across successive frames to
+locate combing artifacts.</li>
+<li>It tracks the rhythmic 3:2 pattern—typically two combed frames
+followed by three clean progressive frames.</li>
+<li>Once the 5-field cycle is locked, the player reconstructs the
+progressive frames by combining matching fields and discarding duplicate
+fields, converting the output rate from 29.97 fps back to the original
+23.976 fps. If the pattern breaks, the player falls back to standard
+29.97 fps deinterlacing to prevent stutter.</li>
+</ol></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/telecined-ntsc-vob-frame-rate-detection-explained';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

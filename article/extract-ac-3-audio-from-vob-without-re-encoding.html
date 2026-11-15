@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Extract AC3 Audio from VOB Without Re-Encoding - vob</title>
+    <meta name="description" content="Extracting raw Dolby Digital (AC-3) audio from a DVD VOB (Video Object) container is best achieved through demultiplexing (demuxing), a process that strips the audio stream directly from the video without re-encoding. This guide explains how to extract pr">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/extract-ac-3-audio-from-vob-without-re-encoding">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Extract AC3 Audio from VOB Without Re-Encoding - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/extract-ac-3-audio-from-vob-without-re-encoding" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Extracting raw Dolby Digital (AC-3) audio from a DVD VOB (Video Object) container is best achieved through demultiplexing (demuxing), a process that strips the audio stream directly from the video without re-encoding. This guide explains how to extract pr" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="extract-ac3-audio-from-vob-without-re-encoding">Extract AC3
+Audio from VOB Without Re-Encoding</h1>
+<p>Extracting raw Dolby Digital (AC-3) audio from a DVD VOB (Video
+Object) container is best achieved through demultiplexing (demuxing), a
+process that strips the audio stream directly from the video without
+re-encoding. This guide explains how to extract pristine, bit-perfect
+Dolby Digital audio tracks from VOB files using fast, lossless methods
+with industry-standard tools like FFmpeg and specialized DVD utilities.
+By bypassing the compression stage, you retain the original
+multi-channel fidelity, save processing time, and avoid any generational
+audio quality loss.</p>
+<h3 id="why-demuxing-is-preferred-over-re-encoding">Why Demuxing Is
+Preferred Over Re-Encoding</h3>
+<p>VOB files store audio alongside MPEG-2 video in multiplexed streams.
+In standard DVD releases, the primary audio track is almost always
+encoded in Dolby Digital (AC-3). Converting this audio to another format
+or passing it through an audio encoder degrades the dynamic range and
+introduces compression artifacts. Demuxing simply extracts the
+underlying <code>.ac3</code> stream directly into its own container,
+completing the process in seconds while maintaining 100% of the original
+track data.</p>
+<h3 id="method-1-using-ffmpeg-command-line">Method 1: Using FFmpeg
+(Command-Line)</h3>
+<p>FFmpeg provides the most direct and scriptable way to extract raw
+audio from standalone VOB files.</p>
+<ol type="1">
+<li><p><strong>Identify the Audio Stream:</strong> Open a terminal or
+command prompt and run:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ffmpeg</span> <span class="at">-i</span> input.vob</span></code></pre></div>
+<p>Examine the output to identify the stream number corresponding to the
+Dolby Digital audio track (e.g.,
+<code>Stream #0:1: Audio: ac3</code>).</p></li>
+<li><p><strong>Extract the Stream Without Re-encoding:</strong> Use the
+<code>-c:a copy</code> (stream copy) flag to extract the stream
+directly:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ffmpeg</span> <span class="at">-i</span> input.vob <span class="at">-map</span> 0:a:0 <span class="at">-c:a</span> copy output.ac3</span></code></pre></div>
+<ul>
+<li><code>-map 0:a:0</code> tells FFmpeg to target the first audio
+stream. Change the index if your desired language or commentary track is
+on a secondary stream (e.g., <code>0:a:1</code>).</li>
+<li><code>-c:a copy</code> instructs the encoder to copy the bitstream
+without processing.</li>
+</ul></li>
+</ol>
+<h3 id="method-2-using-pgcdemux-for-entire-dvd-structures">Method 2:
+Using PGCDemux (For Entire DVD Structures)</h3>
+<p>If your VOB files are part of a complete DVD file structure
+(<code>VIDEO_TS</code> folder), standalone VOB extraction can lead to
+audio/video desynchronization due to chapter breaks and multi-angle
+branching. PGCDemux solves this by reading the corresponding
+<code>.IFO</code> files.</p>
+<ol type="1">
+<li>Open <strong>PGCDemux</strong>.</li>
+<li>Click <strong>Browse</strong> next to the IFO path and select the
+main <code>VTS_XX_0.IFO</code> file corresponding to the feature
+title.</li>
+<li>Under the <strong>Domain</strong> section, select
+<strong>Titles</strong>.</li>
+<li>In the <strong>Mode</strong> section, choose <strong>by PGC</strong>
+and select the main feature from the dropdown menu.</li>
+<li>In the <strong>Options</strong> section, uncheck all options except
+<strong>Demux video stream</strong> (leave unchecked) and ensure
+<strong>Demux audio streams</strong> is checked.</li>
+<li>Choose an output directory and click <strong>Process</strong>.</li>
+</ol>
+<p>PGCDemux will parse the referenced VOB files seamlessly, outputting
+clean, delay-corrected <code>.ac3</code> files for each audio track
+present on the disc.</p>
+<h3 id="verifying-the-extracted-stream">Verifying the Extracted
+Stream</h3>
+<p>Once the extraction is complete, you can verify that the audio
+remains identical to the source:</p>
+<ul>
+<li><strong>File Extension:</strong> Ensure the output has an
+<code>.ac3</code> extension.</li>
+<li><strong>Inspection:</strong> Use a tool like
+<strong>MediaInfo</strong> to inspect the file properties. The stream
+should reflect the DVD specification: a sampling rate of 48 kHz, a bit
+rate typically between 192 kbps (for stereo) and 448 kbps (for 5.1
+surround), and the Dolby Digital / AC-3 format tag.</li>
+</ul></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/extract-ac-3-audio-from-vob-without-re-encoding';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

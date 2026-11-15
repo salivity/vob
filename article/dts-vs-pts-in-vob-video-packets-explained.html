@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DTS vs PTS in VOB Video Packets Explained - vob</title>
+    <meta name="description" content="In DVD VOB (Video Object) files, accurate video synchronization relies on two critical markers embedded within the stream: the Decoding Time Stamp (DTS) and the Presentation Time Stamp (PTS). While the PTS dictates the exact moment a decoded video frame m">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/dts-vs-pts-in-vob-video-packets-explained">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="DTS vs PTS in VOB Video Packets Explained - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/dts-vs-pts-in-vob-video-packets-explained" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="In DVD VOB (Video Object) files, accurate video synchronization relies on two critical markers embedded within the stream: the Decoding Time Stamp (DTS) and the Presentation Time Stamp (PTS). While the PTS dictates the exact moment a decoded video frame m" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="dts-vs-pts-in-vob-video-packets-explained">DTS vs PTS in VOB
+Video Packets Explained</h1>
+<p>In DVD VOB (Video Object) files, accurate video synchronization
+relies on two critical markers embedded within the stream: the Decoding
+Time Stamp (DTS) and the Presentation Time Stamp (PTS). While the PTS
+dictates the exact moment a decoded video frame must appear on the
+screen, the DTS specifies the precise moment the compressed frame data
+must be processed by the decoder. This article explains the technical
+differences between DTS and PTS within VOB packets, why bidirectional
+frame compression makes both timestamps necessary, and how hardware
+decoders use them to prevent playback stutter and visual artifacts.</p>
+<h3 id="the-fundamental-difference-decode-order-vs-display-order">The
+Fundamental Difference: Decode Order vs. Display Order</h3>
+<p>A VOB file is based on the MPEG-2 Program Stream format. Inside this
+format, video data is segmented into Packetized Elementary Stream (PES)
+packets. Each packet header can contain timing information to ensure the
+audio and video remain in sync:</p>
+<ul>
+<li><strong>Presentation Time Stamp (PTS):</strong> Instructs the
+display engine when to present the fully decoded frame to the
+viewer.</li>
+<li><strong>Decoding Time Stamp (DTS):</strong> Instructs the hardware
+or software decoder when to retrieve the compressed bitstream from the
+decoder buffer and convert it into uncompressed pixel data.</li>
+</ul>
+<p>In basic video streams where frames are displayed in the exact order
+they are decoded, DTS and PTS are identical. However, in modern
+compression schemes, the order in which frames are decoded frequently
+deviates from the order in which they must be displayed.</p>
+<h3 id="the-role-of-b-frames-in-vob-files">The Role of B-Frames in VOB
+Files</h3>
+<p>The divergence between DTS and PTS in VOB files is driven entirely by
+the use of bidirectional predictive frames, known as
+<strong>B-frames</strong>. MPEG-2 video relies on three primary frame
+types:</p>
+<ol type="1">
+<li><strong>I-Frames (Intra-coded):</strong> Standalone images that do
+not require any reference frames to decode.</li>
+<li><strong>P-Frames (Predicted):</strong> Compressed images that
+reference previous I-frames or P-frames.</li>
+<li><strong>B-Frames (Bidirectional):</strong> Highly compressed frames
+that require data from both a preceding reference frame and a
+<em>future</em> reference frame to decode properly.</li>
+</ol>
+<p>Because a B-frame needs data from a future frame to be reconstructed,
+the decoder must receive and decode that future frame
+<strong>before</strong> it can decode and display the intermediate
+B-frame.</p>
+<p>For example, consider a display sequence of frames: <strong>I1 - B2 -
+B3 - P4</strong>.</p>
+<p>To render <code>B2</code> and <code>B3</code>, the decoder must
+already have both <code>I1</code> and <code>P4</code> decoded and stored
+in memory. Consequently, the stream reorders the delivery of the packets
+so the transmission and decode order becomes: <strong>I1 - P4 - B2 -
+B3</strong>.</p>
+<p>In this scenario:</p>
+<ul>
+<li><code>P4</code> has a <strong>DTS</strong> indicating it must be
+decoded second.</li>
+<li><code>P4</code> has a <strong>PTS</strong> indicating it must not be
+displayed until after <code>B2</code> and <code>B3</code> have been
+shown.</li>
+</ul>
+<h3 id="timestamp-handling-in-the-vobpes-header">Timestamp Handling in
+the VOB/PES Header</h3>
+<p>Inside the PES header of a VOB packet, flags indicate whether
+timestamps are present. Because carrying two 33-bit timestamps inside
+every single packet would introduce unnecessary overhead, MPEG-2
+utilizes a conditional structure:</p>
+<ul>
+<li><strong>PTS Only (Flag <code>10</code>):</strong> If a frame's DTS
+is identical to its PTS (common with I-frames and P-frames in streams
+without B-frames, or standard audio packets), only the PTS is
+transmitted. The decoder assumes <code>DTS = PTS</code>.</li>
+<li><strong>Both PTS and DTS (Flag <code>11</code>):</strong> When
+decode time and presentation time diverge due to frame reordering, both
+values are explicitly written into the PES header.</li>
+<li><strong>No Timestamps (Flag <code>00</code>):</strong> Used when
+intermediate packets belong to a frame whose timestamps were already
+established in a preceding packet.</li>
+</ul>
+<h3 id="buffer-management">Buffer Management</h3>
+<p>Beyond establishing playback order, DTS is critical for MPEG-2 buffer
+management (the Video Buffer Verifier, or VBV). The DTS tells the
+decoder precisely when to pull data out of the buffer, preventing buffer
+underflows (where the decoder has no data to display) and buffer
+overflows (where incoming data exceeds available memory). Once the frame
+is decoded at the time indicated by the DTS, it sits in a frame store
+buffer until the clock reaches the PTS, at which point it is instantly
+pushed to the display.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/dts-vs-pts-in-vob-video-packets-explained';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

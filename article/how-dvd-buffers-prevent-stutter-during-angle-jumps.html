@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How DVD Buffers Prevent Stutter During Angle Jumps - vob</title>
+    <meta name="description" content="This article explains how DVD players eliminate playback stutter during multi-angle scene transitions within VOB (Video Object) files. By combining an internal memory cache known as the track buffer with specialized disc-authoring techniques like interlea">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/how-dvd-buffers-prevent-stutter-during-angle-jumps">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How DVD Buffers Prevent Stutter During Angle Jumps - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/how-dvd-buffers-prevent-stutter-during-angle-jumps" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains how DVD players eliminate playback stutter during multi-angle scene transitions within VOB (Video Object) files. By combining an internal memory cache known as the track buffer with specialized disc-authoring techniques like interlea" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-dvd-buffers-prevent-stutter-during-angle-jumps">How DVD
+Buffers Prevent Stutter During Angle Jumps</h1>
+<p>This article explains how DVD players eliminate playback stutter
+during multi-angle scene transitions within VOB (Video Object) files. By
+combining an internal memory cache known as the track buffer with
+specialized disc-authoring techniques like interleaved video units, DVD
+hardware ensures that the video decoder receives a continuous stream of
+data, even while the physical optical pickup assembly is mechanically
+repositioning across the disc.</p>
+<h3 id="interleaving-video-streams-in-vob-files">Interleaving Video
+Streams in VOB Files</h3>
+<p>Multi-angle scenes do not store each camera perspective as a
+separate, continuous video track on the disc. Storing them consecutively
+would force the optical laser to perform massive physical seeks across
+gigabytes of data whenever a user switched angles, causing several
+seconds of freezing.</p>
+<p>Instead, the DVD-Video standard relies on Interleaved Video Units
+(ILVUs). The VOB multiplexes different camera angles into alternating
+chunks. For example, a two-second clip of Angle 1 is immediately
+followed on the disc spiral by the matching two-second clip of Angle 2,
+followed by the next slice of Angle 1.</p>
+<h3 id="the-mechanical-latency-problem">The Mechanical Latency
+Problem</h3>
+<p>Even with interleaving, playing a single angle or switching to a new
+one requires the optical pickup to skip over unwanted blocks. If the
+player is presenting Angle 1, it must read Angle 1's unit, physically
+lift or re-aim the laser beam over the adjacent Angle 2 unit, and settle
+precisely onto the start of the next Angle 1 unit.</p>
+<p>This mechanical repositioning—known as track jumping—creates a brief
+period where the laser cannot read any data from the optical surface.
+Without a mitigation strategy, the MPEG-2 video decoder would starve for
+data, causing the audio to drop out and the video frame to freeze.</p>
+<h3 id="how-the-track-buffer-solves-stutter">How the Track Buffer Solves
+Stutter</h3>
+<p>The DVD player's track buffer is a small, high-speed RAM cache
+positioned between the optical pickup and the MPEG-2
+demultiplexer/decoder. It prevents stutter through a process of
+intentional over-reading and buffered depletion:</p>
+<ol type="1">
+<li><strong>Overspeed Reading:</strong> The optical drive reads data
+from the disc surface at a bit rate significantly higher than the
+presentation rate required by the video and audio streams. While the
+maximum allowable DVD-Video stream bitrate is 10.08 Mbps, DVD drives can
+read off the disc at much higher transfer rates.</li>
+<li><strong>Buffer Accumulation:</strong> As the drive reads the
+selected angle’s ILVU, it quickly fills the track buffer with upcoming
+frames. By the time the laser reaches the end of the current ILVU block,
+the buffer holds several frames of uncompressed or partially processed
+bitstream data ahead of what is currently appearing on the screen.</li>
+<li><strong>Continuous Playback During the Jump:</strong> When the laser
+finishes reading the block, it initiates the physical jump across the
+interleaved sectors to land on the next chosen angle block. During this
+transit time, disc reading drops to zero. However, the MPEG-2 decoder
+does not pull data from the disc; it pulls directly from the track
+buffer. The stored data continues to feed the display pipeline without
+interruption.</li>
+<li><strong>Buffer Replenishment:</strong> As soon as the pickup locks
+onto the destination track and resumes reading, the high-speed data flow
+restarts. Because the drive transfers data faster than the decoder
+consumes it, the track buffer refills rapidly, preparing the system for
+the next jump.</li>
+</ol>
+<h3 id="specification-constraints">Specification Constraints</h3>
+<p>To guarantee seamless playback without dropped frames, the official
+DVD-Video specification imposes strict mathematical limits on
+multi-angle authoring. Disc authors must adhere to limits defining the
+maximum allowable jump distance, maximum bitrate per angle, and minimum
+ILVU duration. These limits ensure that the mechanical jump
+time—including track-following settle time and rotational latency—can
+never exceed the duration of data held within the player's mandatory
+track buffer.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/how-dvd-buffers-prevent-stutter-during-angle-jumps';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

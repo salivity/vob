@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VOB Subtitles vs SRT and VTT Explained - vob</title>
+    <meta name="description" content="Subtitle handling differs fundamentally between DVD VOB containers and modern formats like SRT and WebVTT. While VOB subtitles rely on multiplexed, bitmap-based image streams, SRT and VTT files use lightweight, plain-text instructions paired with precise">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/vob-subtitles-vs-srt-and-vtt-explained">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="VOB Subtitles vs SRT and VTT Explained - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/vob-subtitles-vs-srt-and-vtt-explained" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Subtitle handling differs fundamentally between DVD VOB containers and modern formats like SRT and WebVTT. While VOB subtitles rely on multiplexed, bitmap-based image streams, SRT and VTT files use lightweight, plain-text instructions paired with precise" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="vob-subtitles-vs-srt-and-vtt-explained">VOB Subtitles vs SRT and
+VTT Explained</h1>
+<p>Subtitle handling differs fundamentally between DVD VOB containers
+and modern formats like SRT and WebVTT. While VOB subtitles rely on
+multiplexed, bitmap-based image streams, SRT and VTT files use
+lightweight, plain-text instructions paired with precise timestamps.
+This architectural difference significantly impacts playback rendering,
+file size, customizability, device compatibility, and accessibility.</p>
+<h2 id="image-based-vs-text-based-formats">Image-Based vs. Text-Based
+Formats</h2>
+<p>The core distinction lies in how the subtitle data is stored and
+displayed:</p>
+<ul>
+<li><strong>VOB (VobSub / DVD Subpictures):</strong> Subtitles in a VOB
+(Video Object) container are not stored as text characters. Instead,
+they are a series of compressed bitmap images known as subpictures. Each
+subtitle frame is a pre-rendered, two-dimensional graphic overlaid
+directly onto the video. Because they are images, they have a fixed
+resolution (typically standard-definition 720x480 for NTSC or 720x576
+for PAL) and are limited to a restrictive palette of four colors at a
+time.</li>
+<li><strong>SRT (SubRip) and VTT (WebVTT):</strong> Both of these are
+plain-text formats. They store subtitle entries as standard text
+characters accompanied by start and end timestamps (e.g.,
+<code>00:01:20,000 --&gt; 00:01:23,000</code>). The media player or
+browser reads this text and dynamically renders it on the screen using
+system fonts. WebVTT expands on basic SRT functionality by supporting
+CSS-based styling, positioning, and text formatting.</li>
+</ul>
+<h2 id="visual-quality-and-display-scalability">Visual Quality and
+Display Scalability</h2>
+<p>Because VOB subtitles are pre-rendered bitmaps designed for
+standard-definition television, they scale poorly on modern
+high-resolution displays. Upscaling a DVD to 1080p or 4K often results
+in pixelated, blurry, or jagged subtitle edges.</p>
+<p>In contrast, SRT and VTT subtitles are rendered on the fly. The video
+player generates crisp, native-resolution vector text regardless of
+whether the video is viewed on a smartphone, a 4K monitor, or an
+ultra-wide display.</p>
+<h2 id="customization-and-flexibility">Customization and
+Flexibility</h2>
+<p>VOB subtitles offer zero viewer customization during playback.
+Viewers cannot change the font family, adjust the font size, alter the
+color, or shift the screen position because the text has already been
+baked into an image.</p>
+<p>Text formats grant complete control to the user and the player
+interface:</p>
+<ul>
+<li><strong>SRT:</strong> While the format itself does not define
+styling, video players can freely alter the playback font, size, drop
+shadows, and background opacity to match user preferences.</li>
+<li><strong>VTT:</strong> Supports explicit cues for styling,
+alignments, and positioning, while still allowing the playback software
+to override these rules for accessibility needs.</li>
+</ul>
+<h2 id="file-size-and-processing-overhead">File Size and Processing
+Overhead</h2>
+<p>VOB subtitle streams consume noticeably more storage space. Because
+every frame contains graphic data, a complete subtitle track can take up
+several megabytes of data within the container. Decompressing and
+overlaying these bitmaps also demands specific hardware or software
+decoders.</p>
+<p>SRT and VTT formats are exceptionally compact. A typical full-length
+movie subtitle file in SRT or VTT format ranges between 30 KB and 100
+KB. Because they are plain text, parsing requires negligible CPU and
+memory resources.</p>
+<h2 id="accessibility-and-content-editing">Accessibility and Content
+Editing</h2>
+<p>Text-based formats offer superior usability for modern workflows:</p>
+<ul>
+<li><strong>Searchability:</strong> SRT and VTT files can be opened and
+edited in any basic text editor. Search engines can crawl them, video
+platforms can index spoken dialogue for search functionality, and screen
+readers can interpret them for visually impaired users.</li>
+<li><strong>Localization:</strong> Translating or fixing typos in SRT
+and VTT is instantaneous. With VOB subtitles, modifying the text
+requires running Optical Character Recognition (OCR) to convert the
+images into text, editing the content, and re-rendering the images back
+into the subpicture stream.</li>
+</ul>
+<h2 id="ecosystem-and-platform-compatibility">Ecosystem and Platform
+Compatibility</h2>
+<p>VOB subtitle handling is primarily legacy technology, closely tied to
+the MPEG-2 DVD-Video specification and specialized software players like
+VLC or MPC-HC. Modern web environments cannot display VOB subpictures
+natively.</p>
+<p>SRT and VTT are modern cross-platform standards. SRT is supported by
+almost all media containers (such as MKV and MP4) and media servers.
+WebVTT is the native standard for HTML5 video (via the
+<code>&lt;track&gt;</code> element), making it universally compatible
+across web browsers, streaming applications, and mobile operating
+systems.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/vob-subtitles-vs-srt-and-vtt-explained';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

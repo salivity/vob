@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interleaved Multi-Angle VOB Maximum Bitrate - vob</title>
+    <meta name="description" content="This article provides a technical overview of the bitrate restrictions applied to interleaved multi-angle VOB streams under the DVD-Video standard. It covers the precise maximum bitrate limits, explains the hardware and optical buffer constraints that nec">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/interleaved-multi-angle-vob-maximum-bitrate">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Interleaved Multi-Angle VOB Maximum Bitrate - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/interleaved-multi-angle-vob-maximum-bitrate" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article provides a technical overview of the bitrate restrictions applied to interleaved multi-angle VOB streams under the DVD-Video standard. It covers the precise maximum bitrate limits, explains the hardware and optical buffer constraints that nec" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="interleaved-multi-angle-vob-maximum-bitrate">Interleaved
+Multi-Angle VOB Maximum Bitrate</h1>
+<p>This article provides a technical overview of the bitrate
+restrictions applied to interleaved multi-angle VOB streams under the
+DVD-Video standard. It covers the precise maximum bitrate limits,
+explains the hardware and optical buffer constraints that necessitate
+these lower thresholds compared to standard video, and outlines best
+practices for authoring compliant multi-angle content.</p>
+<h2 id="the-maximum-bitrate-limit">The Maximum Bitrate Limit</h2>
+<p>According to the official DVD-Video specification (DVD Forum Book 3),
+the absolute maximum total multiplexed bitrate for an interleaved
+multi-angle VOB stream is <strong>8.0 Mbps (8,000 kbps)</strong>.</p>
+<p>While a standard, non-interleaved DVD-Video title allows a maximum
+total system bitrate of 10.08 Mbps (with video alone reaching up to 9.8
+Mbps), interleaved multi-angle streams enforce a lower cap to prevent
+buffer underruns during playback.</p>
+<h2 id="why-the-limit-is-reduced">Why the Limit is Reduced</h2>
+<p>Multi-angle presentations rely on Interleaved Video Units (ILVUs). In
+this architecture, short chunks of video for Angle 1, Angle 2, and any
+subsequent angles are physically written alternating along the optical
+track.</p>
+<p>During playback:</p>
+<ul>
+<li>The player's optical pickup reads the active angle's data chunk into
+a track buffer.</li>
+<li>While the buffer empties to decode video on-screen, the pickup head
+must mechanically jump over the unselected angles to reach the next
+chunk of the chosen angle.</li>
+<li>If the bitrate of the interleaved data is too high, the track buffer
+will deplete before the optical pickup completes its physical seek and
+resumes reading.</li>
+</ul>
+<p>Capping the combined stream at 8.0 Mbps ensures the read buffer
+contains enough data in reserve to bridge the jump time between
+interleaved blocks.</p>
+<h2 id="allocation-and-authoring-guidelines">Allocation and Authoring
+Guidelines</h2>
+<p>The 8.0 Mbps ceiling represents the aggregate total for all active
+components within the multiplex:</p>
+<ul>
+<li><strong>Video Streams:</strong> Typically constrained to an average
+of 5.5 to 6.5 Mbps, with strict maximum peaks no higher than 7.0 to 7.5
+Mbps.</li>
+<li><strong>Audio Tracks:</strong> Multi-angle titles frequently carry
+multi-channel Dolby Digital (AC-3), DTS, or LPCM streams. These audio
+channels must fit within the 8.0 Mbps envelope alongside the video.</li>
+<li><strong>Subpictures and System Overhead:</strong> Subtitles and
+navigation packet overhead must also be factored into the total
+calculation.</li>
+</ul>
+<h2 id="structural-requirements-for-multi-angle-ilvus">Structural
+Requirements for Multi-Angle ILVUs</h2>
+<p>To ensure seamless branching and proper jumping between angles,
+authoring tools enforce strict structural alignment across all
+angles:</p>
+<ul>
+<li><strong>Identical GOP Length:</strong> Every angle must use the
+exact same Group of Pictures (GOP) structure and duration.</li>
+<li><strong>Closed GOPs:</strong> All GOPs must be closed to prevent
+inter-frame dependencies across angle-switch boundaries.</li>
+<li><strong>Aligned Bitrate Spikes:</strong> Peak bitrates across
+parallel interleaved units must not spike simultaneously in a way that
+breaches the 8.0 Mbps system limit during the jump sequence.</li>
+</ul></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/interleaved-multi-angle-vob-maximum-bitrate';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Can LPCM Audio Be Multiplexed into a VOB File? - vob</title>
+    <meta name="description" content="Yes, an uncompressed Linear PCM (LPCM) audio track can be multiplexed into a VOB (Video Object) file. Because VOB is based on the MPEG-2 Program Stream standard and serves as the core container format for DVD-Video, the official DVD specification fully su">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/can-lpcm-audio-be-multiplexed-into-a-vob-file">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Can LPCM Audio Be Multiplexed into a VOB File? - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/can-lpcm-audio-be-multiplexed-into-a-vob-file" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Yes, an uncompressed Linear PCM (LPCM) audio track can be multiplexed into a VOB (Video Object) file. Because VOB is based on the MPEG-2 Program Stream standard and serves as the core container format for DVD-Video, the official DVD specification fully su" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="can-lpcm-audio-be-multiplexed-into-a-vob-file">Can LPCM Audio Be
+Multiplexed into a VOB File?</h1>
+<p>Yes, an uncompressed Linear PCM (LPCM) audio track can be multiplexed
+into a VOB (Video Object) file. Because VOB is based on the MPEG-2
+Program Stream standard and serves as the core container format for
+DVD-Video, the official DVD specification fully supports uncompressed
+LPCM audio alongside compressed formats like AC-3 (Dolby Digital) and
+DTS. This article explains how LPCM functions inside a VOB container,
+the format's technical constraints, and how the multiplexing process is
+handled.</p>
+<h3 id="lpcm-support-in-the-dvd-video-standard">LPCM Support in the
+DVD-Video Standard</h3>
+<p>The DVD-Video specification explicitly includes LPCM as a mandatory
+audio standard. In a VOB file, LPCM audio is packaged inside MPEG-2
+private stream packets (Private Stream 1, identifier <code>0xBD</code>),
+utilizing specific sub-stream IDs ranging from <code>0xA0</code> to
+<code>0xA7</code> to support up to eight distinct audio tracks.</p>
+<p>Because LPCM is entirely uncompressed, it provides bit-for-bit audio
+fidelity identical to the master recording, making it ideal for music
+releases and high-fidelity video projects on DVD.</p>
+<h3 id="technical-constraints-and-specifications">Technical Constraints
+and Specifications</h3>
+<p>When multiplexing LPCM into a VOB container, the audio must comply
+with strict DVD-Video standard parameters:</p>
+<ul>
+<li><strong>Sampling Rate:</strong> Supported rates are strictly limited
+to 48 kHz and 96 kHz. Standard 44.1 kHz CD audio must be resampled to 48
+kHz or 96 kHz prior to multiplexing.</li>
+<li><strong>Bit Depth:</strong> Quantization supports 16-bit, 20-bit, or
+24-bit resolution.</li>
+<li><strong>Channel Configuration:</strong> While the format
+mathematically supports up to 8 channels, channel count is restricted by
+bandwidth. Standard configurations are almost exclusively 2.0 stereo. At
+96 kHz / 24-bit, stereo alone requires 4.608 Mbps.</li>
+<li><strong>Bitrate Limits:</strong> The DVD-Video specification caps
+the maximum audio bitrate at 6.144 Mbps, and the total multiplexed
+bitrate (combining video, all audio tracks, and subtitles) cannot exceed
+10.08 Mbps.</li>
+</ul>
+<h3 id="how-to-multiplex-lpcm-into-vob">How to Multiplex LPCM into
+VOB</h3>
+<p>Multiplexing involves combining the elementary video stream
+(typically MPEG-2 video, <code>.m2v</code>) and the raw LPCM track
+(commonly provided as an uncompressed <code>.wav</code> or
+<code>.pcm</code> file) into the <code>.vob</code> container.</p>
+<p>Common tools for this process include:</p>
+<ul>
+<li><strong>FFmpeg:</strong> A command-line utility capable of muxing
+directly into DVD-compliant VOB files. A typical command looks like:
+<code>ffmpeg -i video.m2v -i audio.wav -target ntsc-dvd -acodec pcm_dvd output.vob</code>
+Using <code>pcm_dvd</code> ensures the LPCM stream is structured with
+the correct DVD header headers and packet boundaries.</li>
+<li><strong>Dedicated DVD Authoring Software:</strong> Tools such as
+MuxMan, DVDAuthor, or Scenarist directly accept elementary MPEG-2 video
+and 48 kHz WAV files, correctly setting the sub-stream headers and
+navigation packets required for proper playback in standard hardware
+players.</li>
+</ul></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/can-lpcm-audio-be-multiplexed-into-a-vob-file';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MOD vs VOB Format: A Technical Comparison - vob</title>
+    <meta name="description" content="While MOD files created by tapeless camcorders and standard DVD VOB (Video Object) files share the same underlying MPEG-2 video architecture, they differ significantly in their container specifications, aspect ratio metadata implementation, and file syste">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/mod-vs-vob-format-a-technical-comparison">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MOD vs VOB Format: A Technical Comparison - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/mod-vs-vob-format-a-technical-comparison" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="While MOD files created by tapeless camcorders and standard DVD VOB (Video Object) files share the same underlying MPEG-2 video architecture, they differ significantly in their container specifications, aspect ratio metadata implementation, and file syste" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="mod-vs-vob-format-a-technical-comparison">MOD vs VOB Format: A
+Technical Comparison</h1>
+<p>While MOD files created by tapeless camcorders and standard DVD VOB
+(Video Object) files share the same underlying MPEG-2 video
+architecture, they differ significantly in their container
+specifications, aspect ratio metadata implementation, and file system
+navigation. Both formats package standard-definition video into MPEG-2
+Program Streams, but VOB strictly adheres to the DVD-Video standard with
+interleaved navigation packets, whereas MOD is a proprietary recording
+format that often relies on external metadata files.</p>
+<h3 id="core-encoding-and-stream-architecture">Core Encoding and Stream
+Architecture</h3>
+<p>At the elementary stream level, MOD and VOB files are fundamentally
+identical. Both formats wrap standard-definition video using the MPEG-2
+(H.262) codec, adhering to standard DVD resolutions such as 720×480
+(NTSC) or 720×576 (PAL).</p>
+<p>For audio, both formats typically rely on Dolby Digital (AC-3) or
+MPEG-1 Audio Layer II (MP2). Because the fundamental video and audio
+streams are identical, a <code>.mod</code> file can frequently be played
+in standard media players simply by changing its file extension to
+<code>.mpg</code> or <code>.vob</code>.</p>
+<h3 id="container-structure-and-navigation-data">Container Structure and
+Navigation Data</h3>
+<p>The primary technical divergence lies in how the MPEG-2 Program
+Stream (PS) is structured:</p>
+<ul>
+<li><strong>VOB (DVD-Video):</strong> A VOB file is a specialized MPEG-2
+Program Stream constrained by the DVD-Video specifications. It
+integrates multiple multiplexed content streams: MPEG-2 video, up to
+eight audio streams (AC-3, DTS, or LPCM), up to 32 subpicture (subtitle)
+tracks, and DVD navigation commands. Crucially, VOB files contain
+<strong>Navigation Packs (NV_PCK)</strong> interspersed throughout the
+stream, which store Presentation Control Information (PCI) and Data
+Search Information (DSI) required for DVD player seek operations, angle
+switching, and menu actions.</li>
+<li><strong>MOD (Camcorder Stream):</strong> MOD files, adopted by
+manufacturers like JVC, Panasonic, and Canon for hard drive and SD-card
+camcorders, are raw MPEG-2 Program Streams stripped of DVD navigation
+overhead. They contain only a single video stream and a single audio
+stream, lacking the multi-track interleaving and NV_PCK data found in
+VOB files.</li>
+</ul>
+<h3 id="aspect-ratio-and-metadata-signaling">Aspect Ratio and Metadata
+Signaling</h3>
+<p>The most common technical issue when comparing MOD and VOB files
+relates to widescreen (16:9) display signaling.</p>
+<ul>
+<li><strong>VOB Aspect Ratio Handling:</strong> In DVD-Video, the
+display aspect ratio is defined directly inside the sequence header of
+the MPEG-2 elementary stream, or governed by the associated
+<code>.IFO</code> (Information) file. DVD players read the IFO file to
+determine whether to output 4:3 or anamorphic 16:9
+letterboxed/pan-and-scan video.</li>
+<li><strong>MOD Aspect Ratio Handling:</strong> Many camcorders recorded
+16:9 widescreen video onto the MOD file as standard 4:3 anamorphic
+pixels, but failed to write standard widescreen flags into the MPEG-2
+sequence headers. Instead, the 16:9 flag was saved in a proprietary
+companion file with the <code>.MOI</code> extension. When a MOD file is
+stripped of its <code>.MOI</code> companion or renamed to
+<code>.vob</code>/<code>.mpg</code>, standard media players ignore the
+missing proprietary flag, rendering the video squished into a 4:3
+frame.</li>
+</ul>
+<h3 id="system-dependencies-moi-vs-ifobup">System Dependencies: MOI vs.
+IFO/BUP</h3>
+<p>Neither file format is designed to operate completely alone within
+its native ecosystem:</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;">Feature</th>
+<th style="text-align: left;">Camcorder MOD</th>
+<th style="text-align: left;">DVD VOB</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Primary Video Codec</strong></td>
+<td style="text-align: left;">MPEG-2</td>
+<td style="text-align: left;">MPEG-2</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Primary Audio Codec</strong></td>
+<td style="text-align: left;">AC-3 or MP2</td>
+<td style="text-align: left;">AC-3, LPCM, DTS, or MP2</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Multiplexed Data</strong></td>
+<td style="text-align: left;">1 Video, 1 Audio track</td>
+<td style="text-align: left;">Multiple video/audio/subtitles</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Internal Navigation</strong></td>
+<td style="text-align: left;">None (sequential stream)</td>
+<td style="text-align: left;">NV_PCK (PCI and DSI packets)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Metadata File</strong></td>
+<td style="text-align: left;"><code>.MOI</code> (proprietary camcorder
+data)</td>
+<td style="text-align: left;"><code>.IFO</code> and <code>.BUP</code>
+(DVD navigation/timing)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Standard File Size
+Limit</strong></td>
+<td style="text-align: left;">File-system dependent (FAT32:
+2GB–4GB)</td>
+<td style="text-align: left;">Exactly 1 GB (1,048,576 KB chunks)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="summary">Summary</h3>
+<p>Technically, a MOD file is a streamlined, capture-oriented variant of
+an MPEG-2 Program Stream, whereas a VOB file is a playback-oriented
+container engineered specifically for the DVD-Video runtime environment.
+While converting MOD to a functional VOB usually requires no video
+re-encoding, full VOB compliance requires adding DVD-specific navigation
+packets and authoring corresponding IFO tables.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/mod-vs-vob-format-a-technical-comparison';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

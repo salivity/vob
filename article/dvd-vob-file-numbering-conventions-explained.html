@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DVD VOB File Numbering Conventions Explained - vob</title>
+    <meta name="description" content="On standard DVD-Video discs, VOB (Video Object) files follow a strict, standardized naming convention dictated by the DVD Forum&#39;s DVD-Video specification. This article explains how files within a Video Title Set (VTS) are indexed, the distinct roles of th">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/dvd-vob-file-numbering-conventions-explained">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="DVD VOB File Numbering Conventions Explained - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/dvd-vob-file-numbering-conventions-explained" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="On standard DVD-Video discs, VOB (Video Object) files follow a strict, standardized naming convention dictated by the DVD Forum&#39;s DVD-Video specification. This article explains how files within a Video Title Set (VTS) are indexed, the distinct roles of th" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="dvd-vob-file-numbering-conventions-explained">DVD VOB File
+Numbering Conventions Explained</h1>
+<p>On standard DVD-Video discs, VOB (Video Object) files follow a
+strict, standardized naming convention dictated by the DVD Forum's
+DVD-Video specification. This article explains how files within a Video
+Title Set (VTS) are indexed, the distinct roles of the two numeric
+fields in each filename, and the technical limitations—such as
+file-system constraints and content type separation—that determine this
+numbering scheme.</p>
+<h3 id="the-structure-vts_xx_yvob">The Structure:
+<code>VTS_XX_Y.VOB</code></h3>
+<p>Every standard title file inside a DVD's <code>VIDEO_TS</code>
+directory follows the <code>VTS_XX_Y.VOB</code> template. The numbering
+convention is broken down into two distinct numerical components:
+<code>XX</code> and <code>Y</code>.</p>
+<pre><code> VTS _ XX _ Y .VOB
+  │     │   │
+  │     │   └── File Sequence / Content Type Index (0 to 9)
+  │     └────── Title Set Number (01 to 99)
+  └──────────── Video Title Set Prefix</code></pre>
+<h3 id="1-the-title-set-number-xx">1. The Title Set Number
+(<code>XX</code>)</h3>
+<p>The first two digits (<code>XX</code>) represent the specific Video
+Title Set (VTS) on the disc, ranging from <code>01</code> to
+<code>99</code>.</p>
+<ul>
+<li><strong>Logical Grouping:</strong> During the authoring process,
+creators group related video, audio, and subtitle streams together into
+distinct sets. For example, a feature film may be placed in
+<code>VTS_01</code>, while bonus features, deleted scenes, or
+behind-the-scenes documentaries are assigned to <code>VTS_02</code>,
+<code>VTS_03</code>, and so forth.</li>
+<li><strong>Independent Attributes:</strong> Each title set possesses
+uniform technical attributes (such as aspect ratio, audio codecs, and
+video resolution). Whenever a piece of content requires a different
+format (e.g., switching from 16:9 widescreen to 4:3 fullscreen), it must
+be placed into a separate Title Set with its own sequential number.</li>
+<li><strong>Global Menus Exception:</strong> The master disc menu
+resides outside this numbering scheme in the Video Manager, labeled as
+<code>VIDEO_TS.VOB</code>.</li>
+</ul>
+<h3 id="2-the-file-sequence-index-y">2. The File Sequence Index
+(<code>Y</code>)</h3>
+<p>The single digit (<code>Y</code>) following the title set number
+designates the specific role or sequence of the file, ranging from
+<code>0</code> to <code>9</code>.</p>
+<h4 id="index-0-menu-content">Index <code>0</code>: Menu Content</h4>
+<p>A value of <code>0</code> (e.g., <code>VTS_01_0.VOB</code>) indicates
+that the file contains the menu assets for that specific title set. It
+holds the menu background video, audio loops, and subpicture highlight
+data for navigation buttons. If a title set has no dedicated menu, this
+file is omitted.</p>
+<h4 id="indexes-1-through-9-sequential-title-media">Indexes
+<code>1</code> through <code>9</code>: Sequential Title Media</h4>
+<p>Values from <code>1</code> through <code>9</code> (e.g.,
+<code>VTS_01_1.VOB</code>, <code>VTS_01_2.VOB</code>) contain the actual
+continuous video and audio playback stream. Numbering starts at
+<code>1</code> and increments sequentially as content is added.</p>
+<h3 id="the-primary-cause-of-sequential-splitting-the-1-gb-limit">The
+Primary Cause of Sequential Splitting: The 1 GB Limit</h3>
+<p>The need for multiple sequential files (<code>_1</code>,
+<code>_2</code>, <code>_3</code>, etc.) is determined by file-system
+specifications:</p>
+<ul>
+<li><strong>UDF 1.02 File Size Constraint:</strong> DVDs use the
+Universal Disk Format (UDF) alongside ISO 9660 (UDF Bridge). The
+standard mandates that no single file on a DVD-Video disc may exceed
+<strong>1 GiB</strong> (1,073,741,824 bytes, or 1,048,576 KB).</li>
+<li><strong>Seamless Playback:</strong> Because a full-length movie
+exceeds 1 GB, authoring tools automatically slice the continuous
+multiplexed stream into chunks that sit just under the 1 GB
+threshold.</li>
+<li><strong>Maximum Size Limit per VTS:</strong> Because the sequence
+digit (<code>Y</code>) only spans from <code>1</code> to <code>9</code>,
+a single Video Title Set can span a maximum of nine 1 GB media files
+(approximately 9 GB). This aligns directly with the storage limit of a
+dual-layer DVD-9 disc.</li>
+</ul></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/dvd-vob-file-numbering-conventions-explained';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

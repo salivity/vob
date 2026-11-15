@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How SCR in VOB Headers Establishes Decoder Timing - vob</title>
+    <meta name="description" content="The System Clock Reference (SCR) found in a DVD Video Object (VOB) header is the master synchronization timestamp that calibrates a decoder’s internal clock to match the encoder&#39;s clock. In DVD-Video, VOB files are structured as MPEG-2 Program Streams con">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/how-scr-in-vob-headers-establishes-decoder-timing">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How SCR in VOB Headers Establishes Decoder Timing - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/how-scr-in-vob-headers-establishes-decoder-timing" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The System Clock Reference (SCR) found in a DVD Video Object (VOB) header is the master synchronization timestamp that calibrates a decoder’s internal clock to match the encoder&#39;s clock. In DVD-Video, VOB files are structured as MPEG-2 Program Streams con" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-scr-in-vob-headers-establishes-decoder-timing">How SCR in
+VOB Headers Establishes Decoder Timing</h1>
+<p>The System Clock Reference (SCR) found in a DVD Video Object (VOB)
+header is the master synchronization timestamp that calibrates a
+decoder’s internal clock to match the encoder's clock. In DVD-Video, VOB
+files are structured as MPEG-2 Program Streams consisting of discrete
+packs, each beginning with a pack header containing an SCR. By
+periodically delivering the encoder’s time base, the SCR prevents buffer
+underflow or overflow and ensures that elementary streams—such as video,
+audio, and subtitles—remain synchronized across the playback
+timeline.</p>
+<h3 id="the-role-of-the-pack-header-and-scr-structure">The Role of the
+Pack Header and SCR Structure</h3>
+<p>A VOB file is partitioned into 2,048-byte packs. The pack header
+marks the beginning of each pack and contains the SCR field. The SCR
+represents the precise theoretical arrival time of the last byte of the
+pack header into the decoder’s input buffer.</p>
+<p>The SCR value is a 42-bit timestamp derived from a 27 MHz reference
+clock. It is split into two components:</p>
+<ul>
+<li><strong>SCR Base (33 bits):</strong> Measured at a frequency of 90
+kHz, providing backward compatibility with standard presentation
+timers.</li>
+<li><strong>SCR Extension (9 bits):</strong> Operates at the full 27 MHz
+frequency, providing high-precision fractional timing between the 90 kHz
+increments.</li>
+</ul>
+<h3 id="calibrating-the-decoders-system-time-clock-stc">Calibrating the
+Decoder’s System Time Clock (STC)</h3>
+<p>Hardware and software decoders possess an internal free-running clock
+called the System Time Clock (STC). Because independent hardware
+oscillators drift over time due to temperature fluctuations and
+component tolerances, the decoder’s STC cannot run autonomously without
+falling out of sync with the stream.</p>
+<p>When the decoder encounters the first pack of a VOB stream:</p>
+<ol type="1">
+<li>It reads the initial SCR and directly loads this value into its
+STC.</li>
+<li>As subsequent packs arrive, the decoder compares incoming SCR values
+against the current STC value.</li>
+<li>A Phase-Locked Loop (PLL) or software tracking loop continuously
+adjusts the STC frequency, slowing it down or speeding it up to
+eliminate drift relative to the incoming SCR values.</li>
+</ol>
+<h3 id="regulating-buffer-management">Regulating Buffer Management</h3>
+<p>Decoders rely on input buffers to smooth out variable bitrate (VBR)
+data streams before decoding. If data arrives too quickly, the decoder's
+buffer overflows and drops packets; if data arrives too slowly, the
+buffer underflows, causing playback to freeze.</p>
+<p>The SCR manages this delivery flow. The multiplexer calculates SCR
+values to dictate exactly when each pack should enter the system target
+decoder. The decoder uses the arrival timeline defined by the SCR to
+extract elementary stream packets (PES packets) at the intended rate,
+maintaining steady buffer occupancy.</p>
+<h3 id="interplay-with-pts-and-dts">Interplay with PTS and DTS</h3>
+<p>The SCR acts strictly as a delivery and clock-synchronization
+mechanism; it does not determine when an individual audio frame or video
+picture is decoded or rendered. That role belongs to Decoding Time
+Stamps (DTS) and Presentation Time Stamps (PTS) embedded within the
+Packetized Elementary Stream (PES) headers.</p>
+<p>Once the STC is synchronized via the SCR:</p>
+<ul>
+<li>The decoder monitors the advancing STC.</li>
+<li>When the STC reaches the value stored in a frame's DTS, that
+compressed frame is sent to the decoder pipeline.</li>
+<li>When the STC reaches the value stored in a frame's PTS, the
+uncompressed image or audio sample is presented to the user.</li>
+</ul>
+<p>By anchoring the STC to the physical stream timing, the SCR ensures
+that both audio and video PTS/DTS values refer to a stable, shared time
+base, maintaining continuous lip-sync throughout playback.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/how-scr-in-vob-headers-establishes-decoder-timing';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

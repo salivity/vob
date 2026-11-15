@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VOBU Closed GOP Requirements for Seamless Branching - vob</title>
+    <meta name="description" content="This article provides an overview of how a Video Object Unit (VOBU) within a DVD-Video VOB (Video Object) container manages closed Group of Pictures (GOP) requirements to achieve seamless branching. Seamless branching allows playback systems to switch bet">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/vobu-closed-gop-requirements-for-seamless-branching">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="VOBU Closed GOP Requirements for Seamless Branching - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/vobu-closed-gop-requirements-for-seamless-branching" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article provides an overview of how a Video Object Unit (VOBU) within a DVD-Video VOB (Video Object) container manages closed Group of Pictures (GOP) requirements to achieve seamless branching. Seamless branching allows playback systems to switch bet" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="vobu-closed-gop-requirements-for-seamless-branching">VOBU Closed
+GOP Requirements for Seamless Branching</h1>
+<p>This article provides an overview of how a Video Object Unit (VOBU)
+within a DVD-Video VOB (Video Object) container manages closed Group of
+Pictures (GOP) requirements to achieve seamless branching. Seamless
+branching allows playback systems to switch between alternative video
+sequences—such as multiple storylines, director's cuts, or multi-angle
+scenes—without latency, dropped frames, or visual artifacts. By strictly
+regulating GOP headers, temporal reference structures, and buffer
+parameters at the VOBU boundary, the multiplexer ensures that MPEG-2
+decoders can cleanly transition across branch points.</p>
+<h3 id="the-role-of-the-vobu-in-stream-navigation">The Role of the VOBU
+in Stream Navigation</h3>
+<p>A VOBU is the fundamental delivery and timing unit in a DVD VOB
+container, typically representing 0.4 to 1.0 second of playback. Every
+VOBU begins with a Navigation Pack (NV_PCK), containing Presentation
+Control Information (PCI) and Data Search Information (DSI). Immediately
+following the NV_PCK is the elementary video stream, which consists of
+one or more GOPs.</p>
+<p>In seamless branching (implemented via Interleaved Video Units, or
+ILVUs), the playback engine jumps dynamically from the end of one cell
+to the beginning of another. For this transition to occur without
+decoding failure, the entry point of the destination stream must be
+instantly decodable without dependency on previous data.</p>
+<h3 id="closed-gop-implementation-at-branch-boundaries">Closed GOP
+Implementation at Branch Boundaries</h3>
+<p>Standard MPEG-2 video streams often use "open GOPs" to increase
+compression efficiency. In an open GOP, bidirectional predictive frames
+(B-frames) immediately following the first Intra-frame (I-frame) rely on
+backward prediction from the final anchor frame (P-frame or I-frame) of
+the preceding GOP.</p>
+<p>Seamless branching strictly prohibits open GOPs at branch entry and
+exit points:</p>
+<ul>
+<li><strong>Closed GOP Flag (<code>closed_gop = 1</code>):</strong> The
+first GOP in a branch-destination VOBU must have the
+<code>closed_gop</code> bit set to <code>1</code> in the MPEG-2 GOP
+header. This explicitly signals that no frame within the GOP references
+frames from any prior GOP.</li>
+<li><strong>B-Frame Encapsulation:</strong> Any B-frames that display
+after the first I-frame in presentation order (PTS) must only use
+forward prediction from that I-frame, or the sequence must avoid initial
+B-frames altogether (e.g., starting with an <code>IBBP...</code>
+structure where the initial B-frames do not reference past frames).</li>
+<li><strong>Sequence End/Start Codes:</strong> At the transition point
+between branched cells, a sequence end code (<code>0x000001B7</code>)
+may be placed at the conclusion of the terminating VOBU, followed
+immediately by a sequence header at the start of the next VOBU to reset
+video parameters cleanly if stream properties shift.</li>
+</ul>
+<h3 id="buffer-continuity-via-vbv-management">Buffer Continuity via VBV
+Management</h3>
+<p>A closed GOP eliminates cross-GOP prediction dependencies, but
+seamlessness also requires preventing Video Buffer Verifier (VBV)
+underflows or overflows:</p>
+<ul>
+<li><strong>VBV Delay Matching:</strong> The multiplexer calculates the
+exact occupancy of the decoder's VBV buffer at the end of the
+originating VOBU and ensures it matches the expected buffer state of the
+receiving VOBU.</li>
+<li><strong>Bitrate Flattening:</strong> Because I-frames require
+significantly higher bit allocations than P- or B-frames, the VOBU
+layout preceding a branch point must be rate-controlled so that the
+sudden arrival of an I-frame at the branch destination does not exhaust
+the buffer before decoding starts.</li>
+</ul>
+<h3 id="synchronization-via-navigation-packs-nv_pck">Synchronization via
+Navigation Packs (NV_PCK)</h3>
+<p>The VOBU controls the execution of the branch through its DSI
+data:</p>
+<ul>
+<li><strong>Splice Points:</strong> The DSI contains seamless
+angle/branch information (<code>SML_AGLI</code> or
+<code>SML_PBI</code>), which maps relative block addresses to the exact
+sector of the next destination VOBU.</li>
+<li><strong>Seamless Playback Flags:</strong> The
+<code>VOBU_SEAMLESS</code> flag inside the NV_PCK informs the
+demultiplexer to treat the next packet block as a continuous flow,
+preventing audio gaps or blank display updates while transitioning
+across the closed GOP boundary.</li>
+<li><strong>System Clock Reference (SCR) and Presentation Time Stamp
+(PTS) Continuity:</strong> While the closed GOP ensures the video frame
+can be reconstructed independently, the VOBU's multiplex layer aligns
+audio and video timestamps so that presentation continuity remains
+synchronous across the branch cut.</li>
+</ul></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/vobu-closed-gop-requirements-for-seamless-branching';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

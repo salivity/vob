@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How Seek Latency Affects DVD VOB File Placement - vob</title>
+    <meta name="description" content="Optical drive seek latency directly dictates the contiguous physical arrangement of sequential Video Object (VOB) files on a DVD. Because optical pickup mechanisms suffer from high mechanical access times when repositioning the laser across the disc surfa">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/how-seek-latency-affects-dvd-vob-file-placement">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How Seek Latency Affects DVD VOB File Placement - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/how-seek-latency-affects-dvd-vob-file-placement" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Optical drive seek latency directly dictates the contiguous physical arrangement of sequential Video Object (VOB) files on a DVD. Because optical pickup mechanisms suffer from high mechanical access times when repositioning the laser across the disc surfa" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-seek-latency-affects-dvd-vob-file-placement">How Seek
+Latency Affects DVD VOB File Placement</h1>
+<p>Optical drive seek latency directly dictates the contiguous physical
+arrangement of sequential Video Object (VOB) files on a DVD. Because
+optical pickup mechanisms suffer from high mechanical access times when
+repositioning the laser across the disc surface, DVD authoring standards
+require consecutive VOB extents to be recorded in an unbroken physical
+sequence. This article explains how optical drive mechanics, buffer
+constraints, and dual-layer mastering techniques combine to enforce
+strict physical sector placement to prevent playback interruptions.</p>
+<h3 id="the-mechanics-of-optical-seek-latency">The Mechanics of Optical
+Seek Latency</h3>
+<p>Unlike solid-state or magnetic media, an optical drive relies on an
+Optical Pickup Unit (OPU) mounted on a mechanical sled. Reading data
+involves physical translation across a continuous spiral track, coarse
+sled positioning, fine lens actuation, and rotational
+synchronization.</p>
+<p>Average random seek times on optical drives range from 100 to over
+200 milliseconds. If the laser loses track alignment or has to jump
+large radial distances, this latency increases significantly. Because
+video playback demands a continuous, real-time data stream, unexpected
+delays introduce serious playback bottlenecks.</p>
+<h3 id="sequential-vob-segmentation-and-physical-contiguity">Sequential
+VOB Segmentation and Physical Contiguity</h3>
+<p>The DVD-Video specification divides titles into VOB files capped at 1
+GB (1,048,576 KB) to maintain compatibility with the UDF 1.02 and ISO
+9660 file systems. A single continuous feature film is typically split
+across multiple files, such as <code>VTS_01_1.VOB</code>,
+<code>VTS_01_2.VOB</code>, and <code>VTS_01_3.VOB</code>.</p>
+<p>Although the operating system or file system sees these as separate
+entities, the playback engine must treat them as an uninterrupted MPEG-2
+program stream. Because of seek latency:</p>
+<ul>
+<li><strong>Sectors Must Be Contiguous:</strong> The last sector of an
+earlier VOB file must immediately precede the first sector of the
+subsequent VOB file on the spiral track.</li>
+<li><strong>Zero Interleaved File System Metadata:</strong> File system
+tables (allocation descriptors and directory records) cannot be placed
+between sequential VOB extents.</li>
+<li><strong>Elimination of Sled Movement:</strong> By keeping sectors
+sequentially aligned, the drive avoids triggering a sled seek command,
+allowing the spindle motor and laser servo to maintain a steady read
+rate.</li>
+</ul>
+<h3 id="buffer-depletion-and-bitrate-thresholds">Buffer Depletion and
+Bitrate Thresholds</h3>
+<p>Standalone DVD players use a small track buffer (historically between
+1 and 4 megabytes) to smooth out minor read irregularities. Standard
+DVD-Video streams can reach bitrates up to 9.8 Mbps for video and 10.08
+Mbps for the total multiplexed stream.</p>
+<p>At a 10 Mbps transfer rate, a 2 MB buffer holds less than two seconds
+of content. If the sequential files are fragmented across different
+physical areas of the disc:</p>
+<ol type="1">
+<li>The drive must halt reading, initiate an OPU seek, and wait for the
+target sector to rotate beneath the lens.</li>
+<li>The read buffer drains rapidly to keep the decoder supplied with
+data.</li>
+<li>If the seek latency exceeds the time buffer allowance, a buffer
+underrun occurs, resulting in frozen frames, skipped audio, or
+macroblocking.</li>
+</ol>
+<p>To ensure uninterrupted playback, authoring software verifies that
+physical block allocation mirrors playback order precisely.</p>
+<h3 id="impact-on-dual-layer-physical-geometry">Impact on Dual-Layer
+Physical Geometry</h3>
+<p>Seek latency also dictates how VOB files are placed across dual-layer
+(DVD-9) media. Dual-layer discs use either Parallel Track Path (PTP) or
+Opposite Track Path (OTP):</p>
+<ul>
+<li><strong>Opposite Track Path (OTP):</strong> Layer 0 is read from the
+inner diameter outward, while Layer 1 is read from the outer diameter
+inward. Placing sequential VOB blocks across an OTP transition minimizes
+seek latency because the optical head only requires a focal plane shift
+rather than a full radial sled return.</li>
+<li><strong>Seamless Layer Breaks:</strong> Even with OTP, transitioning
+layers causes a momentary delay. Authoring specifications require
+intentional pause markers or ensure that the VOB boundary aligns with a
+non-critical scene cut or cell break where data rates are intentionally
+lowered to keep the buffer full during the layer transition.</li>
+</ul></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/how-seek-latency-affects-dvd-vob-file-placement';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

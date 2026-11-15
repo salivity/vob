@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NTSC VOB Subpicture Maximum Graphic Resolution - vob</title>
+    <meta name="description" content="The maximum graphic resolution of a subpicture stream embedded within an NTSC VOB (DVD Video Object) file is 720×480 pixels. Subpictures function as run-length encoded bitmap overlays applied on top of the primary MPEG-2 video stream to display subtitles,">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/ntsc-vob-subpicture-maximum-graphic-resolution">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="NTSC VOB Subpicture Maximum Graphic Resolution - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/ntsc-vob-subpicture-maximum-graphic-resolution" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The maximum graphic resolution of a subpicture stream embedded within an NTSC VOB (DVD Video Object) file is 720×480 pixels. Subpictures function as run-length encoded bitmap overlays applied on top of the primary MPEG-2 video stream to display subtitles," />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="ntsc-vob-subpicture-maximum-graphic-resolution">NTSC VOB
+Subpicture Maximum Graphic Resolution</h1>
+<p>The maximum graphic resolution of a subpicture stream embedded within
+an NTSC VOB (DVD Video Object) file is 720×480 pixels. Subpictures
+function as run-length encoded bitmap overlays applied on top of the
+primary MPEG-2 video stream to display subtitles, closed captions, and
+DVD menu highlights. Because subpicture graphics are locked to the video
+frame specifications of the NTSC DVD-Video standard, their coordinate
+space matches the full active frame resolution of the accompanying
+video.</p>
+<h3 id="frame-dimensions-and-display-mapping">Frame Dimensions and
+Display Mapping</h3>
+<p>In an NTSC DVD VOB container, the video stream conforms to a standard
+maximum resolution of 720×480 pixels. The subpicture decoder utilizes a
+canvas that matches this 720×480 pixel grid. Although the graphic stream
+can define a smaller bounding box to cover only a specific segment of
+the screen—such as the bottom third for dialogue subtitles—the maximum
+theoretical and functional canvas resolution remains 720×480.</p>
+<p>When dealing with different display aspect ratios, the subpicture
+bitmap adapts to the underlying video behavior:</p>
+<ul>
+<li><strong>Standard 4:3:</strong> The 720×480 subpicture renders over
+the 4:3 frame using non-square pixels with a pixel aspect ratio (PAR) of
+8:9 (approx. 0.89).</li>
+<li><strong>Anamorphic 16:9:</strong> The 720×480 subpicture canvas is
+horizontally stretched alongside the anamorphic video to fill a 16:9
+display, corresponding to an NTSC widescreen PAR of 32:27 (approx.
+1.19).</li>
+<li><strong>Letterbox and Pan &amp; Scan:</strong> For widescreen
+content displayed on 4:3 screens, DVD players use subpicture scaling
+commands or separate subpicture streams specifically authored at 720×480
+to properly align with the letterboxed or cropped output.</li>
+</ul>
+<h3 id="graphic-format-and-color-limitations">Graphic Format and Color
+Limitations</h3>
+<p>While the canvas resolution allows for full-screen coverage, the
+graphical fidelity is constrained by the DVD-Video specification:</p>
+<ul>
+<li><strong>Color Depth:</strong> Subpictures are strictly 2-bit indexed
+bitmaps. This limits any given subpicture unit to a maximum of 4
+distinct colors simultaneously.</li>
+<li><strong>Palette Allocation:</strong> The 4 available colors are
+selected from a larger 16-color lookup table defined in the DVD’s
+Program Chain Information (PGC/IFO).</li>
+<li><strong>Transparency:</strong> Each of the 4 colors has an assigned
+4-bit transparency value (alpha channel), allowing for 16 levels of
+opacity ranging from fully transparent to completely opaque.</li>
+<li><strong>Compression:</strong> The graphics are encoded using
+Run-Length Encoding (RLE) to minimize file size and conserve bitrate
+within the multiplexed VOB stream.</li>
+</ul>
+<p>By maintaining a fixed 720×480 bitmap canvas, the DVD subpicture
+specification ensures that text, interactive buttons, and graphic
+elements render seamlessly in sync with standard-definition NTSC
+video.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/ntsc-vob-subpicture-maximum-graphic-resolution';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

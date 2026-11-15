@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How Media Player Classic Renders Embedded VOB Subtitles - vob</title>
+    <meta name="description" content="Media Player Classic (MPC-HC/MPC-BE) handles embedded VOB subtitles through a multi-stage pipeline involving stream demuxing, packet reassembly, run-length decoding, and video overlay composition. Unlike text-based subtitles, VOB subtitles (found in DVD-V">
+    <link rel="canonical" href="https://salivity.github.io/vob/article/how-media-player-classic-renders-embedded-vob-subtitles">
+    <link rel="search" type="application/opensearchdescription+xml" title="vob" href="/vob/opensearch.xml">
+    <link rel="icon" href="/vob/favicon.ico">
+    <link rel="stylesheet" href="/vob/css/style.css">
+    <link media="print" rel="stylesheet" href="/vob/css/print.css">
+    <script src="/vob/js/fuse.min.js"></script>
+    <script src="/vob/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How Media Player Classic Renders Embedded VOB Subtitles - vob" />
+    <meta property="og:url" content="https://salivity.github.io/vob/article/how-media-player-classic-renders-embedded-vob-subtitles" />
+    <meta property="og:image" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/vob/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Media Player Classic (MPC-HC/MPC-BE) handles embedded VOB subtitles through a multi-stage pipeline involving stream demuxing, packet reassembly, run-length decoding, and video overlay composition. Unlike text-based subtitles, VOB subtitles (found in DVD-V" />
+    <link rel="manifest" href="/vob/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/vob/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>vob</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/vob/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-media-player-classic-renders-embedded-vob-subtitles">How
+Media Player Classic Renders Embedded VOB Subtitles</h1>
+<p>Media Player Classic (MPC-HC/MPC-BE) handles embedded VOB subtitles
+through a multi-stage pipeline involving stream demuxing, packet
+reassembly, run-length decoding, and video overlay composition. Unlike
+text-based subtitles, VOB subtitles (found in DVD-Video and VOB/MPG
+containers) are pre-rendered bitmap images accompanied by display
+commands. Media Player Classic utilizes its internal source filters (or
+external splitters like LAV Splitter) alongside its Internal Subtitle
+Renderer (ISR) to extract these compressed subpicture streams, interpret
+their timing and color palettes, decode the graphical elements, and blit
+them seamlessly over the decoded video frames.</p>
+<h3 id="1-demuxing-and-packet-extraction">1. Demuxing and Packet
+Extraction</h3>
+<p>VOB files encapsulate data using the MPEG-2 Program Stream format.
+Subtitles within this structure are designated as "Subpicture" data and
+are carried inside MPEG Packetized Elementary Stream (PES) packets
+marked under Private Stream 1 (with stream IDs ranging from
+<code>0x20</code> to <code>0x3F</code>).</p>
+<p>When playback begins, MPC's demuxer scans the pack headers to
+identify these subpicture tracks. Because a single subtitle graphic is
+often larger than an individual PES packet, the demuxer strips away the
+transport headers and concatenates the segmented payloads into a
+contiguous data block known as a Subpicture Unit (SPU).</p>
+<h3 id="2-spu-structure-parsing">2. SPU Structure Parsing</h3>
+<p>Once an SPU is reconstructed, the Internal Subtitle Renderer parses
+its contents. Each SPU consists of three primary components:</p>
+<ul>
+<li><strong>SPU Header:</strong> Contains the total size of the
+subpicture unit and the offset to the display control sequence
+table.</li>
+<li><strong>Pixel Data:</strong> Run-length encoded (RLE) bitmapped
+image data representing two interlaced fields (top and bottom fields) of
+the subtitle frame.</li>
+<li><strong>Subpicture Display Control Sequence Table
+(SP_DCSQ):</strong> A list of time-stamped commands that define
+execution start times, screen display coordinates, color palette
+mappings, and alpha transparency values.</li>
+</ul>
+<h3 id="3-palette-and-transparency-resolution">3. Palette and
+Transparency Resolution</h3>
+<p>VOB subpictures are 2-bit indexed images, meaning each pixel can only
+reference one of four logical color indexes: background, pattern
+(body/text), emphasis 1 (primary border/outline), and emphasis 2
+(secondary outline or shadow).</p>
+<p>The actual color definitions are not stored within the SPU itself.
+Instead, the SPU references a 16-color Color Look-Up Table (CLUT) found
+in the DVD’s <code>.IFO</code> configuration file or within the
+container’s metadata stream. MPC reads the control commands from the
+<code>SP_DCSQ</code> to map the 2-bit pixel indices to the 16-color
+palette (in YCbCr/YUV format) and applies the specified 4-bit
+contrast/alpha values (0 to 15, representing fully transparent to fully
+opaque) to determine the visibility of each element.</p>
+<h3 id="4-decompression-and-rasterization">4. Decompression and
+Rasterization</h3>
+<p>The pixel decoder processes the RLE compressed data line by line:</p>
+<ol type="1">
+<li>It reads control bits to determine run lengths (the number of
+consecutive pixels sharing the same color index).</li>
+<li>It expands these runs across the defined width and height of the
+bounding box.</li>
+<li>It separates and deinterlaces the odd and even field lines to
+assemble a single coherent, uncompressed bitmap.</li>
+<li>Using the resolved palette and alpha mappings, MPC transforms this
+indexed graphic into an internal 32-bit RGBA or AYUV bitmap buffer.</li>
+</ol>
+<h3 id="5-synchronization-and-rendering-overlay">5. Synchronization and
+Rendering Overlay</h3>
+<p>Each SPU includes Presentation Time Stamps (PTS) that dictate
+precisely when the subtitle appears and disappears relative to the
+system reference clock. MPC's subtitle engine matches these timestamps
+against the audio/video clock to maintain exact synchronization.</p>
+<p>Finally, the rasterized bitmap is passed to the video rendering
+engine (such as the MPC Video Renderer, EVR Custom Presenter, or madVR).
+The renderer handles aspect-ratio corrections—scaling the non-square
+pixel dimensions typical of standard-definition DVD content to match the
+target display—and alpha-blends the subtitle graphic directly onto the
+final video frame surface before it is presented to the display.</p></article>
+        <div id='disqus_thread'></div>
+        <script>
+
+            var disqus_config = function () {
+                this.page.url =         'https://salivity.github.io/vob/article/how-media-player-classic-renders-embedded-vob-subtitles';  
+                //this.page.identifier =  PAGE_IDENTIFIER; 
+            };
+            
+            (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://salivity-github-io.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="https://smvc.dev/contact">Contact</a></li>
+                <li><a href="/vob/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/vob/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>
